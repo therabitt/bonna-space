@@ -37,6 +37,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (item.Key === 'tagline') {
               // Store total text for typewriter
               el.setAttribute('data-full-text', item.Value);
+              // Clear current text so typewriter can start fresh
+              el.textContent = ''; 
             } else {
               el.textContent = item.Value;
             }
@@ -245,19 +247,25 @@ document.addEventListener('DOMContentLoaded', () => {
         tagline.style.visibility = 'visible';
         return;
       }
-      const text = tagline.textContent;
+      
+      // Use dynamic text if available, otherwise fallback to HTML content
+      const text = tagline.getAttribute('data-full-text') || tagline.textContent;
+      
       tagline.innerHTML = '<span class="typewriter-text"></span><span class="typewriter-cursor" style="color:var(--clr-coral); font-weight:bold;">_</span>';
       tagline.style.visibility = 'visible';
       const textSpan = tagline.querySelector('.typewriter-text');
       let charIndex = 0;
+      
       const type = () => {
         if (charIndex < text.length) {
           textSpan.textContent += text.charAt(charIndex);
           charIndex++;
-          setTimeout(type, 40);
+          setTimeout(type, 45); // Slightly slower for better readability
         }
       };
-      setTimeout(type, 1000);
+      
+      // Wait a bit after data injection before starting
+      setTimeout(type, 500);
     },
 
     initRetroCards() {
