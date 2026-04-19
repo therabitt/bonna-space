@@ -35,12 +35,11 @@ document.addEventListener('DOMContentLoaded', () => {
           const el = document.getElementById(`field-${item.Key}`);
           if (el) {
             if (item.Key === 'tagline') {
-              // Store total text for typewriter
-              el.setAttribute('data-full-text', item.Value);
-              // Clear current text so typewriter can start fresh
+              const val = item.Value || '';
+              el.setAttribute('data-full-text', val);
               el.textContent = ''; 
             } else {
-              el.textContent = item.Value;
+              el.textContent = item.Value || '';
             }
           }
         });
@@ -88,18 +87,32 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
+    // Helper to get value from object with any case key (e.g. ImageURL, imageurl, Image URL)
+    getVal(obj, key) {
+      if (!obj) return '';
+      const normalizedKey = key.toLowerCase().replace(/[\s_]/g, '');
+      const actualKey = Object.keys(obj).find(k => k.toLowerCase().replace(/[\s_]/g, '') === normalizedKey);
+      return actualKey ? obj[actualKey] : '';
+    }
+
     renderShowcase(items, container) {
       container.innerHTML = '';
       items.forEach((item, index) => {
+        const title = this.getVal(item, 'Title');
+        const img = this.getVal(item, 'ImageURL');
+        const desc = this.getVal(item, 'Description');
+
+        if (!img) return; // Skip if no image
+
         const card = document.createElement('div');
         card.className = `retro-card reveal artwork-card reveal-delay-${(index % 4) + 1}`;
         card.innerHTML = `
           <div class="artwork-frame">
-            <img src="${item.ImageURL}" alt="${item.Title}" loading="lazy">
+            <img src="${img}" alt="${title}" loading="lazy">
           </div>
           <div class="artwork-info">
-            <h4 class="artwork-title">${item.Title}</h4>
-            <p class="artwork-desc">${item.Description}</p>
+            <h4 class="artwork-title">${title || 'Untitled'}</h4>
+            <p class="artwork-desc">${desc || ''}</p>
           </div>
         `;
         container.appendChild(card);

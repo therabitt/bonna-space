@@ -157,6 +157,14 @@
       }
     }
 
+    // Helper for robust key matching (case-insensitive)
+    function getVal(obj, key) {
+      if (!obj) return '';
+      const normalizedKey = key.toLowerCase().replace(/[\s_]/g, '');
+      const actualKey = Object.keys(obj).find(k => k.toLowerCase().replace(/[\s_]/g, '') === normalizedKey);
+      return actualKey ? obj[actualKey] : '';
+    }
+
     function populateFields() {
       if (!localCache) return;
 
@@ -178,12 +186,12 @@
           div.innerHTML = `
             <div>
               <label class="admin-label">TYPE</label>
-              <input type="text" class="admin-input price-item" data-key="Type" data-idx="${i}" value="${p.Type}">
+              <input type="text" class="admin-input price-item" data-key="Type" data-idx="${i}" value="${getVal(p, 'Type')}">
             </div>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
-              <div><label class="admin-label">USD</label><input type="text" class="admin-input price-item" data-key="PriceUSD" data-idx="${i}" value="${p.PriceUSD}"></div>
-              <div><label class="admin-label">IDR</label><input type="text" class="admin-input price-item" data-key="PriceIDR" data-idx="${i}" value="${p.PriceIDR}"></div>
-              <input type="hidden" class="price-item" data-key="Category" data-idx="${i}" value="${p.Category}">
+              <div><label class="admin-label">USD</label><input type="text" class="admin-input price-item" data-key="PriceUSD" data-idx="${i}" value="${getVal(p, 'PriceUSD')}"></div>
+              <div><label class="admin-label">IDR</label><input type="text" class="admin-input price-item" data-key="PriceIDR" data-idx="${i}" value="${getVal(p, 'PriceIDR')}"></div>
+              <input type="hidden" class="price-item" data-key="Category" data-idx="${i}" value="${getVal(p, 'Category')}">
             </div>
           `;
           priceList.appendChild(div);
@@ -204,15 +212,15 @@
             <div class="form-row">
               <div>
                 <label class="admin-label">TITLE</label>
-                <input type="text" class="showcase-item admin-input" data-key="Title" data-idx="${i}" value="${s.Title}">
+                <input type="text" class="showcase-item admin-input" data-key="Title" data-idx="${i}" value="${getVal(s, 'Title')}">
               </div>
               <div>
                 <label class="admin-label">IMAGE URL</label>
-                <input type="text" class="showcase-item admin-input" data-key="ImageURL" data-idx="${i}" value="${s.ImageURL}">
+                <input type="text" class="showcase-item admin-input" data-key="ImageURL" data-idx="${i}" value="${getVal(s, 'ImageURL')}">
               </div>
             </div>
             <label class="admin-label" style="margin-top:5px;">DESC</label>
-            <input type="text" class="showcase-item admin-input" data-key="Description" data-idx="${i}" value="${s.Description}">
+            <input type="text" class="showcase-item admin-input" data-key="Description" data-idx="${i}" value="${getVal(s, 'Description')}">
           `;
           showcaseList.appendChild(div);
         });
