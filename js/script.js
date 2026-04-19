@@ -5,6 +5,104 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const API_URL = 'https://script.google.com/macros/s/AKfycbxY6ITbRNFv8FyuTp_DLkcoT_0Tx1cSau3yjimbo2riZ_gNP9u21Oh0xzkcYPiWPObh/exec';
+
+  // --- 0. Data Management (Dynamic CMS) ---
+  class DataManager {
+    constructor(apiUrl) {
+      this.apiUrl = apiUrl;
+      this.cache = null;
+    }
+
+    async fetchData() {
+      try {
+        const response = await fetch(this.apiUrl);
+        this.cache = await response.json();
+        console.log('✨ Data Synced:', this.cache);
+        return this.cache;
+      } catch (err) {
+        console.error('❌ Data Sync Failed:', err);
+        return null;
+      }
+    }
+
+    injectAll(data) {
+      if (!data) return;
+
+      // 1. Inject Profile Data
+      if (data.Profile) {
+        data.Profile.forEach(item => {
+          const el = document.getElementById(`field-${item.Key}`);
+          if (el) {
+            if (item.Key === 'tagline') {
+              // Store total text for typewriter
+              el.setAttribute('data-full-text', item.Value);
+            } else {
+              el.textContent = item.Value;
+            }
+          }
+        });
+      }
+
+      // 2. Inject Prices (Commission Page)
+      const priceContainer = document.getElementById('dynamic-prices-container');
+      if (priceContainer && data.Prices) {
+        this.renderPrices(data.Prices, priceContainer);
+      }
+
+      // 3. Inject Showcase (Home / Showcase Section)
+      const showcaseGrid = document.getElementById('dynamic-showcase-grid');
+      if (showcaseGrid && data.Showcase) {
+        this.renderShowcase(data.Showcase, showcaseGrid);
+      }
+    }
+
+    renderPrices(prices, container) {
+      container.innerHTML = ''; // Clear placeholders
+      
+      // Group by Category
+      const groups = {};
+      prices.forEach(p => {
+        if (!groups[p.Category]) groups[p.Category] = [];
+        groups[p.Category].push(p);
+      });
+
+      for (const [category, items] of Object.entries(groups)) {
+        const section = document.createElement('div');
+        section.className = 'price-category-group reveal';
+        section.innerHTML = `
+          <h4 class="category-title">${category}</h4>
+          <div class="retro-table-wrapper">
+            <table class="retro-table">
+              <thead><tr><th>TYPES</th><th>USD</th><th>IDR</th></tr></thead>
+              <tbody>
+                ${items.map(p => `<tr><td>${p.Type}</td><td>$${p.PriceUSD}</td><td>${p.PriceIDR}</td></tr>`).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+        container.appendChild(section);
+      }
+    }
+
+    renderShowcase(items, container) {
+      container.innerHTML = '';
+      items.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = `retro-card reveal artwork-card reveal-delay-${(index % 4) + 1}`;
+        card.innerHTML = `
+          <div class="artwork-frame">
+            <img src="${item.ImageURL}" alt="${item.Title}" loading="lazy">
+          </div>
+          <div class="artwork-info">
+            <h4 class="artwork-title">${item.Title}</h4>
+            <p class="artwork-desc">${item.Description}</p>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+  }
 
   // --- 1. Audio Management (Persistent) ---
   class RetroAudioManager {
@@ -198,6 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // --- 3. Content Switcher (SPA Engine) ---
+  const dataManager = new DataManager(API_URL);
   const audioManager = new RetroAudioManager();
 
   const loadPage = async (url) => {
@@ -240,6 +339,9 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const reinitAll = () => {
+    // Re-inject dynamic data if already cached
+    if (dataManager.cache) dataManager.injectAll(dataManager.cache);
+
     visualEffects.initReveal();
     visualEffects.initStaggers();
     visualEffects.initTypewriter();
@@ -273,11 +375,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const preloader = document.querySelector('.preloader');
   const hidePreloader = () => { if (preloader) preloader.classList.add('hidden'); };
   
+  // Initialize App (Data First)
+  const initApp = async () => {
+    const data = await dataManager.fetchData();
+    dataManager.injectAll(data);
+    
+    // Once data is injected and scripts are ready, hide preloader
+    setTimeout(hidePreloader, 1200);
+    reinitAll();
+  };
+
   if (document.readyState === 'complete') {
-    setTimeout(hidePreloader, 800);
+    initApp();
   } else {
-    window.addEventListener('load', () => setTimeout(hidePreloader, 800));
-    setTimeout(hidePreloader, 3000); // Fail-safe
+    window.addEventListener('load', initApp);
+    setTimeout(initApp, 4000); // Fail-safe
   }
 
   // Shared Static Visuals (Scroll listeners only added once)

@@ -52,7 +52,7 @@
 
       <h1 class="site-title">BONNA</h1>
 
-      <p class="site-tagline" style="visibility: relative;">Welcome to Bonna's space ༉‧₊˚ I'm a digital artist who likes to draw OCs and fanarts!</p>
+      <p class="site-tagline" id="field-tagline" style="visibility: hidden;">Welcome to Bonna's space ༉‧₊˚ I'm a digital artist who likes to draw OCs and fanarts!</p>
 
       <!-- Social Icons -->
       <nav class="social-icons reveal reveal-delay-1" aria-label="Social media links">
@@ -97,7 +97,10 @@
       </h2>
 
       <div class="retro-card about-card">
-        <h3 class="about-name">BONNA LUCINE DE BUTTERBON</h3>
+        <h3 class="about-name" id="field-about_name">BONNA LUCINE DE BUTTERBON</h3>
+        <p class="about-text" id="field-about_text" style="text-align: center; margin-bottom: var(--space-lg);">
+          Digital artist who loves to create cute and starry artworks.
+        </p>
         <ul class="about-list">
           <li class="about-tag"><span class="tag-emoji">💜</span> You may call me Bonna :3</li>
           <li class="about-tag"><span class="tag-emoji">🦋</span> She/Her</li>
@@ -165,6 +168,21 @@
         </div>
       </div>
 
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ========== SHOWCASE SECTION ========== -->
+    <section class="showcase-section reveal" id="gallery">
+      <h2 class="section-header">
+        <span class="decorative">✦</span>
+        THE MEMORY GALLERY
+        <span class="decorative">✦</span>
+      </h2>
+      <div class="showcase-grid" id="dynamic-showcase-grid">
+        <!-- Injected by script.js -->
+        <div class="preloader-mini" style="text-align: center; color: var(--clr-coral); font-family: var(--font-pixel); font-size: 0.6rem; padding: var(--space-xl);">SYNCING MEMORIES...</div>
+      </div>
     </section>
 
     <div class="section-divider"></div>

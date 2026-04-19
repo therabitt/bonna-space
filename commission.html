@@ -52,56 +52,10 @@
         TYPES & PRICING
         <span class="decorative">✦</span>
       </h3>
-      <h4 style="text-align: center; color: var(--clr-warm-crimson); font-family: var(--font-pixel); font-size: 0.8rem; margin-bottom: var(--space-md);">FULL RENDER</h4>
       
-      <!-- Art Grid Placeholders -->
-      <div class="art-grid">
-        <div class="placeholder-art">ART EXAMPLE 1</div>
-        <div class="placeholder-art">ART EXAMPLE 2</div>
-        <div class="placeholder-art">ART EXAMPLE 3</div>
-        <div class="placeholder-art">ART EXAMPLE 4</div>
-        <div class="placeholder-art">ART EXAMPLE 5</div>
-        <div class="placeholder-art">ART EXAMPLE 6</div>
-      </div>
-
-      <!-- Pricing Table -->
-      <div class="retro-table-wrapper">
-        <table class="retro-table">
-          <thead>
-            <tr>
-              <th>TYPES</th>
-              <th>USD</th>
-              <th>IDR</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Chibi</td>
-              <td>$10</td>
-              <td>25k</td>
-            </tr>
-            <tr>
-              <td>Close-Up/Eye Banner</td>
-              <td>$10</td>
-              <td>25k</td>
-            </tr>
-            <tr>
-              <td>Icon/Headshot</td>
-              <td>$15</td>
-              <td>35k</td>
-            </tr>
-            <tr>
-              <td>Bust up</td>
-              <td>$25</td>
-              <td>50k</td>
-            </tr>
-            <tr>
-              <td>Half body</td>
-              <td>$35</td>
-              <td>65k</td>
-            </tr>
-          </tbody>
-        </table>
+      <div id="dynamic-prices-container">
+        <!-- Injected by script.js from Google Sheets -->
+        <div class="preloader-mini" style="text-align: center; color: var(--clr-coral); font-family: var(--font-pixel); font-size: 0.6rem; padding: var(--space-xl);">RESTOCKING SHOP...</div>
       </div>
 
       <div style="margin-top: var(--space-lg);">
@@ -112,30 +66,6 @@
           <li>Minor accessories/bg: Free</li>
           <li>Major accessories/bg: varies depending on complexity</li>
         </ul>
-      </div>
-
-      <div class="retro-table-wrapper">
-        <table class="retro-table">
-          <thead>
-            <tr>
-              <th>BACKGROUND</th>
-              <th>USD</th>
-              <th>IDR</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Solid color / minimal</td>
-              <td>Free</td>
-              <td>Free</td>
-            </tr>
-            <tr>
-              <td>Detailed background</td>
-              <td>~$2-6</td>
-              <td>~6-12k</td>
-            </tr>
-          </tbody>
-        </table>
       </div>
     </section>
 
@@ -283,7 +213,13 @@
         <i class="fa-solid fa-volume-xmark"></i>
       </button>
     </div>
-
+    <!-- Navigation back -->
+    <div style="text-align: center; margin-top: var(--space-2xl);">
+      <a href="index.html" class="cta-btn cta-btn-secondary back-home-btn" id="btn-back-home">
+        <i class="fa-solid fa-house-user"></i>
+        <span>Return Home</span>
+      </a>
+    </div>
   </main>
 
   <script src="js/script.js"></script>
