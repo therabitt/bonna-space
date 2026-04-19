@@ -843,25 +843,27 @@ body {
 
 .about-list {
   list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: var(--space-sm);
+  margin-top: var(--space-md);
 }
 
 .about-tag {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: var(--space-xs);
-  padding: var(--space-xs) var(--space-md);
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm);
   background: var(--clr-light-peach);
   border: 2px solid var(--retro-border);
   border-radius: var(--radius-xs);
   font-family: var(--font-body);
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: var(--text-primary);
   transition: transform 0.1s ease, box-shadow 0.1s ease;
   box-shadow: 2px 2px 0px var(--retro-shadow);
+  text-align: center;
 }
 
 .about-tag:hover {
@@ -908,24 +910,28 @@ body {
 
 /* --- Fandom Section --- */
 .fandom-tags {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: var(--space-sm);
-  justify-content: center;
+  width: 100%;
 }
 
 .fandom-tag {
-  padding: var(--space-xs) var(--space-md);
+  padding: var(--space-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: var(--clr-peach);
   border: 2px solid var(--retro-border);
   border-radius: var(--radius-xs);
   font-family: var(--font-body);
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 500;
   color: var(--text-primary);
   transition: transform 0.1s ease, box-shadow 0.1s ease;
   box-shadow: 2px 2px 0px var(--retro-shadow);
   cursor: default;
+  text-align: center;
 }
 
 .fandom-tag:hover {
