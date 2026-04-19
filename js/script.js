@@ -38,6 +38,31 @@ document.addEventListener('DOMContentLoaded', () => {
               const val = item.Value || '';
               el.setAttribute('data-full-text', val);
               el.textContent = ''; 
+            } else if (item.Key === 'about_text') {
+              // Convert multi-line bio into Tags
+              const tagContainer = document.getElementById('dynamic-about-tags');
+              if (tagContainer) {
+                const lines = (item.Value || '').split('\n').filter(l => l.trim() !== '');
+                if (lines.length > 0) {
+                  tagContainer.innerHTML = ''; // Clear default tags
+                  lines.forEach(line => {
+                    const li = document.createElement('li');
+                    li.className = 'about-tag reveal';
+                    // Try to extract emoji if present at start
+                    const emojiMatch = line.match(/^(\ud83c[\udf00-\uffff]|\ud83d[\udc00-\ude4f\ude80-\udeff]|\ud83e[\udd00-\uddff]|[\u2600-\u27bf])\s*/);
+                    if (emojiMatch) {
+                      const emoji = emojiMatch[0];
+                      const text = line.replace(emoji, '');
+                      li.innerHTML = `<span class="tag-emoji">${emoji}</span> ${text}`;
+                    } else {
+                      li.textContent = line;
+                    }
+                    tagContainer.appendChild(li);
+                  });
+                }
+              }
+              // Still show as text if needed elsewhere, or keep empty if only tags
+              el.textContent = ''; 
             } else {
               el.textContent = item.Value || '';
             }
