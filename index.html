@@ -77,6 +77,10 @@
           <span>Commission</span>
           <i class="fa-solid fa-store"></i>
         </a>
+        <a href="gallery.html" class="cta-btn cta-btn-secondary" id="btn-gallery">
+          <span>View Gallery</span>
+          <i class="fa-solid fa-images"></i>
+        </a>
         <a href="tos.html" class="cta-btn cta-btn-secondary" id="btn-tos">
           <span>Terms of Service</span>
           <i class="fa-solid fa-file-contract"></i>
@@ -172,16 +176,26 @@
 
     <div class="section-divider"></div>
 
-    <!-- ========== SHOWCASE SECTION ========== -->
-    <section class="showcase-section reveal" id="gallery">
+    <!-- ========== GALLERY CTA SECTION ========== -->
+    <section class="gallery-cta-section reveal" id="gallery-cta">
       <h2 class="section-header">
         <span class="decorative">✦</span>
         THE MEMORY GALLERY
         <span class="decorative">✦</span>
       </h2>
-      <div class="showcase-grid" id="dynamic-showcase-grid">
-        <!-- Injected by script.js -->
-        <div class="preloader-mini" style="text-align: center; color: var(--clr-coral); font-family: var(--font-pixel); font-size: 0.6rem; padding: var(--space-xl);">SYNCING MEMORIES...</div>
+      <div class="retro-card" style="text-align: center; padding: var(--space-2xl);">
+        <div class="gallery-preview-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md); margin-bottom: var(--space-xl); opacity: 0.6;">
+          <div style="aspect-ratio: 1; background: var(--clr-salmon); border: 2px solid var(--retro-border); border-radius: var(--radius-xs);"></div>
+          <div style="aspect-ratio: 1; background: var(--clr-coral); border: 2px solid var(--retro-border); border-radius: var(--radius-xs);"></div>
+          <div style="aspect-ratio: 1; background: var(--clr-salmon); border: 2px solid var(--retro-border); border-radius: var(--radius-xs);"></div>
+        </div>
+        <p style="font-family: var(--font-retro); font-size: 1.2rem; color: var(--text-secondary); margin-bottom: var(--space-lg);">
+          Explore the complete collection of artworks
+        </p>
+        <a href="gallery.html" class="cta-btn cta-btn-primary" style="min-width: 200px;">
+          <i class="fa-solid fa-images"></i>
+          <span>View Full Gallery</span>
+        </a>
       </div>
     </section>
 

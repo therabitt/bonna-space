@@ -555,6 +555,315 @@ document.addEventListener('DOMContentLoaded', () => {
     ripple.addEventListener('animationend', () => ripple.remove());
   });
 
+  // --- 5. Gallery Page Management ---
+  class GalleryManager {
+    constructor(dataManager) {
+      this.dataManager = dataManager;
+      this.itemsPerPage = 6;
+      this.currentPage = 1;
+      this.allGalleryItems = [];
+      this.filteredItems = [];
+      this.currentFilter = 'all';
+      this.currentLightboxIndex = 0;
+      
+      this.elements = {
+        grid: document.getElementById('gallery-grid'),
+        filtersContainer: document.getElementById('gallery-filters-dynamic'),
+        loadMoreBtn: document.getElementById('gallery-load-more'),
+        noResults: document.getElementById('gallery-no-results'),
+        lightbox: document.getElementById('gallery-lightbox'),
+        lightboxImage: document.getElementById('lightbox-image'),
+        lightboxTitle: document.getElementById('lightbox-title'),
+        lightboxType: document.getElementById('lightbox-type'),
+        lightboxDesc: document.getElementById('lightbox-desc'),
+        filterButtons: document.querySelectorAll('.gallery-filter-btn')
+      };
+      
+      if (this.elements.grid) {
+        this.init();
+      }
+    }
+    
+    init() {
+      this.setupEventListeners();
+      this.setupLightboxListeners();
+      
+      // Wait for data to be loaded
+      const checkData = setInterval(() => {
+        if (this.dataManager.cache) {
+          clearInterval(checkData);
+          this.loadGalleryData();
+        }
+      }, 100);
+      
+      // Timeout after 10 seconds
+      setTimeout(() => clearInterval(checkData), 10000);
+    }
+    
+    setupEventListeners() {
+      // Filter buttons
+      if (this.elements.filterButtons) {
+        this.elements.filterButtons.forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const filter = e.currentTarget.dataset.filter;
+            this.setFilter(filter);
+          });
+        });
+      }
+      
+      // Load more button
+      if (this.elements.loadMoreBtn) {
+        this.elements.loadMoreBtn.addEventListener('click', () => this.loadMore());
+      }
+    }
+    
+    setupLightboxListeners() {
+      if (!this.elements.lightbox) return;
+      
+      // Close on backdrop click
+      this.elements.lightbox.querySelector('.gallery-lightbox-backdrop').addEventListener('click', () => {
+        this.closeLightbox();
+      });
+      
+      // Close button
+      this.elements.lightbox.querySelector('.gallery-lightbox-close').addEventListener('click', () => {
+        this.closeLightbox();
+      });
+      
+      // Navigation
+      this.elements.lightbox.querySelector('.gallery-lightbox-prev').addEventListener('click', () => {
+        this.navigateLightbox(-1);
+      });
+      
+      this.elements.lightbox.querySelector('.gallery-lightbox-next').addEventListener('click', () => {
+        this.navigateLightbox(1);
+      });
+      
+      // Keyboard navigation
+      document.addEventListener('keydown', (e) => {
+        if (!this.elements.lightbox.classList.contains('active')) return;
+        
+        if (e.key === 'Escape') this.closeLightbox();
+        if (e.key === 'ArrowLeft') this.navigateLightbox(-1);
+        if (e.key === 'ArrowRight') this.navigateLightbox(1);
+      });
+    }
+    
+    loadGalleryData() {
+      const data = this.dataManager.cache;
+      if (!data) return;
+      
+      // Get gallery data (support both Showcase and Gallery)
+      this.allGalleryItems = data.Gallery || data.Showcase || [];
+      
+      // Sort by Order (if available)
+      this.allGalleryItems.sort((a, b) => {
+        const orderA = parseInt(this.getVal(a, 'Order')) || 0;
+        const orderB = parseInt(this.getVal(b, 'Order')) || 0;
+        return orderA - orderB;
+      });
+      
+      this.filteredItems = [...this.allGalleryItems];
+      
+      // Generate dynamic filters
+      this.generateFilters();
+      
+      // Initial render
+      this.renderGallery();
+    }
+    
+    generateFilters() {
+      if (!this.elements.filtersContainer) return;
+      
+      // Get unique types from gallery items
+      const types = new Set();
+      this.allGalleryItems.forEach(item => {
+        const type = this.getVal(item, 'Type');
+        if (type) types.add(type);
+      });
+      
+      // Get types from Prices sheet as fallback
+      if (types.size === 0 && this.dataManager.cache?.Prices) {
+        this.dataManager.cache.Prices.forEach(p => {
+          if (p.Type) types.add(p.Type);
+        });
+      }
+      
+      // Create filter buttons
+      this.elements.filtersContainer.innerHTML = '';
+      
+      Array.from(types).sort().forEach(type => {
+        const btn = document.createElement('button');
+        btn.className = 'gallery-filter-btn';
+        btn.dataset.filter = type.toLowerCase();
+        btn.innerHTML = `<i class="fa-solid fa-filter"></i> ${type}`;
+        btn.addEventListener('click', () => this.setFilter(type.toLowerCase()));
+        this.elements.filtersContainer.appendChild(btn);
+      });
+    }
+    
+    setFilter(filter) {
+      this.currentFilter = filter;
+      this.currentPage = 1;
+      
+      // Update active state on buttons
+      document.querySelectorAll('.gallery-filter-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.filter === filter);
+      });
+      
+      // Filter items
+      if (filter === 'all') {
+        this.filteredItems = [...this.allGalleryItems];
+      } else {
+        this.filteredItems = this.allGalleryItems.filter(item => {
+          const itemType = this.getVal(item, 'Type')?.toLowerCase() || '';
+          return itemType === filter;
+        });
+      }
+      
+      this.renderGallery();
+    }
+    
+    renderGallery() {
+      if (!this.elements.grid) return;
+      
+      // Show no results if empty
+      if (this.filteredItems.length === 0) {
+        this.elements.grid.innerHTML = '';
+        this.elements.noResults.style.display = 'block';
+        this.elements.loadMoreBtn.style.display = 'none';
+        return;
+      }
+      
+      this.elements.noResults.style.display = 'none';
+      
+      // Get items to show
+      const endIndex = this.currentPage * this.itemsPerPage;
+      const itemsToShow = this.filteredItems.slice(0, endIndex);
+      
+      // Render items
+      this.elements.grid.innerHTML = itemsToShow.map((item, index) => {
+        const title = this.getVal(item, 'Title') || 'Untitled';
+        const imageUrl = this.getVal(item, 'ImageURL');
+        const type = this.getVal(item, 'Type') || 'Artwork';
+        const desc = this.getVal(item, 'Description') || '';
+        
+        if (!imageUrl) return '';
+        
+        return `
+          <div class="gallery-item reveal" data-index="${index}" data-title="${this.escapeHtml(title)}" data-type="${this.escapeHtml(type)}" data-desc="${this.escapeHtml(desc)}" data-image="${this.escapeHtml(imageUrl)}">
+            <img src="${imageUrl}" alt="${this.escapeHtml(title)}" class="gallery-item-image" loading="lazy">
+            <div class="gallery-item-overlay">
+              <h4 class="gallery-item-title">${this.escapeHtml(title)}</h4>
+              <span class="gallery-item-type">${this.escapeHtml(type)}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+      
+      // Add click handlers
+      this.elements.grid.querySelectorAll('.gallery-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const index = parseInt(item.dataset.index);
+          this.openLightbox(index);
+        });
+      });
+      
+      // Show/hide load more button
+      const hasMore = endIndex < this.filteredItems.length;
+      this.elements.loadMoreBtn.style.display = hasMore ? 'inline-flex' : 'none';
+      this.elements.loadMoreBtn.classList.remove('loading');
+      this.elements.loadMoreBtn.innerHTML = '<i class="fa-solid fa-chevron-down"></i><span>Load More</span>';
+      
+      // Re-trigger reveal animations
+      if (typeof visualEffects !== 'undefined' && visualEffects.initReveal) {
+        visualEffects.initReveal();
+      }
+    }
+    
+    loadMore() {
+      this.elements.loadMoreBtn.classList.add('loading');
+      this.elements.loadMoreBtn.innerHTML = '<i class="fa-solid fa-spinner"></i><span>Loading...</span>';
+      
+      // Simulate loading delay for better UX
+      setTimeout(() => {
+        this.currentPage++;
+        this.renderGallery();
+      }, 500);
+    }
+    
+    openLightbox(index) {
+      this.currentLightboxIndex = index;
+      this.updateLightboxContent();
+      
+      this.elements.lightbox.classList.add('active');
+      this.elements.lightbox.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+    
+    closeLightbox() {
+      this.elements.lightbox.classList.remove('active');
+      this.elements.lightbox.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+    
+    navigateLightbox(direction) {
+      const newIndex = this.currentLightboxIndex + direction;
+      
+      if (newIndex < 0 || newIndex >= this.filteredItems.length) return;
+      
+      this.currentLightboxIndex = newIndex;
+      this.updateLightboxContent();
+    }
+    
+    updateLightboxContent() {
+      const item = this.filteredItems[this.currentLightboxIndex];
+      if (!item) return;
+      
+      const title = this.getVal(item, 'Title') || 'Untitled';
+      const imageUrl = this.getVal(item, 'ImageURL');
+      const type = this.getVal(item, 'Type') || 'Artwork';
+      const desc = this.getVal(item, 'Description') || '';
+      
+      // Show loading state
+      this.elements.lightboxImage.classList.remove('loaded');
+      this.elements.lightboxImage.src = imageUrl;
+      
+      // Update info
+      this.elements.lightboxTitle.textContent = title;
+      this.elements.lightboxType.textContent = type;
+      this.elements.lightboxDesc.textContent = desc;
+      
+      // Handle image load
+      this.elements.lightboxImage.onload = () => {
+        this.elements.lightboxImage.classList.add('loaded');
+      };
+      
+      // Update navigation buttons visibility
+      const prevBtn = this.elements.lightbox.querySelector('.gallery-lightbox-prev');
+      const nextBtn = this.elements.lightbox.querySelector('.gallery-lightbox-next');
+      
+      prevBtn.style.visibility = this.currentLightboxIndex > 0 ? 'visible' : 'hidden';
+      nextBtn.style.visibility = this.currentLightboxIndex < this.filteredItems.length - 1 ? 'visible' : 'hidden';
+    }
+    
+    getVal(obj, key) {
+      if (!obj) return '';
+      const normalizedKey = key.toLowerCase().replace(/[\s_]/g, '');
+      const actualKey = Object.keys(obj).find(k => k.toLowerCase().replace(/[\s_]/g, '') === normalizedKey);
+      return actualKey ? obj[actualKey] : '';
+    }
+    
+    escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  }
+  
+  // Initialize Gallery Manager
+  const galleryManager = new GalleryManager(dataManager);
+
   // Re-run for first time
   reinitAll();
 });

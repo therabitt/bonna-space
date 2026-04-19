@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gallery ✦ BONNA</title>
+  <meta name="description" content="Bonna's complete art collection - OCs, fanarts, pixel art, and commissions.">
+  <meta name="theme-color" content="#2d0a1e">
+  
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦋</text></svg>">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <div class="scroll-progress" aria-hidden="true"></div>
+  <div class="page-transition-overlay"></div>
+
+  <!-- Preloader -->
+  <div class="preloader" id="preloader">
+    <div class="preloader-spinner"></div>
+    <span class="preloader-text">LOADING GALLERY...</span>
+  </div>
+
+  <!-- Background Parallax Layers -->
+  <div class="page-background"></div>
+  <div class="scanlines"></div>
+  <div class="parallax-bg" id="parallax-bg">
+    <div class="parallax-layer parallax-layer-1"></div>
+    <div class="parallax-layer parallax-layer-2"></div>
+    <div class="parallax-layer parallax-layer-3"></div>
+  </div>
+
+  <main class="main-container" id="main-content" tabindex="-1">
+
+    <a href="index.html" class="back-home-btn reveal">
+      <i class="fa-solid fa-arrow-left"></i>
+      BACK TO HOME
+    </a>
+
+    <!-- Header -->
+    <header class="header-section reveal" style="margin-bottom: var(--space-xl);">
+      <h1 class="site-title">ART GALLERY</h1>
+      <p class="site-tagline" style="visibility: visible;">A collection of OCs, fanarts, and commission works</p>
+    </header>
+
+    <div class="section-divider"></div>
+
+    <!-- Filter Section -->
+    <section class="gallery-filter-section reveal">
+      <div class="gallery-filter-container">
+        <button class="gallery-filter-btn active" data-filter="all">
+          <i class="fa-solid fa-border-all"></i> All
+        </button>
+        <div id="gallery-filters-dynamic">
+          <!-- Dynamic filters injected by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Gallery Grid -->
+    <section class="gallery-section reveal">
+      <div class="gallery-grid" id="gallery-grid">
+        <!-- Gallery items injected by script.js -->
+        <div class="preloader-mini" style="text-align: center; color: var(--clr-coral); font-family: var(--font-pixel); font-size: 0.6rem; padding: var(--space-xl);">
+          <div class="preloader-spinner" style="width: 30px; height: 30px; margin: 0 auto var(--space-md);"></div>
+          SYNCING ARTWORKS...
+        </div>
+      </div>
+      
+      <!-- Load More Button -->
+      <div class="gallery-load-more-container">
+        <button class="cta-btn cta-btn-secondary gallery-load-more-btn" id="gallery-load-more" style="display: none;">
+          <i class="fa-solid fa-chevron-down"></i>
+          <span>Load More</span>
+        </button>
+      </div>
+      
+      <!-- No Results Message -->
+      <div class="gallery-no-results" id="gallery-no-results" style="display: none;">
+        <div class="retro-card" style="text-align: center; padding: var(--space-2xl);">
+          <i class="fa-solid fa-wand-magic-sparkles" style="font-size: 3rem; color: var(--clr-coral); margin-bottom: var(--space-md);"></i>
+          <h3 style="font-family: var(--font-pixel); font-size: 0.8rem; margin-bottom: var(--space-sm);">No artworks found</h3>
+          <p style="color: var(--text-secondary);">Try selecting a different filter!</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer CTA -->
+    <div class="section-divider"></div>
+    <section class="mystery-section reveal">
+      <h3 class="section-header" style="margin-bottom: var(--space-lg);">
+        <span class="decorative">✦</span>
+        LIKE WHAT YOU SEE?
+        <span class="decorative">✦</span>
+      </h3>
+      <div class="cta-buttons">
+        <a href="commission.html" class="cta-btn cta-btn-primary">
+          <i class="fa-solid fa-store"></i>
+          <span>Commission Me</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Sound Controller -->
+    <div class="sound-controller" id="sound-controls">
+      <button class="sound-toggle-btn tooltip" id="sound-toggle" data-tooltip="Sound ON/OFF" aria-label="Toggle Sound">
+        <i class="fa-solid fa-volume-xmark"></i>
+      </button>
+    </div>
+
+    <!-- Navigation back -->
+    <div style="text-align: center; margin-top: var(--space-2xl);">
+      <a href="index.html" class="cta-btn cta-btn-secondary back-home-btn">
+        <i class="fa-solid fa-house-user"></i>
+        <span>Return Home</span>
+      </a>
+    </div>
+
+  </main>
+
+  <!-- Lightbox Modal -->
+  <div class="gallery-lightbox" id="gallery-lightbox" aria-hidden="true">
+    <div class="gallery-lightbox-backdrop"></div>
+    <div class="gallery-lightbox-content">
+      <button class="gallery-lightbox-close" aria-label="Close lightbox">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      
+      <button class="gallery-lightbox-nav gallery-lightbox-prev" aria-label="Previous image">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+      
+      <div class="gallery-lightbox-image-container">
+        <img src="" alt="" class="gallery-lightbox-image" id="lightbox-image">
+        <div class="gallery-lightbox-loading">
+          <div class="preloader-spinner"></div>
+        </div>
+      </div>
+      
+      <button class="gallery-lightbox-nav gallery-lightbox-next" aria-label="Next image">
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+      
+      <div class="gallery-lightbox-info">
+        <h3 class="gallery-lightbox-title" id="lightbox-title"></h3>
+        <span class="gallery-lightbox-type" id="lightbox-type"></span>
+        <p class="gallery-lightbox-desc" id="lightbox-desc"></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
