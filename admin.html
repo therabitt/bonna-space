@@ -68,27 +68,27 @@
   <div class="scanlines"></div>
 
   <main class="admin-container">
-    <header class="admin-intro reveal">
+    <header class="admin-intro">
       <h1 class="site-title" style="font-size: 2rem;">COMMAND CENTER</h1>
-      <p class="site-tagline" style="font-size: 0.9rem; letter-spacing: 2px; color: var(--clr-gold);">MANAGE YOUR KINGDOM, BONNA</p>
+      <p class="site-tagline" style="font-size: 0.9rem; letter-spacing: 2px; color: var(--clr-gold); visibility: visible;">MANAGE YOUR KINGDOM, BONNA</p>
     </header>
 
     <!-- Authentication -->
-    <section class="token-box retro-card reveal">
+    <section class="token-box retro-card">
       <label class="admin-label">SECRET ACCESS TOKEN</label>
       <input type="password" id="admin-token" class="admin-input" placeholder="Type secret magic key...">
       <p style="font-family: var(--font-retro); font-size: 0.8rem; margin-top: var(--space-sm); color: var(--text-secondary); text-align: center;">Required to save changes.</p>
     </section>
 
     <!-- Tab Navigation -->
-    <nav class="tab-nav reveal">
+    <nav class="tab-nav">
       <button class="tab-btn active" onclick="switchTab('profile')">PROFILE</button>
       <button class="tab-btn" onclick="switchTab('prices')">PRICES</button>
       <button class="tab-btn" onclick="switchTab('showcase')">SHOWCASE</button>
     </nav>
 
     <!-- PROFILE TAB -->
-    <section id="tab-profile" class="tab-content reveal">
+    <section id="tab-profile" class="tab-content">
       <div class="retro-card admin-card">
         <h3 class="section-header"><span class="decorative">✦</span> EDIT BIO <span class="decorative">✦</span></h3>
         <div class="admin-form-group">
@@ -108,23 +108,24 @@
     </section>
 
     <!-- PRICES TAB -->
-    <section id="tab-prices" class="tab-content reveal" style="display: none;">
+    <section id="tab-prices" class="tab-content" style="display: none;">
       <div class="retro-card admin-card">
         <h3 class="section-header"><span class="decorative">✦</span> PRICE MANAGER <span class="decorative">✦</span></h3>
-        <p style="text-align: center; margin-bottom: var(--space-md); font-family: var(--font-retro);">Note: Adding new categories is done via Google Sheets for stability.</p>
+        <p style="text-align: center; margin-bottom: var(--space-md); font-family: var(--font-retro);">Note: Please update the spreadsheet directly for adding new categories.</p>
         <div id="prices-editor-list">
-          <!-- Dynamic Form Rows Injected Here -->
+          <!-- Future improvement: dynamic price editing -->
+           <p style="text-align: center; opacity: 0.6;">Current Prices will be synced from your Sheets.</p>
         </div>
         <button class="cta-btn cta-btn-secondary admin-btn" onclick="saveData('Prices')">Sync All Prices</button>
       </div>
     </section>
 
     <!-- SHOWCASE TAB -->
-    <section id="tab-showcase" class="tab-content reveal" style="display: none;">
+    <section id="tab-showcase" class="tab-content" style="display: none;">
       <div class="retro-card admin-card">
         <h3 class="section-header"><span class="decorative">✦</span> COLLECTION MANAGER <span class="decorative">✦</span></h3>
         <div id="showcase-editor-list">
-          <!-- Dynamic Gallery Manager Injected Here -->
+           <p style="text-align: center; opacity: 0.6;">Your gallery items will appear here after initial sync.</p>
         </div>
         <button class="cta-btn cta-btn-tertiary admin-btn" onclick="saveData('Showcase')">Sync Gallery</button>
       </div>
