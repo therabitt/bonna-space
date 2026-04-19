@@ -54,8 +54,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // 3. Inject Showcase (Home / Showcase Section)
       const showcaseGrid = document.getElementById('dynamic-showcase-grid');
-      if (showcaseGrid && data.Showcase) {
-        this.renderShowcase(data.Showcase, showcaseGrid);
+      const showcaseData = data.Showcase || data.Gallery; // Support both tab names
+      if (showcaseGrid && showcaseData) {
+        this.renderShowcase(showcaseData, showcaseGrid);
       }
     }
 

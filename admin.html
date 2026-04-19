@@ -192,9 +192,10 @@
 
       // 3. Showcase Editor
       const showcaseList = document.getElementById('showcase-editor-list');
-      if (showcaseList && localCache.Showcase) {
+      const showcaseData = localCache.Showcase || localCache.Gallery;
+      if (showcaseList && showcaseData) {
         showcaseList.innerHTML = '';
-        localCache.Showcase.forEach((s, i) => {
+        showcaseData.forEach((s, i) => {
           const div = document.createElement('div');
           div.className = 'admin-form-group';
           div.style.borderBottom = '1px solid var(--clr-coral)';
@@ -203,15 +204,15 @@
             <div class="form-row">
               <div>
                 <label class="admin-label">TITLE</label>
-                <input type="text" class="admin-input showcase-item" data-key="Title" data-idx="${i}" value="${s.Title}">
+                <input type="text" class="showcase-item admin-input" data-key="Title" data-idx="${i}" value="${s.Title}">
               </div>
               <div>
                 <label class="admin-label">IMAGE URL</label>
-                <input type="text" class="admin-input showcase-item" data-key="ImageURL" data-idx="${i}" value="${s.ImageURL}">
+                <input type="text" class="showcase-item admin-input" data-key="ImageURL" data-idx="${i}" value="${s.ImageURL}">
               </div>
             </div>
             <label class="admin-label" style="margin-top:5px;">DESC</label>
-            <input type="text" class="admin-input showcase-item" data-key="Description" data-idx="${i}" value="${s.Description}">
+            <input type="text" class="showcase-item admin-input" data-key="Description" data-idx="${i}" value="${s.Description}">
           `;
           showcaseList.appendChild(div);
         });
@@ -233,8 +234,11 @@
       }
 
       showToast('⚔️ Synchronizing with Kingdom...');
+
+      // Find actual sheet name from cache to match POST request
+      const actualSheetName = (type === 'Showcase' && !localCache.Showcase && localCache.Gallery) ? 'Gallery' : type;
       
-      let payload = { token, targetSheet: type, data: [] };
+      let payload = { token, targetSheet: actualSheetName, data: [] };
 
       if (type === 'Profile') {
         payload.data = [

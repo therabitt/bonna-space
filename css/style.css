@@ -552,13 +552,16 @@ body {
 
 .site-tagline {
   font-family: var(--font-retro);
-  font-size: clamp(1.1rem, 3vw, 1.4rem);
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
   color: var(--clr-light-peach);
-  max-width: 400px;
+  max-width: 600px; /* Increased for dynamic content from GSheets */
   margin: 0 auto var(--space-xl);
-  line-height: 1.4;
+  line-height: 1.2;
   text-shadow: 0 2px 8px rgba(0,0,0,0.2);
   transition: color var(--transition-smooth), transform var(--transition-smooth);
+  /* Prevent weird high-contrast selection boxes */
+  user-select: none;
+  min-height: 2.8em; 
 }
 
 .header-section:hover .site-tagline {
