@@ -160,7 +160,7 @@
     function populateFields() {
       if (!localCache) return;
 
-      // Profile
+      // 1. Profile
       if (localCache.Profile) {
         localCache.Profile.forEach(p => {
           const input = document.getElementById(`input-${p.Key}`);
@@ -168,8 +168,54 @@
         });
       }
 
-      // Prices & Showcase would follow similar logic 
-      // (Simplified for this version to keep focus on profile/basic setup)
+      // 2. Prices Editor
+      const priceList = document.getElementById('prices-editor-list');
+      if (priceList && localCache.Prices) {
+        priceList.innerHTML = '';
+        localCache.Prices.forEach((p, i) => {
+          const div = document.createElement('div');
+          div.className = 'admin-form-group form-row';
+          div.innerHTML = `
+            <div>
+              <label class="admin-label">TYPE</label>
+              <input type="text" class="admin-input price-item" data-key="Type" data-idx="${i}" value="${p.Type}">
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
+              <div><label class="admin-label">USD</label><input type="text" class="admin-input price-item" data-key="PriceUSD" data-idx="${i}" value="${p.PriceUSD}"></div>
+              <div><label class="admin-label">IDR</label><input type="text" class="admin-input price-item" data-key="PriceIDR" data-idx="${i}" value="${p.PriceIDR}"></div>
+              <input type="hidden" class="price-item" data-key="Category" data-idx="${i}" value="${p.Category}">
+            </div>
+          `;
+          priceList.appendChild(div);
+        });
+      }
+
+      // 3. Showcase Editor
+      const showcaseList = document.getElementById('showcase-editor-list');
+      if (showcaseList && localCache.Showcase) {
+        showcaseList.innerHTML = '';
+        localCache.Showcase.forEach((s, i) => {
+          const div = document.createElement('div');
+          div.className = 'admin-form-group';
+          div.style.borderBottom = '1px solid var(--clr-coral)';
+          div.style.paddingBottom = 'var(--space-md)';
+          div.innerHTML = `
+            <div class="form-row">
+              <div>
+                <label class="admin-label">TITLE</label>
+                <input type="text" class="admin-input showcase-item" data-key="Title" data-idx="${i}" value="${s.Title}">
+              </div>
+              <div>
+                <label class="admin-label">IMAGE URL</label>
+                <input type="text" class="admin-input showcase-item" data-key="ImageURL" data-idx="${i}" value="${s.ImageURL}">
+              </div>
+            </div>
+            <label class="admin-label" style="margin-top:5px;">DESC</label>
+            <input type="text" class="admin-input showcase-item" data-key="Description" data-idx="${i}" value="${s.Description}">
+          `;
+          showcaseList.appendChild(div);
+        });
+      }
     }
 
     function switchTab(tabId) {
@@ -196,22 +242,39 @@
           { Key: 'about_name', Value: document.getElementById('input-about_name').value },
           { Key: 'about_text', Value: document.getElementById('input-about_text').value }
         ];
+      } else if (type === 'Prices') {
+        const items = document.querySelectorAll('.price-item');
+        const rows = [];
+        items.forEach(it => {
+          const idx = it.dataset.idx;
+          if (!rows[idx]) rows[idx] = {};
+          rows[idx][it.dataset.key] = it.value;
+        });
+        payload.data = rows.filter(r => r); 
+      } else if (type === 'Showcase') {
+        const items = document.querySelectorAll('.showcase-item');
+        const rows = [];
+        items.forEach(it => {
+          const idx = it.dataset.idx;
+          if (!rows[idx]) rows[idx] = {};
+          rows[idx][it.dataset.key] = it.value;
+        });
+        payload.data = rows.filter(r => r);
       }
 
       try {
-        const response = await fetch(API_URL, {
+        await fetch(API_URL, {
           method: 'POST',
-          mode: 'no-cors', // Google Apps Script redirection handling
+          mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
 
-        // 'no-cors' doesn't let us read the JSON response, but the data will be sent!
-        alert('✨ SUCCESS! Data ' + type + ' telah dikirim ke Google Sheets.\n\nCek spreadsheet Anda, data seharusnya sudah terupdate dalam beberapa detik.');
+        alert('✨ SUCCESS! Kerajaan ' + type + ' telah terupdate.\n\nCek spreadsheet Anda, data seharusnya sudah berubah.');
         showToast('Success! Your Kingdom is updated.');
       } catch (err) {
         console.error(err);
-        showToast('Error: Gagal terhubung ke pusat data.');
+        showToast('Error: Gagal memanggil penyihir data.');
       }
     }
 
