@@ -241,15 +241,23 @@ document.addEventListener('DOMContentLoaded', () => {
       stagger('.game-chip', '.niche-games');
     },
 
+    typewriterTimeout: null,
+
     initTypewriter() {
       const tagline = document.querySelector('.site-tagline');
       if (!tagline) return;
+      
+      // Stop any existing typewriter animation
+      if (this.typewriterTimeout) {
+        clearTimeout(this.typewriterTimeout);
+      }
+
       if (prefersReducedMotion) {
         tagline.style.visibility = 'visible';
         return;
       }
       
-      // Use dynamic text if available, otherwise fallback to HTML content
+      // Use dynamic text if available
       const text = tagline.getAttribute('data-full-text') || tagline.textContent;
       
       tagline.innerHTML = '<span class="typewriter-text"></span><span class="typewriter-cursor" style="color:var(--clr-coral); font-weight:bold;">_</span>';
@@ -261,12 +269,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (charIndex < text.length) {
           textSpan.textContent += text.charAt(charIndex);
           charIndex++;
-          setTimeout(type, 45); // Slightly slower for better readability
+          this.typewriterTimeout = setTimeout(type, 45);
+        } else {
+          this.typewriterTimeout = null;
         }
       };
       
-      // Wait a bit after data injection before starting
-      setTimeout(type, 500);
+      // Initial delay
+      this.typewriterTimeout = setTimeout(type, 800);
     },
 
     initRetroCards() {
