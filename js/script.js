@@ -275,8 +275,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       };
       
-      // Initial delay
-      this.typewriterTimeout = setTimeout(type, 800);
+      // Initial delay - start faster on first load
+      this.typewriterTimeout = setTimeout(type, 400);
     },
 
     initRetroCards() {
@@ -396,11 +396,15 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Initialize App (Data First)
   const initApp = async () => {
+    // Hide old text immediately while we fetch
+    const tagline = document.querySelector('.site-tagline');
+    if (tagline) tagline.textContent = '';
+
     const data = await dataManager.fetchData();
     dataManager.injectAll(data);
     
-    // Once data is injected and scripts are ready, hide preloader
-    setTimeout(hidePreloader, 1200);
+    // Hide preloader faster after data is ready
+    setTimeout(hidePreloader, 600);
     reinitAll();
   };
 
@@ -529,7 +533,7 @@ function createConfetti() {
   if (!document.getElementById('confetti-style')) {
     const s = document.createElement('style');
     s.id = 'confetti-style';
-    s.textContent = '@keyframes confettiFall { 0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(60vh) translateX(var(--drift-x)) rotate(var(--rotation)); opacity: 0; } }';
+    s.textContent = '.site-tagline { font-family: var(--font-retro); font-size: clamp(1rem, 2.5vw, 1.2rem); color: var(--clr-light-peach); max-width: 500px; margin: 0 auto var(--space-xl); line-height: 1.3; text-shadow: 0 2px 8px rgba(0,0,0,0.2); transition: color var(--transition-smooth), transform var(--transition-smooth); user-select: none; min-height: 3.2em; } @keyframes confettiFall { 0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(60vh) translateX(var(--drift-x)) rotate(var(--rotation)); opacity: 0; } }';
     document.head.appendChild(s);
   }
   setTimeout(() => container.remove(), 3000);
