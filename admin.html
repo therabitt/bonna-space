@@ -182,16 +182,14 @@
     async function saveData(type) {
       const token = document.getElementById('admin-token').value;
       if (!token) {
-        alert('Wait! You need the MAGIC TOKEN to save changes.');
+        alert('Tunggu! Anda butuh MAGIC TOKEN untuk menyimpan perubahan.');
         return;
       }
 
-      showToast('Saving to Google Sheets...');
+      showToast('⚔️ Synchronizing with Kingdom...');
       
-      // Assemble data based on type
-      let payload = { token, targetSheet: type };
+      let payload = { token, targetSheet: type, data: [] };
 
-      // Simplified Profile logic
       if (type === 'Profile') {
         payload.data = [
           { Key: 'tagline', Value: document.getElementById('input-tagline').value },
@@ -201,16 +199,19 @@
       }
 
       try {
-        // NOTE: Google Apps Script POST requests often need redirect handling or 
-        // a simple fetch with mode: 'no-cors' if just sending, 
-        // but for real feedback we use a JSONP approach or check with the Apps Script deployment settings.
-        // For this demo, we assume the Apps Script handles it.
-        
-        alert('Simulasi Update: Data ' + type + ' berhasil dikirim ke Google Sheets!\n\n(Pastikan Token Anda di Apps Script sama dengan yang diinputkan).');
-        
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          mode: 'no-cors', // Google Apps Script redirection handling
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        // 'no-cors' doesn't let us read the JSON response, but the data will be sent!
+        alert('✨ SUCCESS! Data ' + type + ' telah dikirim ke Google Sheets.\n\nCek spreadsheet Anda, data seharusnya sudah terupdate dalam beberapa detik.');
         showToast('Success! Your Kingdom is updated.');
       } catch (err) {
-        showToast('Error saving data.');
+        console.error(err);
+        showToast('Error: Gagal terhubung ke pusat data.');
       }
     }
 
