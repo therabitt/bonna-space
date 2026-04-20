@@ -141,14 +141,31 @@ const api = {
     }
   },
 
-  // Upload image to Imgur
+  // Upload image to Imgur with validation
   async uploadToImgur(file) {
+    // Validation
+    if (!file) {
+      throw new Error('No file selected');
+    }
+
+    if (!file.type.startsWith('image/')) {
+      throw new Error('Invalid file type. Allowed: JPG, PNG, GIF, WebP');
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+      throw new Error(`File too large: ${sizeMB}MB. Max: 5MB`);
+    }
+
+    // Check Client ID
     if (CONFIG.IMGUR_CLIENT_ID === 'YOUR_IMGUR_CLIENT_ID_HERE') {
-      throw new Error('Imgur Client ID not configured. Please add your Client ID in js/admin.js');
+      throw new Error('Imgur Client ID not configured. Please add your Client ID in js/admin.js line 11');
     }
 
     const formData = new FormData();
     formData.append('image', file);
+    formData.append('type', 'file');
+    formData.append('title', file.name);
 
     const response = await fetch('https://api.imgur.com/3/image', {
       method: 'POST',
@@ -157,6 +174,11 @@ const api = {
       },
       body: formData
     });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.data?.error || `Upload failed: HTTP ${response.status}`);
+    }
 
     const data = await response.json();
     
@@ -412,29 +434,44 @@ const galleryManager = {
     `;
   },
 
-  // Handle file upload
+  // Handle file upload with enhanced UX
   async handleFileUpload(input) {
     const file = input.files[0];
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
-      utils.showToast('Please select an image file', 'error');
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      utils.showToast('Image too large. Max 5MB.', 'error');
-      return;
+    // Show file info
+    const fileSizeMB = (file.size / 1024 / 1024).toFixed(2);
+    const fileName = file.name.length > 20 ? file.name.substring(0, 20) + '...' : file.name;
+    
+    // Update UI to show selected file
+    const uploadBtn = input.closest('.file-upload-wrapper')?.querySelector('.file-upload-btn');
+    if (uploadBtn) {
+      uploadBtn.innerHTML = `<i class="fa-solid fa-file-image"></i> ${fileName} (${fileSizeMB}MB)`;
     }
 
     try {
-      utils.showToast('Uploading to Imgur...', 'info');
+      utils.showToast(`Uploading "${fileName}" to Imgur...`, 'info');
       const imageUrl = await api.uploadToImgur(file);
+      
       document.getElementById('gallery-input-url').value = imageUrl;
       this.updateGalleryPreview();
-      utils.showToast('Image uploaded!', 'success');
+      
+      utils.showToast(`✨ "${fileName}" uploaded successfully!`, 'success');
+      
+      // Reset button text after success
+      if (uploadBtn) {
+        uploadBtn.innerHTML = `<i class="fa-solid fa-check"></i> Uploaded!`;
+        setTimeout(() => {
+          uploadBtn.innerHTML = `<i class="fa-solid fa-upload"></i> Upload`;
+        }, 2000);
+      }
     } catch (err) {
-      utils.showToast('Upload failed: ' + err.message, 'error');
+      utils.showToast(`Upload failed: ${err.message}`, 'error');
+      
+      // Reset button on error
+      if (uploadBtn) {
+        uploadBtn.innerHTML = `<i class="fa-solid fa-upload"></i> Upload`;
+      }
     }
   },
 
@@ -669,24 +706,38 @@ const commissionManager = {
     `;
   },
 
-  // Handle file upload for commission
+  // Handle file upload for commission with enhanced UX
   async handleFileUpload(input) {
     const file = input.files[0];
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
-      utils.showToast('Please select an image file', 'error');
-      return;
+    const fileName = file.name.length > 20 ? file.name.substring(0, 20) + '...' : file.name;
+    
+    // Update UI
+    const uploadBtn = input.closest('.file-upload-wrapper')?.querySelector('.file-upload-btn');
+    if (uploadBtn) {
+      uploadBtn.innerHTML = `<i class="fa-solid fa-file-image"></i> ${fileName}`;
     }
 
     try {
-      utils.showToast('Uploading...', 'info');
+      utils.showToast(`Uploading "${fileName}"...`, 'info');
       const imageUrl = await api.uploadToImgur(file);
       document.getElementById('commission-edit-url').value = imageUrl;
       this.updateCommissionPreview();
-      utils.showToast('Image uploaded!', 'success');
+      utils.showToast(`✨ "${fileName}" uploaded!`, 'success');
+      
+      // Reset button
+      if (uploadBtn) {
+        uploadBtn.innerHTML = `<i class="fa-solid fa-check"></i> Done`;
+        setTimeout(() => {
+          uploadBtn.innerHTML = `<i class="fa-solid fa-upload"></i> Upload`;
+        }, 2000);
+      }
     } catch (err) {
-      utils.showToast('Upload failed: ' + err.message, 'error');
+      utils.showToast(`Upload failed: ${err.message}`, 'error');
+      if (uploadBtn) {
+        uploadBtn.innerHTML = `<i class="fa-solid fa-upload"></i> Upload`;
+      }
     }
   },
 
