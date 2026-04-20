@@ -864,6 +864,124 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize Gallery Manager
   const galleryManager = new GalleryManager(dataManager);
 
+  // --- 6. Commission Preview Manager ---
+  class CommissionPreviewManager {
+    constructor(dataManager) {
+      this.dataManager = dataManager;
+      this.container = document.getElementById('commission-preview-grid');
+      
+      if (this.container) {
+        this.init();
+      }
+    }
+    
+    init() {
+      // Wait for data to be loaded
+      const checkData = setInterval(() => {
+        if (this.dataManager.cache) {
+          clearInterval(checkData);
+          this.loadCommissionPreviews();
+        }
+      }, 100);
+      
+      // Timeout after 10 seconds
+      setTimeout(() => clearInterval(checkData), 10000);
+    }
+    
+    loadCommissionPreviews() {
+      const data = this.dataManager.cache;
+      if (!data) return;
+      
+      // Get commission types data (from CommissionTypes sheet or fallback to Prices)
+      let commissionTypes = data.CommissionTypes;
+      
+      // Fallback: Generate from Prices if CommissionTypes doesn't exist
+      if (!commissionTypes && data.Prices) {
+        const uniqueTypes = [...new Set(data.Prices.map(p => p.Category))];
+        commissionTypes = uniqueTypes.map((type, index) => ({
+          Type: type,
+          SampleImage: '',
+          Description: this.getDefaultDescription(type),
+          DisplayOrder: index + 1
+        }));
+      }
+      
+      if (!commissionTypes || commissionTypes.length === 0) {
+        this.container.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No commission samples available yet.</p>';
+        return;
+      }
+      
+      // Sort by DisplayOrder
+      commissionTypes.sort((a, b) => {
+        const orderA = parseInt(this.getVal(a, 'DisplayOrder')) || 0;
+        const orderB = parseInt(this.getVal(b, 'DisplayOrder')) || 0;
+        return orderA - orderB;
+      });
+      
+      // Get prices for each type
+      const prices = data.Prices || [];
+      
+      // Render preview cards
+      this.container.innerHTML = commissionTypes.map(type => {
+        const typeName = this.getVal(type, 'Type');
+        const sampleImage = this.getVal(type, 'SampleImage');
+        const description = this.getVal(type, 'Description') || this.getDefaultDescription(typeName);
+        
+        // Find price for this type
+        const typePrice = prices.find(p => p.Category === typeName);
+        const priceDisplay = typePrice ? `From $${typePrice.PriceUSD} / Rp${typePrice.PriceIDR}` : 'Contact for pricing';
+        
+        return `
+          <div class="commission-preview-card reveal" data-type="${this.escapeHtml(typeName)}" onclick="window.location.href='#dynamic-prices-container'">
+            <div class="commission-preview-image-container">
+              ${sampleImage ? 
+                `<img src="${sampleImage}" alt="${this.escapeHtml(typeName)} sample" class="commission-preview-image" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'commission-preview-image-placeholder\\'>${this.escapeHtml(typeName)}<br>Sample<br>Coming Soon</div>'">` : 
+                `<div class="commission-preview-image-placeholder">${this.escapeHtml(typeName)}<br>Sample<br>Coming Soon</div>`
+              }
+            </div>
+            <div class="commission-preview-info">
+              <h4 class="commission-preview-type">${this.escapeHtml(typeName)}</h4>
+              <p class="commission-preview-desc">${this.escapeHtml(description)}</p>
+              <div class="commission-preview-price">${priceDisplay}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+      
+      // Re-trigger reveal animations
+      if (typeof visualEffects !== 'undefined' && visualEffects.initReveal) {
+        visualEffects.initReveal();
+      }
+    }
+    
+    getDefaultDescription(type) {
+      const descriptions = {
+        'Chibi': 'Cute chibi characters with big heads and tiny bodies',
+        'Close Up': 'Portrait style focusing on face and expression',
+        'Half Body': 'Upper body with some pose and details',
+        'Full Body': 'Complete character from head to toe',
+        'Scene': 'Full scene with background and environment'
+      };
+      return descriptions[type] || 'Commission artwork';
+    }
+    
+    getVal(obj, key) {
+      if (!obj) return '';
+      const normalizedKey = key.toLowerCase().replace(/[\s_]/g, '');
+      const actualKey = Object.keys(obj).find(k => k.toLowerCase().replace(/[\s_]/g, '') === normalizedKey);
+      return actualKey ? obj[actualKey] : '';
+    }
+    
+    escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  }
+  
+  // Initialize Commission Preview Manager
+  const commissionPreviewManager = new CommissionPreviewManager(dataManager);
+
   // Re-run for first time
   reinitAll();
 });

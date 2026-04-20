@@ -2073,3 +2073,116 @@ button:disabled {
     padding: 0 var(--space-md);
   }
 }
+
+/* ============================================
+   COMMISSION PREVIEW STYLES
+   ============================================ */
+
+/* --- Commission Preview Section --- */
+.commission-preview-section {
+  margin-bottom: var(--space-xl);
+}
+
+.commission-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-lg);
+}
+
+.commission-preview-card {
+  background: var(--retro-bg);
+  border: 3px solid var(--retro-border);
+  border-radius: var(--radius-xs);
+  box-shadow: 6px 6px 0 var(--retro-shadow);
+  overflow: hidden;
+  transition: transform 0.2s var(--ease-out-expo), box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.commission-preview-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0 var(--retro-shadow), var(--glow-coral);
+}
+
+.commission-preview-image-container {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: var(--clr-dark-plum);
+  border-bottom: 3px solid var(--retro-border);
+}
+
+.commission-preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s var(--ease-out-expo);
+}
+
+.commission-preview-card:hover .commission-preview-image {
+  transform: scale(1.05);
+}
+
+.commission-preview-image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--clr-salmon) 0%, var(--clr-coral) 100%);
+  font-family: var(--font-pixel);
+  font-size: 0.6rem;
+  color: var(--text-light);
+  text-align: center;
+  padding: var(--space-md);
+}
+
+.commission-preview-info {
+  padding: var(--space-md);
+}
+
+.commission-preview-type {
+  font-family: var(--font-pixel);
+  font-size: 0.65rem;
+  color: var(--clr-warm-crimson);
+  margin-bottom: var(--space-xs);
+  letter-spacing: 1px;
+}
+
+.commission-preview-desc {
+  font-family: var(--font-retro);
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.commission-preview-price {
+  margin-top: var(--space-sm);
+  padding-top: var(--space-sm);
+  border-top: 1px dashed var(--clr-coral);
+  font-family: var(--font-pixel);
+  font-size: 0.55rem;
+  color: var(--clr-coral);
+}
+
+/* --- Commission Preview Responsive --- */
+@media (max-width: 768px) {
+  .commission-preview-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+  }
+  
+  .commission-preview-card {
+    box-shadow: 4px 4px 0 var(--retro-shadow);
+  }
+  
+  .commission-preview-card:hover {
+    box-shadow: 5px 5px 0 var(--retro-shadow);
+  }
+}
+
+@media (max-width: 480px) {
+  .commission-preview-grid {
+    grid-template-columns: 1fr;
+  }
+}
