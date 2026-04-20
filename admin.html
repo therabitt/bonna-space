@@ -3,302 +3,317 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>COMMAND CENTER ✦ Admin Dashboard</title>
+  <title>COMMAND CENTER ✦ Admin Dashboard 2.0</title>
+  <meta name="description" content="Admin dashboard for Bonna's portfolio">
+  <meta name="theme-color" content="#2d0a1e">
+  
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦋</text></svg>">
+  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
   <link rel="stylesheet" href="css/style.css">
-  <style>
-    /* Admin specific overrides to make it feel like a pro editor */
-    .admin-container {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: var(--space-xl);
-    }
-    .admin-card {
-      margin-bottom: var(--space-xl);
-      border-left: 6px solid var(--clr-coral);
-    }
-    .admin-btn {
-      width: 100%;
-      margin-top: var(--space-md);
-      padding: var(--space-md);
-      font-size: 0.7rem;
-      font-family: var(--font-pixel);
-      text-transform: uppercase;
-      cursor: pointer;
-    }
-    .tab-nav {
-      display: flex;
-      gap: var(--space-sm);
-      margin-bottom: var(--space-xl);
-      justify-content: center;
-    }
-    .tab-btn {
-      background: var(--clr-dark-plum);
-      color: white;
-      border: 2px solid var(--clr-gold);
-      padding: var(--space-sm) var(--space-md);
-      font-family: var(--font-pixel);
-      font-size: 0.5rem;
-      cursor: pointer;
-      opacity: 0.7;
-      transition: opacity 0.3s;
-    }
-    .tab-btn.active {
-      opacity: 1;
-      box-shadow: 0 0 15px var(--clr-gold);
-    }
-    .admin-intro {
-      text-align: center;
-      margin-bottom: var(--space-2xl);
-    }
-    .token-box {
-      max-width: 400px;
-      margin: 0 auto var(--space-2xl);
-    }
-    /* Simple form spacing */
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--space-md);
-    }
-  </style>
+  <link rel="stylesheet" href="css/admin.css">
 </head>
 <body class="admin-body">
   <div class="page-background"></div>
   <div class="scanlines"></div>
 
   <main class="admin-container">
-    <header class="admin-intro">
-      <h1 class="site-title" style="font-size: 2rem;">COMMAND CENTER</h1>
-      <p class="site-tagline" style="font-size: 0.9rem; letter-spacing: 2px; color: var(--clr-gold); visibility: visible;">MANAGE YOUR KINGDOM, BONNA</p>
+    <!-- Header -->
+    <header class="admin-header">
+      <h1 class="site-title">COMMAND CENTER</h1>
+      <p class="admin-subtitle">MANAGE YOUR KINGDOM, BONNA</p>
     </header>
 
-    <!-- Authentication -->
-    <section class="token-box retro-card">
-      <label class="admin-label">SECRET ACCESS TOKEN</label>
-      <input type="password" id="admin-token" class="admin-input" placeholder="Type secret magic key...">
-      <p style="font-family: var(--font-retro); font-size: 0.8rem; margin-top: var(--space-sm); color: var(--text-secondary); text-align: center;">Required to save changes.</p>
+    <!-- Token Section -->
+    <section class="token-section">
+      <div class="admin-card">
+        <div class="admin-card-body">
+          <div class="admin-form-group">
+            <label class="admin-label">SECRET ACCESS TOKEN</label>
+            <div class="token-input-wrapper">
+              <input type="password" id="admin-token" placeholder="Type secret magic key...">
+              <button class="token-toggle" id="token-toggle" title="Show/Hide">
+                <i class="fa-solid fa-eye"></i>
+              </button>
+            </div>
+            <p class="token-hint">Required to save changes. Never share this token!</p>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Tab Navigation -->
-    <nav class="tab-nav">
-      <button class="tab-btn active" onclick="switchTab('profile')">PROFILE</button>
-      <button class="tab-btn" onclick="switchTab('prices')">PRICES</button>
-      <button class="tab-btn" onclick="switchTab('showcase')">SHOWCASE</button>
+    <nav class="admin-tabs">
+      <button class="tab-btn active" data-tab="profile">
+        <i class="fa-solid fa-user"></i> Profile
+      </button>
+      <button class="tab-btn" data-tab="gallery">
+        <i class="fa-solid fa-images"></i> Gallery
+      </button>
+      <button class="tab-btn" data-tab="commission">
+        <i class="fa-solid fa-palette"></i> Commission
+      </button>
     </nav>
 
     <!-- PROFILE TAB -->
-    <section id="tab-profile" class="tab-content">
-      <div class="retro-card admin-card">
-        <h3 class="section-header"><span class="decorative">✦</span> EDIT BIO <span class="decorative">✦</span></h3>
-        <div class="admin-form-group">
-          <label class="admin-label">ARTIST NAME</label>
-          <input type="text" id="input-about_name" class="admin-input" placeholder="e.g. BONNA">
+    <section id="tab-profile" class="tab-content active">
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <h3 class="section-header" style="margin: 0;">
+            <span class="decorative">✦</span> Edit Profile <span class="decorative">✦</span>
+          </h3>
         </div>
-        <div class="admin-form-group">
-          <label class="admin-label">TAGLINE (TYPEWRITER TEXT)</label>
-          <textarea id="input-tagline" class="admin-input" rows="3"></textarea>
+        <div class="admin-card-body">
+          <form id="profile-form">
+            <div class="admin-form-group">
+              <label class="admin-label">ARTIST NAME</label>
+              <input type="text" id="input-about_name" class="admin-input" placeholder="e.g. BONNA">
+            </div>
+
+            <div class="admin-form-group">
+              <label class="admin-label">TAGLINE (TYPEWRITER TEXT)</label>
+              <input type="text" id="input-tagline" class="admin-input" placeholder="Welcome to my space...">
+            </div>
+
+            <div class="admin-form-group">
+              <label class="admin-label">BIO TAGS (ONE PER LINE, WITH EMOJI)</label>
+              <textarea id="input-about_text" class="admin-textarea" placeholder="💜 You may call me Bonna :3
+🦋 She/Her
+🇮🇩 Average Indonesian alien
+🧠 INTP
+🎂 18 years old"></textarea>
+              <p class="admin-input-hint">Each line becomes a tag on your profile. Start with an emoji!</p>
+            </div>
+
+            <div class="preview-panel">
+              <h4 class="preview-panel-title">LIVE PREVIEW</h4>
+              <div class="preview-content">
+                <div class="profile-preview">
+                  <h3 class="profile-preview-name" id="preview-name">BONNA LUCINE DE BUTTERBON</h3>
+                  <p class="profile-preview-tagline" id="preview-tagline">Welcome to Bonna's space...</p>
+                  <div class="profile-preview-tags" id="preview-tags">
+                    <span class="preview-tag"><span class="tag-emoji">💜</span> You may call me Bonna :3</span>
+                    <span class="preview-tag"><span class="tag-emoji">🦋</span> She/Her</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div style="text-align: center; margin-top: var(--space-xl);">
+              <button type="button" class="cta-btn cta-btn-primary" id="btn-save-profile">
+                <i class="fa-solid fa-save"></i>
+                <span>Update Profile</span>
+              </button>
+            </div>
+          </form>
         </div>
-        <div class="admin-form-group">
-          <label class="admin-label">BIO TAGS (ONE PER LINE)</label>
-          <textarea id="input-about_text" class="admin-input" rows="5" placeholder="💜 You may call me Bonna :3&#10;🦋 She/Her&#10;🍕 Pizza Lover"></textarea>
-          <p style="font-size: 0.7rem; opacity: 0.6; margin-top: 5px;">* Setiap baris baru akan menjadi kotak tag di website.</p>
-        </div>
-        <button class="cta-btn cta-btn-primary admin-btn" onclick="saveData('Profile')">Update Profile</button>
       </div>
     </section>
 
-    <!-- PRICES TAB -->
-    <section id="tab-prices" class="tab-content" style="display: none;">
-      <div class="retro-card admin-card">
-        <h3 class="section-header"><span class="decorative">✦</span> PRICE MANAGER <span class="decorative">✦</span></h3>
-        <p style="text-align: center; margin-bottom: var(--space-md); font-family: var(--font-retro);">Note: Please update the spreadsheet directly for adding new categories.</p>
-        <div id="prices-editor-list">
-          <!-- Future improvement: dynamic price editing -->
-           <p style="text-align: center; opacity: 0.6;">Current Prices will be synced from your Sheets.</p>
+    <!-- GALLERY TAB -->
+    <section id="tab-gallery" class="tab-content">
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <div class="editor-list-header">
+            <h3 class="section-header" style="margin: 0;">
+              <span class="decorative">✦</span> Gallery Manager <span class="decorative">✦</span>
+            </h3>
+            <button class="add-btn" id="btn-add-gallery-item">
+              <i class="fa-solid fa-plus"></i> Add New Artwork
+            </button>
+          </div>
         </div>
-        <button class="cta-btn cta-btn-secondary admin-btn" onclick="saveData('Prices')">Sync All Prices</button>
+        <div class="admin-card-body">
+          <div class="editor-list" id="gallery-editor-list">
+            <!-- Gallery items injected here -->
+            <div class="empty-state">
+              <i class="fa-solid fa-images"></i>
+              <p>No artworks yet. Add your first!</p>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- SHOWCASE TAB -->
-    <section id="tab-showcase" class="tab-content" style="display: none;">
-      <div class="retro-card admin-card">
-        <h3 class="section-header"><span class="decorative">✦</span> COLLECTION MANAGER <span class="decorative">✦</span></h3>
-        <div id="showcase-editor-list">
-           <p style="text-align: center; opacity: 0.6;">Your gallery items will appear here after initial sync.</p>
+    <!-- COMMISSION TAB -->
+    <section id="tab-commission" class="tab-content">
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <div class="editor-list-header">
+            <h3 class="section-header" style="margin: 0;">
+              <span class="decorative">✦</span> Commission Manager <span class="decorative">✦</span>
+            </h3>
+          </div>
         </div>
-        <button class="cta-btn cta-btn-tertiary admin-btn" onclick="saveData('Showcase')">Sync Gallery</button>
+        <div class="admin-card-body">
+          <p style="text-align: center; color: var(--text-secondary); margin-bottom: var(--space-lg); font-family: var(--font-retro);">
+            Update sample images and descriptions for each commission type
+          </p>
+          <div class="editor-list" id="commission-editor-list">
+            <!-- Commission types injected here -->
+            <div class="empty-state">
+              <i class="fa-solid fa-palette"></i>
+              <p>No commission types configured.</p>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
+    <!-- Back to Portal -->
     <div style="text-align: center; margin-top: var(--space-2xl);">
-      <a href="index.html" class="cta-btn cta-btn-email">
+      <a href="index.html" class="cta-btn cta-btn-secondary">
         <i class="fa-solid fa-arrow-left"></i>
         <span>Back to Portal</span>
       </a>
     </div>
 
+    <!-- Status Toast -->
     <div id="status-toast" class="admin-status"></div>
   </main>
 
-  <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxY6ITbRNFv8FyuTp_DLkcoT_0Tx1cSau3yjimbo2riZ_gNP9u21Oh0xzkcYPiWPObh/exec';
-    let localCache = null;
+  <!-- Gallery Modal -->
+  <div class="admin-modal" id="gallery-modal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="gallery-modal-title">Add New Artwork</h3>
+        <button class="modal-close" aria-label="Close modal">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="gallery-form">
+          <div class="admin-form-group">
+            <label class="admin-label">TITLE</label>
+            <input type="text" id="gallery-input-title" class="admin-input" placeholder="e.g. Chibi Commission Sample">
+          </div>
 
-    async function initAdmin() {
-      showToast('Connecting to Kingdom data...');
-      try {
-        const response = await fetch(API_URL);
-        localCache = await response.json();
-        populateFields();
-        showToast('Connected! Data Synced.');
-      } catch (err) {
-        showToast('Connection failed. Using offline mode.');
-      }
-    }
+          <div class="admin-form-group">
+            <label class="admin-label">TYPE</label>
+            <select id="gallery-input-type" class="admin-select">
+              <option value="">Select Type</option>
+              <option value="Chibi">Chibi</option>
+              <option value="Close Up">Close Up</option>
+              <option value="Half Body">Half Body</option>
+              <option value="Full Body">Full Body</option>
+              <option value="Scene">Scene</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
 
-    // Helper for robust key matching (case-insensitive)
-    function getVal(obj, key) {
-      if (!obj) return '';
-      const normalizedKey = key.toLowerCase().replace(/[\s_]/g, '');
-      const actualKey = Object.keys(obj).find(k => k.toLowerCase().replace(/[\s_]/g, '') === normalizedKey);
-      return actualKey ? obj[actualKey] : '';
-    }
-
-    function populateFields() {
-      if (!localCache) return;
-
-      // 1. Profile
-      if (localCache.Profile) {
-        localCache.Profile.forEach(p => {
-          const input = document.getElementById(`input-${p.Key}`);
-          if (input) input.value = p.Value;
-        });
-      }
-
-      // 2. Prices Editor
-      const priceList = document.getElementById('prices-editor-list');
-      if (priceList && localCache.Prices) {
-        priceList.innerHTML = '';
-        localCache.Prices.forEach((p, i) => {
-          const div = document.createElement('div');
-          div.className = 'admin-form-group form-row';
-          div.innerHTML = `
-            <div>
-              <label class="admin-label">TYPE</label>
-              <input type="text" class="admin-input price-item" data-key="Type" data-idx="${i}" value="${getVal(p, 'Type')}">
+          <div class="admin-form-group">
+            <label class="admin-label">IMAGE SOURCE</label>
+            <div class="split-input">
+              <input type="url" id="gallery-input-url" class="admin-input" placeholder="https://i.imgur.com/...">
+              <label class="file-upload-btn">
+                <i class="fa-solid fa-upload"></i> Upload
+                <input type="file" id="gallery-input-file" class="file-upload-input" accept="image/*">
+              </label>
             </div>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
-              <div><label class="admin-label">USD</label><input type="text" class="admin-input price-item" data-key="PriceUSD" data-idx="${i}" value="${getVal(p, 'PriceUSD')}"></div>
-              <div><label class="admin-label">IDR</label><input type="text" class="admin-input price-item" data-key="PriceIDR" data-idx="${i}" value="${getVal(p, 'PriceIDR')}"></div>
-              <input type="hidden" class="price-item" data-key="Category" data-idx="${i}" value="${getVal(p, 'Category')}">
-            </div>
-          `;
-          priceList.appendChild(div);
-        });
-      }
+            <p class="admin-input-hint">Enter URL or upload image directly (auto-uploads to Imgur)</p>
+          </div>
 
-      // 3. Showcase Editor
-      const showcaseList = document.getElementById('showcase-editor-list');
-      const showcaseData = localCache.Showcase || localCache.Gallery;
-      if (showcaseList && showcaseData) {
-        showcaseList.innerHTML = '';
-        showcaseData.forEach((s, i) => {
-          const div = document.createElement('div');
-          div.className = 'admin-form-group';
-          div.style.borderBottom = '1px solid var(--clr-coral)';
-          div.style.paddingBottom = 'var(--space-md)';
-          div.innerHTML = `
-            <div class="form-row">
-              <div>
-                <label class="admin-label">TITLE</label>
-                <input type="text" class="showcase-item admin-input" data-key="Title" data-idx="${i}" value="${getVal(s, 'Title')}">
-              </div>
-              <div>
-                <label class="admin-label">IMAGE URL</label>
-                <input type="text" class="showcase-item admin-input" data-key="ImageURL" data-idx="${i}" value="${getVal(s, 'ImageURL')}">
+          <div class="admin-form-group">
+            <label class="admin-label">DESCRIPTION (OPTIONAL)</label>
+            <textarea id="gallery-input-desc" class="admin-textarea" rows="2" placeholder="Brief description..."></textarea>
+          </div>
+
+          <div class="preview-panel">
+            <h4 class="preview-panel-title">PREVIEW</h4>
+            <div id="gallery-preview-container" class="preview-content" style="max-width: 300px; margin: 0 auto;">
+              <div class="gallery-preview-card">
+                <div class="gallery-preview-placeholder" style="aspect-ratio: 1; display: flex; align-items: center; justify-content: center; background: var(--clr-dark-plum);">
+                  <i class="fa-solid fa-image" style="font-size: 3rem; color: var(--clr-salmon);"></i>
+                </div>
+                <div class="gallery-preview-info">
+                  <h4 class="gallery-preview-title">Untitled</h4>
+                  <span class="gallery-preview-type">Artwork</span>
+                </div>
               </div>
             </div>
-            <label class="admin-label" style="margin-top:5px;">DESC</label>
-            <input type="text" class="showcase-item admin-input" data-key="Description" data-idx="${i}" value="${getVal(s, 'Description')}">
-          `;
-          showcaseList.appendChild(div);
-        });
-      }
-    }
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="cta-btn cta-btn-secondary modal-close-btn">
+          <span>Cancel</span>
+        </button>
+        <button type="button" class="cta-btn cta-btn-primary" id="btn-save-gallery-item">
+          <i class="fa-solid fa-save"></i>
+          <span>Save Artwork</span>
+        </button>
+      </div>
+    </div>
+  </div>
 
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.getElementById(`tab-${tabId}`).style.display = 'block';
-      event.target.classList.add('active');
-    }
+  <!-- Commission Modal -->
+  <div class="admin-modal" id="commission-modal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Edit Commission Type</h3>
+        <button class="modal-close" aria-label="Close modal">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="commission-edit-form">
+          <input type="hidden" id="commission-edit-index">
+          
+          <div class="admin-form-group">
+            <label class="admin-label">TYPE NAME</label>
+            <input type="text" id="commission-edit-type" class="admin-input" readonly>
+            <p class="admin-input-hint">Type name is auto-populated from your pricing sheet</p>
+          </div>
 
-    async function saveData(type) {
-      const token = document.getElementById('admin-token').value;
-      if (!token) {
-        alert('Tunggu! Anda butuh MAGIC TOKEN untuk menyimpan perubahan.');
-        return;
-      }
+          <div class="admin-form-group">
+            <label class="admin-label">SAMPLE IMAGE</label>
+            <div class="split-input">
+              <input type="url" id="commission-edit-url" class="admin-input" placeholder="https://i.imgur.com/...">
+              <label class="file-upload-btn">
+                <i class="fa-solid fa-upload"></i> Upload
+                <input type="file" id="commission-edit-file" class="file-upload-input" accept="image/*">
+              </label>
+            </div>
+          </div>
 
-      showToast('⚔️ Synchronizing with Kingdom...');
+          <div class="admin-form-group">
+            <label class="admin-label">DESCRIPTION</label>
+            <textarea id="commission-edit-desc" class="admin-textarea" rows="3" placeholder="Describe this commission type..."></textarea>
+          </div>
 
-      // Find actual sheet name from cache to match POST request
-      const actualSheetName = (type === 'Showcase' && !localCache.Showcase && localCache.Gallery) ? 'Gallery' : type;
-      
-      let payload = { token, targetSheet: actualSheetName, data: [] };
+          <div class="preview-panel">
+            <h4 class="preview-panel-title">PREVIEW</h4>
+            <div id="commission-preview" class="preview-content" style="max-width: 300px; margin: 0 auto;">
+              <div class="commission-preview-card">
+                <div class="commission-preview-image-container" style="height: 200px; background: var(--clr-dark-plum); display: flex; align-items: center; justify-content: center;">
+                  <div class="commission-preview-placeholder">
+                    <i class="fa-solid fa-image"></i>
+                    <span>No Image</span>
+                  </div>
+                </div>
+                <div class="commission-preview-info">
+                  <h4 class="commission-preview-type">Commission Type</h4>
+                  <p class="commission-preview-desc">Description...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="cta-btn cta-btn-secondary modal-close-btn">
+          <span>Cancel</span>
+        </button>
+        <button type="button" class="cta-btn cta-btn-primary" id="btn-save-commission">
+          <i class="fa-solid fa-save"></i>
+          <span>Save Changes</span>
+        </button>
+      </div>
+    </div>
+  </div>
 
-      if (type === 'Profile') {
-        payload.data = [
-          { Key: 'tagline', Value: document.getElementById('input-tagline').value },
-          { Key: 'about_name', Value: document.getElementById('input-about_name').value },
-          { Key: 'about_text', Value: document.getElementById('input-about_text').value }
-        ];
-      } else if (type === 'Prices') {
-        const items = document.querySelectorAll('.price-item');
-        const rows = [];
-        items.forEach(it => {
-          const idx = it.dataset.idx;
-          if (!rows[idx]) rows[idx] = {};
-          rows[idx][it.dataset.key] = it.value;
-        });
-        payload.data = rows.filter(r => r); 
-      } else if (type === 'Showcase') {
-        const items = document.querySelectorAll('.showcase-item');
-        const rows = [];
-        items.forEach(it => {
-          const idx = it.dataset.idx;
-          if (!rows[idx]) rows[idx] = {};
-          rows[idx][it.dataset.key] = it.value;
-        });
-        payload.data = rows.filter(r => r);
-      }
-
-      try {
-        await fetch(API_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-
-        alert('✨ SUCCESS! Kerajaan ' + type + ' telah terupdate.\n\nCek spreadsheet Anda, data seharusnya sudah berubah.');
-        showToast('Success! Your Kingdom is updated.');
-      } catch (err) {
-        console.error(err);
-        showToast('Error: Gagal memanggil penyihir data.');
-      }
-    }
-
-    function showToast(msg) {
-      const toast = document.getElementById('status-toast');
-      toast.textContent = msg;
-      toast.style.display = 'block';
-      setTimeout(() => { toast.style.display = 'none'; }, 3000);
-    }
-
-    initAdmin();
-  </script>
+  <script src="js/admin.js"></script>
 </body>
 </html>
