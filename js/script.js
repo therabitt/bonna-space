@@ -408,6 +408,19 @@ document.addEventListener('DOMContentLoaded', () => {
     visualEffects.initRetroCards();
     visualEffects.initMascots();
     audioManager.attachUIListeners();
+    
+    // Re-initialize page-specific managers
+    // Gallery Manager - only on gallery page
+    const galleryGrid = document.getElementById('gallery-grid');
+    if (galleryGrid) {
+      new GalleryManager(dataManager);
+    }
+    
+    // Commission Preview Manager - only on commission page
+    const commissionPreviewGrid = document.getElementById('commission-preview-grid');
+    if (commissionPreviewGrid) {
+      new CommissionPreviewManager(dataManager);
+    }
   };
 
   // Global Link Interceptor
@@ -587,6 +600,12 @@ document.addEventListener('DOMContentLoaded', () => {
     init() {
       this.setupEventListeners();
       this.setupLightboxListeners();
+      
+      // Check if data is already available
+      if (this.dataManager.cache) {
+        this.loadGalleryData();
+        return;
+      }
       
       // Wait for data to be loaded
       const checkData = setInterval(() => {
@@ -861,9 +880,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
   
-  // Initialize Gallery Manager
-  const galleryManager = new GalleryManager(dataManager);
-
   // --- 6. Commission Preview Manager ---
   class CommissionPreviewManager {
     constructor(dataManager) {
@@ -876,6 +892,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     init() {
+      // Check if data is already available
+      if (this.dataManager.cache) {
+        this.loadCommissionPreviews();
+        return;
+      }
+      
       // Wait for data to be loaded
       const checkData = setInterval(() => {
         if (this.dataManager.cache) {
@@ -978,11 +1000,8 @@ document.addEventListener('DOMContentLoaded', () => {
       return div.innerHTML;
     }
   }
-  
-  // Initialize Commission Preview Manager
-  const commissionPreviewManager = new CommissionPreviewManager(dataManager);
 
-  // Re-run for first time
+  // Re-run for first time - this will initialize managers based on current page
   reinitAll();
 });
 
