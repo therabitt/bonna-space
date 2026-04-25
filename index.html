@@ -1,259 +1,471 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BONNA ✦ Digital Artist Portfolio</title>
-  <meta name="description" content="Welcome to Bonna's space — a digital artist who draws OCs, fanarts, and pixel art. Commission open!">
-  <meta name="keywords" content="digital artist, pixel art, commissions, fanart, OC">
-  <meta name="theme-color" content="#2d0a1e">
-  
-  <!-- Favicon (pixel heart) -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦋</text></svg>">
-  
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-  <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-  <div class="page-transition-overlay"></div>
-  <a class="skip-link" href="#main-content">Skip to content</a>
-  <div class="scroll-progress" aria-hidden="true"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BONNA ✦ Digital Artist Portfolio</title>
+    <meta
+      name="description"
+      content="Welcome to Bonna's space — a digital artist who draws OCs, fanarts, and pixel art. Commission open!"
+    />
+    <meta
+      name="keywords"
+      content="digital artist, pixel art, commissions, fanart, OC"
+    />
+    <meta name="theme-color" content="#2d0a1e" />
 
-  <!-- Preloader -->
-  <div class="preloader" id="preloader">
-    <div class="preloader-spinner"></div>
-    <span class="preloader-text">LOADING...</span>
-  </div>
+    <!-- Open Graph / Social -->
+    <meta property="og:site_name" content="BONNA ✦ Digital Artist" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="BONNA ✦ Digital Artist Portfolio" />
+    <meta
+      property="og:description"
+      content="Welcome to Bonna's space — a digital artist who draws OCs, fanarts, and pixel art. Commission open!"
+    />
+    <meta property="og:image" content="assets/bonna.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="BONNA ✦ Digital Artist Portfolio" />
+    <meta
+      name="twitter:description"
+      content="Welcome to Bonna's space — a digital artist who draws OCs, fanarts, and pixel art. Commission open!"
+    />
 
-  <!-- Background Parallax Layers -->
-  <div class="page-background"></div>
-  <div class="scanlines"></div>
-  <div class="parallax-bg" id="parallax-bg">
-    <div class="parallax-layer parallax-layer-1"></div>
-    <div class="parallax-layer parallax-layer-2"></div>
-    <div class="parallax-layer parallax-layer-3"></div>
-  </div>
+    <!-- Favicon (pixel heart) -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦋</text></svg>"
+    />
 
-  <!-- Main Content -->
-  <main class="main-container" id="main-content" tabindex="-1">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="page-transition-overlay"></div>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <div class="scroll-progress" aria-hidden="true"></div>
 
-    <!-- ========== HEADER SECTION ========== -->
-    <header class="header-section reveal">
-      <div class="mascot-container">
-        <div class="mascot-parallax">
-          <img src="./assets/bonna.png" alt="Bonna mascot — a cute pixel art butterfly" class="mascot-img" id="mascot-main">
-        </div>
-        <span class="sparkle sparkle-1"></span>
-        <span class="sparkle sparkle-2"></span>
-        <span class="sparkle sparkle-3"></span>
-        <span class="sparkle sparkle-4"></span>
-      </div>
-      <br>
-
-      <h1 class="site-title">BONNA</h1>
-
-      <p class="site-tagline" id="field-tagline" style="visibility: hidden;">Welcome to Bonna's space ༉‧₊˚ I'm a digital artist who likes to draw OCs and fanarts!</p>
-
-      <!-- Social Icons -->
-      <nav class="social-icons reveal reveal-delay-1" aria-label="Social media links">
-        <a href="https://bsky.app/profile/bonna0bon.bsky.social" class="social-icon tooltip" data-tooltip="Bluesky" id="social-bluesky" aria-label="Bluesky">
-          <i class="fa-brands fa-bluesky"></i>
-        </a>
-        <a href="https://www.instagram.com/bonna0bon" class="social-icon tooltip" data-tooltip="Instagram" id="social-instagram" aria-label="Instagram">
-          <i class="fa-brands fa-instagram"></i>
-        </a>
-        <a href="https://x.com/Bonna0bon" class="social-icon tooltip" data-tooltip="X / Twitter" id="social-twitter" aria-label="X / Twitter">
-          <i class="fa-brands fa-x-twitter"></i>
-        </a>
-        <a href="https://ko-fi.com/bonnabon" class="social-icon tooltip" data-tooltip="Ko-fi" id="social-kofi" aria-label="Ko-fi">
-          <!-- Ko-fi brand not in standard free FA, but cup icon works. -->
-          <i class="fa-solid fa-mug-hot"></i>
-        </a>
-      </nav>
-
-      <!-- CTA Buttons -->
-      <div class="cta-buttons reveal reveal-delay-2">
-        <a href="commission.html" class="cta-btn cta-btn-primary" id="btn-commission">
-          <span>Commission</span>
-          <i class="fa-solid fa-store"></i>
-        </a>
-        <a href="gallery.html" class="cta-btn cta-btn-secondary" id="btn-gallery">
-          <span>View Gallery</span>
-          <i class="fa-solid fa-images"></i>
-        </a>
-        <a href="tos.html" class="cta-btn cta-btn-secondary" id="btn-tos">
-          <span>Terms of Service</span>
-          <i class="fa-solid fa-file-contract"></i>
-        </a>
-      </div>
-    </header>
-
-    <div class="section-divider"></div>
-
-    <!-- ========== ABOUT ME SECTION ========== -->
-    <section class="about-section reveal" id="about-me">
-      <h2 class="section-header">
-        <span class="decorative">✦</span>
-        <span class="decorative">·</span>
-        ABOUT ME
-        <span class="decorative">·</span>
-        <span class="decorative">♡</span>
-      </h2>
-
-      <div class="retro-card about-card">
-        <h3 class="about-name" id="field-about_name">BONNA LUCINE DE BUTTERBON</h3>
-        <p class="about-text" id="field-about_text" style="text-align: center; margin-bottom: var(--space-lg);">
-          Digital artist who loves to create cute and starry artworks.
-        </p>
-        <ul class="about-list" id="dynamic-about-tags">
-          <li class="about-tag"><span class="tag-emoji">💜</span> You may call me Bonna :3</li>
-          <li class="about-tag"><span class="tag-emoji">🦋</span> She/Her</li>
-          <li class="about-tag"><span class="tag-emoji">🇮🇩</span> Average Indonesian alien</li>
-          <li class="about-tag"><span class="tag-emoji">🧠</span> INTP</li>
-          <li class="about-tag"><span class="tag-emoji">🎂</span> 18 years old</li>
-        </ul>
-      </div>
-    </section>
-
-    <!-- ========== BENTO GRID ========== -->
-    <section class="bento-grid" style="margin-top: var(--space-xl);">
-
-      <!-- What Do I Draw? -->
-      <div class="retro-card reveal" id="what-i-draw">
-        <h3 class="section-header" style="margin-bottom: var(--space-lg);">
-          <span class="decorative">✦</span>
-          WHAT DO I DRAW?
-        </h3>
-        <div class="draw-grid">
-          <div class="draw-item"><span class="item-icon">🎨</span> OCs</div>
-          <div class="draw-item"><span class="item-icon">✨</span> Fanarts</div>
-          <div class="draw-item"><span class="item-icon">🐾</span> Sometimes furry</div>
-          <div class="draw-item"><span class="item-icon">👾</span> Pixel art</div>
-          <div class="draw-item"><span class="item-icon">🏺</span> Inanimate objects</div>
-        </div>
-      </div>
-
-      <!-- What Do I Use? -->
-      <div class="retro-card reveal reveal-delay-1" id="what-i-use">
-        <h3 class="section-header" style="margin-bottom: var(--space-lg);">
-          <span class="decorative">✦</span>
-          WHAT DO I USE?
-        </h3>
-        <div class="tools-grid">
-          <div class="tool-item"><span class="tool-icon">📱</span> Redmi Pad SE</div>
-          <div class="tool-item"><span class="tool-icon">🖊️</span> Disk tip stylus</div>
-          <div class="tool-item"><span class="tool-icon">🎨</span> Ibis Paint X</div>
-          <div class="tool-item"><span class="tool-icon">🖌️</span> Magma</div>
-          <div class="tool-item"><span class="tool-icon">👾</span> Pixel Studio</div>
-          <div class="tool-item"><span class="tool-icon">🎧</span> Processed tree</div>
-          <div class="tool-item"><span class="tool-icon">✏️</span> Pencil</div>
-        </div>
-      </div>
-
-      <!-- Fandom -->
-      <div class="retro-card bento-span-2 reveal reveal-delay-2" id="fandom">
-        <h3 class="section-header" style="margin-bottom: var(--space-lg);">
-          <span class="decorative">✦</span>
-          FANDOM
-          <span class="decorative">✦</span>
-        </h3>
-        <div class="fandom-tags">
-          <span class="fandom-tag">🎭 Twisted Wonderland</span>
-          <span class="fandom-tag">🌸 Tokyo Debunker</span>
-          <span class="fandom-tag">📖 Manhwa (rofan, murim, action)</span>
-          <span class="fandom-tag">🪲 Hollow Knight</span>
-          <span class="fandom-tag">🔥 Rainworld</span>
-          <span class="fandom-tag">🌿 Terraria</span>
-          <span class="fandom-tag">⚔️ Soul Knight</span>
-          <span class="fandom-tag">🌟 Boboiboy (a new fan)</span>
-          <span class="fandom-tag">🍪 Cookie Run Kingdom</span>
-          <span class="fandom-tag">📺 Anime (I will <strong>not</strong> elaborate further)</span>
-          <span class="fandom-tag">🎮 Genshin Impact... kinda</span>
-        </div>
-      </div>
-
-    </section>
-
-    <div class="section-divider"></div>
-
-    <!-- ========== GALLERY CTA SECTION ========== -->
-    <section class="gallery-cta-section reveal" id="gallery-cta">
-      <h2 class="section-header">
-        <span class="decorative">✦</span>
-        THE MEMORY GALLERY
-        <span class="decorative">✦</span>
-      </h2>
-      <div class="retro-card" style="text-align: center; padding: var(--space-2xl);">
-        <div class="gallery-preview-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md); margin-bottom: var(--space-xl); opacity: 0.6;">
-          <div style="aspect-ratio: 1; background: var(--clr-salmon); border: 2px solid var(--retro-border); border-radius: var(--radius-xs);"></div>
-          <div style="aspect-ratio: 1; background: var(--clr-coral); border: 2px solid var(--retro-border); border-radius: var(--radius-xs);"></div>
-          <div style="aspect-ratio: 1; background: var(--clr-salmon); border: 2px solid var(--retro-border); border-radius: var(--radius-xs);"></div>
-        </div>
-        <p style="font-family: var(--font-retro); font-size: 1.2rem; color: var(--text-secondary); margin-bottom: var(--space-lg);">
-          Explore the complete collection of artworks
-        </p>
-        <a href="gallery.html" class="cta-btn cta-btn-primary" style="min-width: 200px;">
-          <i class="fa-solid fa-images"></i>
-          <span>View Full Gallery</span>
-        </a>
-      </div>
-    </section>
-
-    <div class="section-divider"></div>
-
-    <!-- ========== WHY DO I DRAW? ========== -->
-    <section class="retro-card why-card reveal" id="why-i-draw">
-      <h3 class="section-header">
-        <span class="decorative">✦</span>
-        WHY DO I DRAW?
-        <span class="decorative">✦</span>
-      </h3>
-      <p class="why-text">
-        This alien fell in love with a certain <em>boboiboy</em> fanfusion so she starts to draw yumeship art and <em>voilà!</em>
-      </p>
-    </section>
-
-    <!-- ========== MYSTERY ========== -->
-    <div class="mystery-section reveal">
-      <span class="mystery-text">? ? ?</span>
+    <!-- Preloader -->
+    <div class="preloader" id="preloader">
+      <div class="preloader-spinner"></div>
+      <span class="preloader-text">LOADING...</span>
     </div>
 
-    <!-- ========== NICHE SECTION ========== -->
-    <section class="retro-card niche-card reveal" id="niche-section">
-      <h3 class="niche-title">I CAN'T REALLY STICK TO NICHE I'M CRINE</h3>
-      <p class="niche-text">
-        btw I only play <strong>CRK</strong>, <strong>Soul Knight</strong>, <strong>Roblox</strong>, and <strong>Tokyo Debunker</strong> for now. The other aforementioned games aren't available for me at the moment
-        <s style="color:#4a1234">because my brother took the PC with him...</s> 
-      </p>
-      <div class="niche-games">
-        <span class="game-chip">🍪 CRK</span>
-        <span class="game-chip">⚔️ Soul Knight</span>
-        <span class="game-chip">🎮 Roblox</span>
-        <span class="game-chip">🌸 Tokyo Debunker</span>
+    <!-- Background Parallax Layers -->
+    <div class="page-background"></div>
+    <div class="scanlines"></div>
+    <div class="parallax-bg" id="parallax-bg">
+      <div class="parallax-layer parallax-layer-1"></div>
+      <div class="parallax-layer parallax-layer-2"></div>
+      <div class="parallax-layer parallax-layer-3"></div>
+    </div>
+
+    <!-- Site Navigation -->
+    <nav class="site-nav" id="site-nav" aria-label="Site navigation">
+      <div class="nav-inner">
+        <a href="index.html" class="nav-brand" aria-label="Bonna - Home">
+          <span class="nav-brand-icon">🦋</span>
+          <span class="nav-brand-name">BONNA</span>
+        </a>
+        <button
+          class="nav-hamburger"
+          id="nav-hamburger"
+          aria-label="Toggle navigation"
+          aria-expanded="false"
+        >
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+        <div class="nav-links" id="nav-links">
+          <a href="index.html" class="nav-link" data-page="index">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+          </a>
+          <a href="commission.html" class="nav-link" data-page="commission">
+            <i class="fa-solid fa-store"></i>
+            <span>Commission</span>
+          </a>
+          <a href="gallery.html" class="nav-link" data-page="gallery">
+            <i class="fa-solid fa-images"></i>
+            <span>Gallery</span>
+          </a>
+          <a href="tos.html" class="nav-link" data-page="tos">
+            <i class="fa-solid fa-file-contract"></i>
+            <span>ToS</span>
+          </a>
+        </div>
       </div>
-    </section>
+    </nav>
 
-    <div class="section-divider"></div>
+    <!-- Main Content -->
+    <main class="main-container" id="main-content" tabindex="-1">
+      <!-- ========== HEADER SECTION ========== -->
+      <header class="header-section reveal">
+        <div class="mascot-container">
+          <div class="mascot-parallax">
+            <img
+              src="./assets/bonna.png"
+              alt="Bonna mascot — a cute pixel art butterfly"
+              class="mascot-img"
+              id="mascot-main"
+            />
+          </div>
+          <span class="sparkle sparkle-1"></span>
+          <span class="sparkle sparkle-2"></span>
+          <span class="sparkle sparkle-3"></span>
+          <span class="sparkle sparkle-4"></span>
+        </div>
+        <br />
 
-    <!-- ========== FOOTER ========== -->
-    <footer class="footer-section reveal" id="contact">
-      <img src="./assets/bonna2.png" alt="Bonna mascot sitting" class="footer-mascot">
-      <p class="footer-contact">Contact</p>
-      <a href="mailto:bonna0bonna@gmail.com" class="footer-email" id="contact-email">bonna0bonna@gmail.com</a>
-      <p class="footer-credits">
-        Made with <span class="heart">♥</span> by Bonna
-      </p>
-    </footer>
+        <h1 class="site-title">BONNA</h1>
 
-    <!-- Sound Controller -->
-    <div class="sound-controller" id="sound-controls">
-      <button class="sound-toggle-btn tooltip" id="sound-toggle" data-tooltip="Sound ON/OFF" aria-label="Toggle Sound">
-        <i class="fa-solid fa-volume-xmark"></i>
+        <p class="site-tagline" id="field-tagline" style="visibility: hidden">
+          Welcome to Bonna's space ༉‧₊˚ I'm a digital artist who likes to draw
+          OCs and fanarts!
+        </p>
+
+        <div class="commission-status-area">
+          <span
+            id="field-commission_status"
+            class="commission-status-badge status-open"
+            >OPEN</span
+          >
+        </div>
+
+        <!-- Social Icons -->
+        <nav
+          class="social-icons reveal reveal-delay-1"
+          aria-label="Social media links"
+        >
+          <a
+            href="https://bsky.app/profile/bonna0bon.bsky.social"
+            class="social-icon tooltip"
+            data-tooltip="Bluesky"
+            id="social-bluesky"
+            aria-label="Bluesky"
+          >
+            <i class="fa-brands fa-bluesky"></i>
+          </a>
+          <a
+            href="https://www.instagram.com/bonna0bon"
+            class="social-icon tooltip"
+            data-tooltip="Instagram"
+            id="social-instagram"
+            aria-label="Instagram"
+          >
+            <i class="fa-brands fa-instagram"></i>
+          </a>
+          <a
+            href="https://x.com/Bonna0bon"
+            class="social-icon tooltip"
+            data-tooltip="X / Twitter"
+            id="social-twitter"
+            aria-label="X / Twitter"
+          >
+            <i class="fa-brands fa-x-twitter"></i>
+          </a>
+          <a
+            href="https://ko-fi.com/bonnabon"
+            class="social-icon tooltip"
+            data-tooltip="Ko-fi"
+            id="social-kofi"
+            aria-label="Ko-fi"
+          >
+            <!-- Ko-fi brand not in standard free FA, but cup icon works. -->
+            <i class="fa-solid fa-mug-hot"></i>
+          </a>
+        </nav>
+
+        <!-- CTA Buttons -->
+        <div class="cta-buttons reveal reveal-delay-2">
+          <a
+            href="commission.html"
+            class="cta-btn cta-btn-primary"
+            id="btn-commission"
+          >
+            <span>Commission</span>
+            <i class="fa-solid fa-store"></i>
+          </a>
+          <a href="tos.html" class="cta-btn cta-btn-secondary" id="btn-tos">
+            <span>Terms of Service</span>
+            <i class="fa-solid fa-file-contract"></i>
+          </a>
+        </div>
+      </header>
+
+      <div class="section-divider"></div>
+
+      <!-- ========== ABOUT ME SECTION ========== -->
+      <section class="about-section reveal" id="about-me">
+        <h2 class="section-header">
+          <span class="decorative">✦</span>
+          <span class="decorative">·</span>
+          ABOUT ME
+          <span class="decorative">·</span>
+          <span class="decorative">♡</span>
+        </h2>
+
+        <div class="retro-card about-card">
+          <h3 class="about-name" id="field-about_name">
+            BONNA LUCINE DE BUTTERBON
+          </h3>
+          <p
+            class="about-text"
+            id="field-about_text"
+            style="text-align: center; margin-bottom: var(--space-lg)"
+          >
+            Digital artist who loves to create cute and starry artworks.
+          </p>
+          <ul class="about-list" id="dynamic-about-tags">
+            <li class="about-tag">
+              <span class="tag-emoji">💜</span> You may call me Bonna :3
+            </li>
+            <li class="about-tag"><span class="tag-emoji">🦋</span> She/Her</li>
+            <li class="about-tag">
+              <span class="tag-emoji">🇮🇩</span> Average Indonesian alien
+            </li>
+            <li class="about-tag"><span class="tag-emoji">🧠</span> INTP</li>
+            <li class="about-tag">
+              <span class="tag-emoji">🎂</span> 18 years old
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ========== BENTO GRID ========== -->
+      <section class="bento-grid" style="margin-top: var(--space-xl)">
+        <!-- What Do I Draw? -->
+        <div class="retro-card reveal" id="what-i-draw">
+          <h3 class="section-header" style="margin-bottom: var(--space-lg)">
+            <span class="decorative">✦</span>
+            WHAT DO I DRAW?
+          </h3>
+          <div class="draw-grid">
+            <div class="draw-item"><span class="item-icon">🎨</span> OCs</div>
+            <div class="draw-item">
+              <span class="item-icon">✨</span> Fanarts
+            </div>
+            <div class="draw-item">
+              <span class="item-icon">🐾</span> Sometimes furry
+            </div>
+            <div class="draw-item">
+              <span class="item-icon">👾</span> Pixel art
+            </div>
+            <div class="draw-item special-item">
+              <span class="item-icon">🏺</span> Inanimate objects
+            </div>
+          </div>
+        </div>
+
+        <!-- What Do I Use? -->
+        <div class="retro-card reveal reveal-delay-1" id="what-i-use">
+          <h3 class="section-header" style="margin-bottom: var(--space-lg)">
+            <span class="decorative">✦</span>
+            WHAT DO I USE?
+          </h3>
+          <div class="tools-grid">
+            <div class="tool-item">
+              <span class="tool-icon">📱</span> Redmi Pad SE
+            </div>
+            <div class="tool-item">
+              <span class="tool-icon">🖊️</span> Disk tip stylus
+            </div>
+            <div class="tool-item">
+              <span class="tool-icon">🎨</span> Ibis Paint X
+            </div>
+            <div class="tool-item"><span class="tool-icon">🖌️</span> Magma</div>
+            <div class="tool-item">
+              <span class="tool-icon">👾</span> Pixel Studio
+            </div>
+            <div class="tool-item">
+              <span class="tool-icon">🎧</span> Processed tree
+            </div>
+            <div class="tool-item special-item">
+              <span class="tool-icon">✏️</span> Trusty Pencil (old school!)
+            </div>
+          </div>
+        </div>
+
+        <!-- Fandom -->
+        <div class="retro-card bento-span-2 reveal reveal-delay-2" id="fandom">
+          <h3 class="section-header" style="margin-bottom: var(--space-lg)">
+            <span class="decorative">✦</span>
+            FANDOM
+            <span class="decorative">✦</span>
+          </h3>
+          <div class="fandom-tags">
+            <span class="fandom-tag">🎭 Twisted Wonderland</span>
+            <span class="fandom-tag">🌸 Tokyo Debunker</span>
+            <span class="fandom-tag">📖 Manhwa (rofan, murim, action)</span>
+            <span class="fandom-tag">🪲 Hollow Knight</span>
+            <span class="fandom-tag">🔥 Rainworld</span>
+            <span class="fandom-tag">🌿 Terraria</span>
+            <span class="fandom-tag">⚔️ Soul Knight</span>
+            <span class="fandom-tag">🌟 Boboiboy (a new fan)</span>
+            <span class="fandom-tag">🍪 Cookie Run Kingdom</span>
+            <span class="fandom-tag"
+              >📺 Anime (I will <strong>not</strong> elaborate further)</span
+            >
+            <span class="fandom-tag">🎮 Genshin Impact... kinda</span>
+          </div>
+        </div>
+      </section>
+
+      <div class="section-divider"></div>
+
+      <!-- ========== GALLERY CTA SECTION ========== -->
+      <section class="gallery-cta-section reveal" id="gallery-cta">
+        <h2 class="section-header">
+          <span class="decorative">✦</span>
+          THE MEMORY GALLERY
+          <span class="decorative">✦</span>
+        </h2>
+        <div
+          class="retro-card"
+          style="text-align: center; padding: var(--space-2xl)"
+        >
+          <div
+            class="gallery-preview-grid"
+            style="
+              display: grid;
+              grid-template-columns: repeat(3, 1fr);
+              gap: var(--space-md);
+              margin-bottom: var(--space-xl);
+              opacity: 0.6;
+            "
+          >
+            <div
+              style="
+                aspect-ratio: 1;
+                background: var(--clr-salmon);
+                border: 2px solid var(--retro-border);
+                border-radius: var(--radius-xs);
+              "
+            ></div>
+            <div
+              style="
+                aspect-ratio: 1;
+                background: var(--clr-coral);
+                border: 2px solid var(--retro-border);
+                border-radius: var(--radius-xs);
+              "
+            ></div>
+            <div
+              style="
+                aspect-ratio: 1;
+                background: var(--clr-salmon);
+                border: 2px solid var(--retro-border);
+                border-radius: var(--radius-xs);
+              "
+            ></div>
+          </div>
+          <p
+            style="
+              font-family: var(--font-retro);
+              font-size: 1.2rem;
+              color: var(--text-secondary);
+              margin-bottom: var(--space-lg);
+            "
+          >
+            Explore the complete collection of artworks
+          </p>
+          <a
+            href="gallery.html"
+            class="cta-btn cta-btn-primary"
+            style="min-width: 200px"
+          >
+            <i class="fa-solid fa-images"></i>
+            <span>View Full Gallery</span>
+          </a>
+        </div>
+      </section>
+
+      <div class="section-divider"></div>
+
+      <!-- ========== WHY DO I DRAW? ========== -->
+      <section class="retro-card why-card reveal" id="why-i-draw">
+        <h3 class="section-header">
+          <span class="decorative">✦</span>
+          WHY DO I DRAW?
+          <span class="decorative">✦</span>
+        </h3>
+        <p class="why-text">
+          This alien fell in love with a certain <em>boboiboy</em> fanfusion so
+          she starts to draw yumeship art and <em>voilà!</em>
+        </p>
+      </section>
+
+      <!-- ========== MYSTERY ========== -->
+      <div class="mystery-section reveal">
+        <span class="mystery-text">? ? ?</span>
+      </div>
+
+      <!-- ========== NICHE SECTION ========== -->
+      <section class="retro-card niche-card reveal" id="niche-section">
+        <h3 class="niche-title">I CAN'T REALLY STICK TO NICHE I'M CRINE</h3>
+        <p class="niche-text">
+          btw I only play <strong>CRK</strong>, <strong>Soul Knight</strong>,
+          <strong>Roblox</strong>, and <strong>Tokyo Debunker</strong> for now.
+          The other aforementioned games aren't available for me at the moment
+          <s style="color: #4a1234"
+            >because my brother took the PC with him...</s
+          >
+        </p>
+        <div class="niche-games">
+          <span class="game-chip">🍪 CRK</span>
+          <span class="game-chip">⚔️ Soul Knight</span>
+          <span class="game-chip">🎮 Roblox</span>
+          <span class="game-chip">🌸 Tokyo Debunker</span>
+        </div>
+      </section>
+
+      <div class="section-divider"></div>
+
+      <!-- ========== FOOTER ========== -->
+      <footer class="footer-section reveal" id="contact">
+        <img
+          src="./assets/bonna2.png"
+          alt="Bonna mascot sitting"
+          class="footer-mascot"
+        />
+        <p class="footer-contact">Contact</p>
+        <a
+          href="mailto:bonna0bonna@gmail.com"
+          class="footer-email"
+          id="contact-email"
+          >bonna0bonna@gmail.com</a
+        >
+        <p class="footer-credits">
+          Made with <span class="heart">♥</span> by Bonna
+        </p>
+      </footer>
+
+      <!-- Sound Controller -->
+      <div class="sound-controller" id="sound-controls">
+        <button
+          class="sound-toggle-btn tooltip"
+          id="sound-toggle"
+          data-tooltip="Sound ON/OFF"
+          aria-label="Toggle Sound"
+        >
+          <i class="fa-solid fa-volume-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Scroll to Top -->
+      <button
+        class="scroll-to-top"
+        id="scroll-to-top"
+        aria-label="Scroll to top"
+      >
+        <i class="fa-solid fa-chevron-up"></i>
       </button>
-    </div>
+    </main>
 
-  </main>
-
-  <script src="js/script.js"></script>
-</body>
+    <script src="js/utils.js"></script>
+    <script src="js/script.js"></script>
+  </body>
 </html>

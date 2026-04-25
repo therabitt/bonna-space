@@ -1,247 +1,413 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Commission ✦ BONNA</title>
-  <meta name="description" content="Commission pricing and info for Bonna.">
-  <meta name="theme-color" content="#2d0a1e">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦋</text></svg>">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-  <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-  <a class="skip-link" href="#main-content">Skip to content</a>
-  <div class="scroll-progress" aria-hidden="true"></div>
-  <div class="page-transition-overlay"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Commission ✦ BONNA</title>
+    <meta name="description" content="Commission pricing and info for Bonna." />
+    <meta name="theme-color" content="#2d0a1e" />
 
-  <!-- Preloader -->
-  <div class="preloader" id="preloader">
-    <div class="preloader-spinner"></div>
-    <span class="preloader-text">LOADING...</span>
-  </div>
+    <!-- Open Graph / Social -->
+    <meta property="og:site_name" content="BONNA ✦ Digital Artist" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Commission ✦ BONNA" />
+    <meta
+      property="og:description"
+      content="Commission pricing, process, and availability for Bonna's digital art services."
+    />
+    <meta property="og:image" content="assets/bonna.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Commission ✦ BONNA" />
+    <meta
+      name="twitter:description"
+      content="Commission pricing, process, and availability for Bonna's digital art services."
+    />
 
-  <!-- Background Parallax Layers -->
-  <div class="page-background"></div>
-  <div class="scanlines"></div>
-  <div class="parallax-bg" id="parallax-bg">
-    <div class="parallax-layer parallax-layer-1"></div>
-    <div class="parallax-layer parallax-layer-2"></div>
-    <div class="parallax-layer parallax-layer-3"></div>
-  </div>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦋</text></svg>"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <div class="scroll-progress" aria-hidden="true"></div>
+    <div class="page-transition-overlay"></div>
 
-  <main class="main-container" id="main-content" tabindex="-1">
+    <!-- Preloader -->
+    <div class="preloader" id="preloader">
+      <div class="preloader-spinner"></div>
+      <span class="preloader-text">LOADING...</span>
+    </div>
 
-    <a href="index.html" class="back-home-btn reveal">
-      <i class="fa-solid fa-arrow-left"></i>
-      BACK TO HOME
-    </a>
+    <!-- Background Parallax Layers -->
+    <div class="page-background"></div>
+    <div class="scanlines"></div>
+    <div class="parallax-bg" id="parallax-bg">
+      <div class="parallax-layer parallax-layer-1"></div>
+      <div class="parallax-layer parallax-layer-2"></div>
+      <div class="parallax-layer parallax-layer-3"></div>
+    </div>
 
-    <!-- Header -->
-    <header class="header-section reveal" style="margin-bottom: var(--space-xl);">
-      <h1 class="site-title">COMMISSION</h1>
-      <p class="site-tagline" style="font-family: var(--font-pixel); font-size: 0.8rem; letter-spacing: 4px;">OPEN</p>
-    </header>
-
-    <div class="section-divider"></div>
-
-    <!-- Types & Pricing -->
-    <section class="retro-card reveal" style="margin-bottom: var(--space-xl);">
-      <h3 class="section-header">
-        <span class="decorative">✦</span>
-        TYPES & PRICING
-        <span class="decorative">✦</span>
-      </h3>
-      
-      <div id="dynamic-prices-container">
-        <!-- Injected by script.js from Google Sheets -->
-        <div class="preloader-mini" style="text-align: center; color: var(--clr-coral); font-family: var(--font-pixel); font-size: 0.6rem; padding: var(--space-xl);">RESTOCKING SHOP...</div>
-      </div>
-
-      <div style="margin-top: var(--space-lg);">
-        <h5 style="color: var(--clr-coral); font-family: var(--font-pixel); font-size: 0.7rem; margin-bottom: var(--space-sm);">ADD-ONS</h5>
-        <ul class="retro-list" style="font-size: 0.95rem; line-height: 1.4;">
-          <li>Extra Character: 100% of base price</li>
-          <li>Commercial use: x2 base price</li>
-          <li>Minor accessories/bg: Free</li>
-          <li>Major accessories/bg: varies depending on complexity</li>
-        </ul>
-      </div>
-    </section>
-
-    <!-- Commission Type Previews -->
-    <section class="commission-preview-section reveal" style="margin-bottom: var(--space-xl);">
-      <h3 class="section-header">
-        <span class="decorative">✦</span>
-        COMMISSION SAMPLES
-        <span class="decorative">✦</span>
-      </h3>
-      <p style="text-align: center; font-family: var(--font-retro); font-size: 1rem; color: var(--text-secondary); margin-bottom: var(--space-lg);">
-        Preview of each commission type
-      </p>
-      
-      <div class="commission-preview-grid" id="commission-preview-grid">
-        <!-- Injected by script.js -->
-        <div class="preloader-mini" style="text-align: center; color: var(--clr-coral); font-family: var(--font-pixel); font-size: 0.6rem; padding: var(--space-xl);">
-          <div class="preloader-spinner" style="width: 30px; height: 30px; margin: 0 auto var(--space-md);"></div>
-          LOADING SAMPLES...
+    <!-- Site Navigation -->
+    <nav class="site-nav" id="site-nav" aria-label="Site navigation">
+      <div class="nav-inner">
+        <a href="index.html" class="nav-brand" aria-label="Bonna - Home">
+          <span class="nav-brand-icon">🦋</span>
+          <span class="nav-brand-name">BONNA</span>
+        </a>
+        <button
+          class="nav-hamburger"
+          id="nav-hamburger"
+          aria-label="Toggle navigation"
+          aria-expanded="false"
+        >
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+        <div class="nav-links" id="nav-links">
+          <a href="index.html" class="nav-link" data-page="index">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+          </a>
+          <a href="commission.html" class="nav-link" data-page="commission">
+            <i class="fa-solid fa-store"></i>
+            <span>Commission</span>
+          </a>
+          <a href="gallery.html" class="nav-link" data-page="gallery">
+            <i class="fa-solid fa-images"></i>
+            <span>Gallery</span>
+          </a>
+          <a href="tos.html" class="nav-link" data-page="tos">
+            <i class="fa-solid fa-file-contract"></i>
+            <span>ToS</span>
+          </a>
         </div>
       </div>
-    </section>
+    </nav>
 
-    <!-- Draw / Won't Draw -->
-    <section class="bento-grid" style="margin-bottom: var(--space-xl);">
-      <div class="retro-card reveal">
-        <h3 class="section-header">
-          <span class="decorative">✦</span>
-          WHAT I WILL DRAW
-          <span class="decorative">✦</span>
-        </h3>
-        <ul class="retro-list">
-          <li>Humans</li>
-          <li>Humanoid</li>
-          <li>Fanart</li>
-          <li>Ship art</li>
-          <li>OC x Canon</li>
-          <li>Kemonomimi</li>
-          <li>Slight gore</li>
-          <li>Complicated designs</li>
-        </ul>
-      </div>
-
-      <div class="retro-card reveal reveal-delay-1">
-        <h3 class="section-header">
-          <span class="decorative">✦</span>
-          WHAT I WON'T DRAW
-          <span class="decorative">✦</span>
-        </h3>
-        <ul class="retro-list">
-          <li>Heavy gore</li>
-          <li>Mecha/Sci-Fi</li>
-          <li>Furries</li>
-          <li>NSFW</li>
-          <li>NSFL</li>
-          <li>Illegal themes</li>
-          <li>Hate art</li>
-        </ul>
-      </div>
-    </section>
-
-    <!-- Commission Process -->
-    <section class="retro-card reveal" style="margin-bottom: var(--space-xl);">
-      <h3 class="section-header">
-        <span class="decorative">✦</span>
-        COMMISSION PROCESS
-        <span class="decorative">✦</span>
-      </h3>
-      <ul class="retro-list ordered-list">
-        <li>Client submits a commission request</li>
-        <li>Request is reviewed and approved</li>
-        <li>Client provides references and details</li>
-        <li>Bonna provides a rough sketch</li>
-        <li>Client pays per agreed schedule: <strong>full payment upfront</strong>, or <strong>50% after sketch approval</strong> with the <strong>remaining 50% before final delivery</strong> (see ToS)</li>
-        <li>Work-in-progress flat colors are shown</li>
-        <li>Minor revisions may be requested</li>
-        <li>Artwork completed; any balance due is settled before delivery</li>
-        <li>Final artwork delivered via email or link</li>
-      </ul>
-    </section>
-
-    <!-- Payment Methods -->
-    <section class="retro-card reveal" style="margin-bottom: var(--space-xl);">
-      <h3 class="section-header">
-        <span class="decorative">✦</span>
-        PAYMENT METHODS
-        <span class="decorative">✦</span>
-      </h3>
-      <div class="retro-table-wrapper">
-        <table class="retro-table">
-          <thead>
-            <tr>
-              <th>LOCAL</th>
-              <th>INTERNATIONAL</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Dana</td>
-              <td>PayPal</td>
-            </tr>
-            <tr>
-              <td>Gopay</td>
-              <td>Ko-Fi</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- Turnaround Time -->
-    <section class="retro-card reveal" style="margin-bottom: var(--space-xl);">
-      <h3 class="section-header">
-        <span class="decorative">✦</span>
-        TURNAROUND TIME
-        <span class="decorative">✦</span>
-      </h3>
-      <p style="text-align: center; color: var(--text-primary); margin-bottom: var(--space-md); font-family: var(--font-body); font-size: 1.1rem;">
-        Estimated completion time:<strong> 3-14 Days</strong>.
-      </p>
-      <p style="max-width: 262px; margin: 0 auto; margin-bottom: var(--space-sm);">
-        Depends on:
-      </p>
-      <ul class="retro-list" style="max-width: 300px; margin: 0 auto;">
-        <li>Artwork complexity</li>
-        <li>Current commission queue</li>
-        <li>My personal schedule</li>
-      </ul>
-      <span class="text-small" style="text-align: center; margin-top: var(--space-md);">Please let me know if there's a specific deadline.</span>
-    </section>
-
-    <!-- Footer CTA -->
-    <div class="section-divider"></div>
-    <section class="mystery-section reveal">
-      <h3 class="section-header" style="margin-bottom: var(--space-sm); color: var(--clr-warm-crimson);">REQUEST COMMISSION</h3>
-      <div class="mascot-container" style="transform: scale(0.8);">
-        <div class="mascot-parallax">
-          <img src="./assets/bonna.png" alt="Bonna mascot" class="mascot-img">
+    <main class="main-container" id="main-content" tabindex="-1">
+      <!-- Header -->
+      <header
+        class="header-section reveal"
+        style="margin-bottom: var(--space-xl)"
+      >
+        <h1 class="site-title">COMMISSION</h1>
+        <div class="commission-status-area">
+          <span
+            id="field-commission_status"
+            class="commission-status-badge status-open"
+            >OPEN</span
+          >
         </div>
-      </div>
-      <p style="text-align: center; font-family: var(--font-body); margin: var(--space-md) 0; color: var(--text-primary);">
-        Interested in making a request? Read the ToS first!
-      </p>
-      
-      <div class="cta-buttons" style="margin-bottom: var(--space-xl);">
-        <a href="tos.html" class="cta-btn cta-btn-secondary">
-          READ TERMS OF SERVICE
-        </a>
-      </div>
-      
-      <p>Just buy me a coffee ☕️ </p><br>
-      <div class="cta-buttons" style="flex-direction: row; justify-content: center; flex-wrap: wrap;">
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLSe_GdsMiygNWPwEzVMDtfz_IVCUb8eTc_UlTwhN63N36e-_Yg/viewform" class="cta-btn cta-btn-primary" style="min-width: 150px;">
-          YESSIR
-        </a>
-        <a href="https://ko-fi.com/bonnabon" class="cta-btn cta-btn-primary" style="min-width: 150px; background: #FF5E5B;">
-          KO-FI
-        </a>
-      </div>
-    </section>
+      </header>
 
-    <!-- Sound Controller -->
-    <div class="sound-controller" id="sound-controls">
-      <button class="sound-toggle-btn tooltip" id="sound-toggle" data-tooltip="Sound ON/OFF" aria-label="Toggle Sound">
-        <i class="fa-solid fa-volume-xmark"></i>
+      <div class="section-divider"></div>
+
+      <!-- Types & Pricing -->
+      <section class="retro-card reveal" style="margin-bottom: var(--space-xl)">
+        <h3 class="section-header">
+          <span class="decorative">✦</span>
+          TYPES & PRICING
+          <span class="decorative">✦</span>
+        </h3>
+
+        <div id="dynamic-prices-container">
+          <!-- Injected by script.js from Google Sheets -->
+          <div
+            class="preloader-mini"
+            style="
+              text-align: center;
+              color: var(--clr-coral);
+              font-family: var(--font-pixel);
+              font-size: 0.6rem;
+              padding: var(--space-xl);
+            "
+          >
+            RESTOCKING SHOP...
+          </div>
+        </div>
+
+        <div style="margin-top: var(--space-lg)">
+          <h5
+            style="
+              color: var(--clr-coral);
+              font-family: var(--font-pixel);
+              font-size: 0.7rem;
+              margin-bottom: var(--space-sm);
+            "
+          >
+            ADD-ONS
+          </h5>
+          <ul class="retro-list" style="font-size: 0.95rem; line-height: 1.4">
+            <li>Extra Character: 100% of base price</li>
+            <li>Commercial use: x2 base price</li>
+            <li>Minor accessories/bg: Free</li>
+            <li>Major accessories/bg: varies depending on complexity</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Commission Type Previews -->
+      <section
+        class="commission-preview-section reveal"
+        style="margin-bottom: var(--space-xl)"
+      >
+        <h3 class="section-header">
+          <span class="decorative">✦</span>
+          COMMISSION SAMPLES
+          <span class="decorative">✦</span>
+        </h3>
+        <p
+          style="
+            text-align: center;
+            font-family: var(--font-retro);
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-lg);
+          "
+        >
+          Preview of each commission type
+        </p>
+
+        <div class="commission-preview-grid" id="commission-preview-grid">
+          <!-- Injected by script.js -->
+          <div
+            class="preloader-mini"
+            style="
+              text-align: center;
+              color: var(--clr-coral);
+              font-family: var(--font-pixel);
+              font-size: 0.6rem;
+              padding: var(--space-xl);
+            "
+          >
+            <div
+              class="preloader-spinner"
+              style="width: 30px; height: 30px; margin: 0 auto var(--space-md)"
+            ></div>
+            LOADING SAMPLES...
+          </div>
+        </div>
+      </section>
+
+      <!-- Draw / Won't Draw -->
+      <section class="bento-grid" style="margin-bottom: var(--space-xl)">
+        <div class="retro-card reveal">
+          <h3 class="section-header">
+            <span class="decorative">✦</span>
+            WHAT I WILL DRAW
+            <span class="decorative">✦</span>
+          </h3>
+          <ul class="retro-list">
+            <li>Humans</li>
+            <li>Humanoid</li>
+            <li>Fanart</li>
+            <li>Ship art</li>
+            <li>OC x Canon</li>
+            <li>Kemonomimi</li>
+            <li>Slight gore</li>
+            <li>Complicated designs</li>
+          </ul>
+        </div>
+
+        <div class="retro-card reveal reveal-delay-1">
+          <h3 class="section-header">
+            <span class="decorative">✦</span>
+            WHAT I WON'T DRAW
+            <span class="decorative">✦</span>
+          </h3>
+          <ul class="retro-list">
+            <li>Heavy gore</li>
+            <li>Mecha/Sci-Fi</li>
+            <li>Furries</li>
+            <li>NSFW</li>
+            <li>NSFL</li>
+            <li>Illegal themes</li>
+            <li>Hate art</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Commission Process -->
+      <section class="retro-card reveal" style="margin-bottom: var(--space-xl)">
+        <h3 class="section-header">
+          <span class="decorative">✦</span>
+          COMMISSION PROCESS
+          <span class="decorative">✦</span>
+        </h3>
+        <ul class="retro-list ordered-list">
+          <li>Client submits a commission request</li>
+          <li>Request is reviewed and approved</li>
+          <li>Client provides references and details</li>
+          <li>Bonna provides a rough sketch</li>
+          <li>
+            Client pays per agreed schedule:
+            <strong>full payment upfront</strong>, or
+            <strong>50% after sketch approval</strong> with the
+            <strong>remaining 50% before final delivery</strong> (see ToS)
+          </li>
+          <li>Work-in-progress flat colors are shown</li>
+          <li>Minor revisions may be requested</li>
+          <li>Artwork completed; any balance due is settled before delivery</li>
+          <li>Final artwork delivered via email or link</li>
+        </ul>
+      </section>
+
+      <!-- Payment Methods -->
+      <section class="retro-card reveal" style="margin-bottom: var(--space-xl)">
+        <h3 class="section-header">
+          <span class="decorative">✦</span>
+          PAYMENT METHODS
+          <span class="decorative">✦</span>
+        </h3>
+        <div class="retro-table-wrapper">
+          <table class="retro-table">
+            <thead>
+              <tr>
+                <th>LOCAL</th>
+                <th>INTERNATIONAL</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Dana</td>
+                <td>PayPal</td>
+              </tr>
+              <tr>
+                <td>Gopay</td>
+                <td>Ko-Fi</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Turnaround Time -->
+      <section class="retro-card reveal" style="margin-bottom: var(--space-xl)">
+        <h3 class="section-header">
+          <span class="decorative">✦</span>
+          TURNAROUND TIME
+          <span class="decorative">✦</span>
+        </h3>
+        <p
+          style="
+            text-align: center;
+            color: var(--text-primary);
+            margin-bottom: var(--space-md);
+            font-family: var(--font-body);
+            font-size: 1.1rem;
+          "
+        >
+          Estimated completion time:<strong> 3-14 Days</strong>.
+        </p>
+        <p
+          style="
+            max-width: 262px;
+            margin: 0 auto;
+            margin-bottom: var(--space-sm);
+          "
+        >
+          Depends on:
+        </p>
+        <ul class="retro-list" style="max-width: 300px; margin: 0 auto">
+          <li>Artwork complexity</li>
+          <li>Current commission queue</li>
+          <li>My personal schedule</li>
+        </ul>
+        <span
+          class="text-small"
+          style="text-align: center; margin-top: var(--space-md)"
+          >Please let me know if there's a specific deadline.</span
+        >
+      </section>
+
+      <!-- Footer CTA -->
+      <div class="section-divider"></div>
+      <section class="mystery-section reveal">
+        <h3
+          class="section-header"
+          style="margin-bottom: var(--space-sm); color: var(--clr-warm-crimson)"
+        >
+          REQUEST COMMISSION
+        </h3>
+        <div class="mascot-container" style="transform: scale(0.8)">
+          <div class="mascot-parallax">
+            <img
+              src="./assets/bonna.png"
+              alt="Bonna mascot"
+              class="mascot-img"
+            />
+          </div>
+        </div>
+        <p
+          style="
+            text-align: center;
+            font-family: var(--font-body);
+            margin: var(--space-md) 0;
+            color: var(--text-primary);
+          "
+        >
+          Interested in making a request? Read the ToS first!
+        </p>
+
+        <div class="cta-buttons" style="margin-bottom: var(--space-xl)">
+          <a href="tos.html" class="cta-btn cta-btn-secondary">
+            READ TERMS OF SERVICE
+          </a>
+        </div>
+
+        <p>Just buy me a coffee ☕️</p>
+        <br />
+        <div
+          class="cta-buttons"
+          style="flex-direction: row; justify-content: center; flex-wrap: wrap"
+        >
+          <a
+            href="https://docs.google.com/forms/d/e/1FAIpQLSe_GdsMiygNWPwEzVMDtfz_IVCUb8eTc_UlTwhN63N36e-_Yg/viewform"
+            class="cta-btn cta-btn-primary"
+            style="min-width: 150px"
+          >
+            YESSIR
+          </a>
+          <a
+            href="https://ko-fi.com/bonnabon"
+            class="cta-btn cta-btn-primary"
+            style="min-width: 150px; background: #ff5e5b"
+          >
+            KO-FI
+          </a>
+        </div>
+      </section>
+
+      <!-- Sound Controller -->
+      <div class="sound-controller" id="sound-controls">
+        <button
+          class="sound-toggle-btn tooltip"
+          id="sound-toggle"
+          data-tooltip="Sound ON/OFF"
+          aria-label="Toggle Sound"
+        >
+          <i class="fa-solid fa-volume-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Scroll to Top -->
+      <button
+        class="scroll-to-top"
+        id="scroll-to-top"
+        aria-label="Scroll to top"
+      >
+        <i class="fa-solid fa-chevron-up"></i>
       </button>
-    </div>
-    <!-- Navigation back -->
-    <div style="text-align: center; margin-top: var(--space-2xl);">
-      <a href="index.html" class="cta-btn cta-btn-secondary back-home-btn" id="btn-back-home">
-        <i class="fa-solid fa-house-user"></i>
-        <span>Return Home</span>
-      </a>
-    </div>
-  </main>
+    </main>
 
-  <script src="js/script.js"></script>
-</body>
+    <script src="js/utils.js"></script>
+    <script src="js/script.js"></script>
+  </body>
 </html>
