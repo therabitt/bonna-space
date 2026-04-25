@@ -723,11 +723,16 @@ document.addEventListener("DOMContentLoaded", () => {
       this.allGalleryItems = [];
       this.filteredItems = [];
       this.currentFilter = "all";
+      this.currentCategoryFilter = "all";
+      this.currentTypeFilter = "all";
       this.currentLightboxIndex = 0;
 
       this.elements = {
         grid: document.getElementById("gallery-grid"),
         filtersContainer: document.getElementById("gallery-filters-dynamic"),
+        categoryFiltersContainer: document.getElementById(
+          "gallery-filters-categories",
+        ),
         loadMoreBtn: document.getElementById("gallery-load-more"),
         noResults: document.getElementById("gallery-no-results"),
         lightbox: document.getElementById("gallery-lightbox"),
@@ -767,11 +772,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setupEventListeners() {
       // Filter buttons
+      // NEW — reads data-filter-kind from the static "All" buttons
       if (this.elements.filterButtons) {
         this.elements.filterButtons.forEach((btn) => {
           btn.addEventListener("click", (e) => {
             const filter = e.currentTarget.dataset.filter;
-            this.setFilter(filter);
+            const kind = e.currentTarget.dataset.filterKind || "type";
+            this.setFilter(filter, kind);
           });
         });
       }
@@ -843,6 +850,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       this.filteredItems = [...this.allGalleryItems];
 
+      // Reset both filters on fresh data load
+      this.currentCategoryFilter = "all";
+      this.currentTypeFilter = "all";
+
       // Generate dynamic filters
       this.generateFilters();
 
@@ -851,57 +862,141 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     generateFilters() {
-      if (!this.elements.filtersContainer) return;
+      this.generateCategoryFilters();
+      this.generateTypeFilters();
+    }
 
-      // Get unique types from gallery items
-      const types = new Set();
+    generateCategoryFilters() {
+      const container = this.elements.categoryFiltersContainer;
+      if (!container) return;
+
+      // Always seed from Prices first — every known style is always visible as a filter
+      const categories = new Set();
+      if (this.dataManager.cache?.Prices) {
+        this.dataManager.cache.Prices.forEach((p) => {
+          if (p.Category) categories.add(p.Category);
+        });
+      }
+
+      // Also add any custom categories that exist on gallery items but aren't in Prices
       this.allGalleryItems.forEach((item) => {
-        const type = BonnaUtils.getVal(item, "Type");
-        if (type) types.add(type);
+        const cat = BonnaUtils.getVal(item, "Category");
+        if (cat) categories.add(cat);
       });
 
-      // Get types from Prices sheet as fallback
-      if (types.size === 0 && this.dataManager.cache?.Prices) {
+      container.innerHTML = "";
+      Array.from(categories)
+        .sort()
+        .forEach((category) => {
+          const btn = document.createElement("button");
+          btn.className = "gallery-filter-btn";
+          btn.dataset.filter = category.toLowerCase();
+          btn.dataset.filterKind = "category";
+          btn.innerHTML = `<i class="fa-solid fa-palette"></i> ${BonnaUtils.escapeHtml(category)}`;
+          btn.addEventListener(
+            "click",
+            () => this.setFilter(category.toLowerCase(), "category"),
+            {
+              signal: this._abortController.signal,
+            },
+          );
+          container.appendChild(btn);
+        });
+    }
+
+    generateTypeFilters() {
+      const container = this.elements.filtersContainer;
+      if (!container) return;
+
+      // Always seed from CommissionTypes first — this is the authoritative source
+      const types = new Set();
+      if (this.dataManager.cache?.CommissionTypes) {
+        this.dataManager.cache.CommissionTypes.forEach((ct) => {
+          const type = BonnaUtils.getVal(ct, "Type");
+          if (type) types.add(type);
+        });
+      }
+
+      // Also include types from Prices sheet (fallback/legacy support)
+      if (this.dataManager.cache?.Prices) {
         this.dataManager.cache.Prices.forEach((p) => {
           if (p.Type) types.add(p.Type);
         });
       }
 
-      // Create filter buttons
-      this.elements.filtersContainer.innerHTML = "";
+      // Also add any custom types that exist on gallery items but aren't in the above sheets
+      this.allGalleryItems.forEach((item) => {
+        const type = BonnaUtils.getVal(item, "Type");
+        if (type) types.add(type);
+      });
 
+      container.innerHTML = "";
       Array.from(types)
         .sort()
         .forEach((type) => {
           const btn = document.createElement("button");
           btn.className = "gallery-filter-btn";
           btn.dataset.filter = type.toLowerCase();
-          btn.innerHTML = `<i class="fa-solid fa-filter"></i> ${type}`;
-          btn.addEventListener("click", () =>
-            this.setFilter(type.toLowerCase()),
+          btn.dataset.filterKind = "type";
+          btn.innerHTML = `<i class="fa-solid fa-filter"></i> ${BonnaUtils.escapeHtml(type)}`;
+          btn.addEventListener(
+            "click",
+            () => this.setFilter(type.toLowerCase(), "type"),
+            {
+              signal: this._abortController.signal,
+            },
           );
-          this.elements.filtersContainer.appendChild(btn);
+          container.appendChild(btn);
         });
     }
 
-    setFilter(filter) {
-      this.currentFilter = filter;
+    setFilter(filter, kind = "type") {
       this.currentPage = 1;
 
-      // Update active state on buttons
-      document.querySelectorAll(".gallery-filter-btn").forEach((btn) => {
-        btn.classList.toggle("active", btn.dataset.filter === filter);
-      });
+      if (kind === "category") {
+        this.currentCategoryFilter = filter;
 
-      // Filter items
-      if (filter === "all") {
-        this.filteredItems = [...this.allGalleryItems];
+        // Update active state — only touch category row buttons
+        document
+          .querySelector('[data-filter="all"][data-filter-kind="category"]')
+          ?.classList.toggle("active", filter === "all");
+        document
+          .querySelectorAll(
+            '[data-filter-kind="category"]:not([data-filter="all"])',
+          )
+          .forEach((btn) => {
+            btn.classList.toggle("active", btn.dataset.filter === filter);
+          });
       } else {
-        this.filteredItems = this.allGalleryItems.filter((item) => {
-          const itemType = BonnaUtils.getVal(item, "Type")?.toLowerCase() || "";
-          return itemType === filter;
-        });
+        this.currentTypeFilter = filter;
+
+        // Update active state — only touch type row buttons
+        document
+          .querySelector('[data-filter="all"][data-filter-kind="type"]')
+          ?.classList.toggle("active", filter === "all");
+        document
+          .querySelectorAll(
+            '[data-filter-kind="type"]:not([data-filter="all"])',
+          )
+          .forEach((btn) => {
+            btn.classList.toggle("active", btn.dataset.filter === filter);
+          });
       }
+
+      // Apply BOTH active filters simultaneously
+      this.filteredItems = this.allGalleryItems.filter((item) => {
+        const itemCategory = BonnaUtils.getVal(item, "Category").toLowerCase();
+        const itemType = BonnaUtils.getVal(item, "Type").toLowerCase();
+
+        const categoryMatch =
+          this.currentCategoryFilter === "all" ||
+          itemCategory === this.currentCategoryFilter;
+        const typeMatch =
+          this.currentTypeFilter === "all" ||
+          itemType === this.currentTypeFilter;
+
+        return categoryMatch && typeMatch;
+      });
 
       this.renderGallery();
     }

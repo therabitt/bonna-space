@@ -316,7 +316,7 @@ body {
   z-index: 500;
   height: var(--nav-height);
   background: var(--clr-dark-plum);
-  border-bottom: 4px solid var(--clr-warm-crimson);
+  border-bottom: 1px solid var(--clr-warm-crimson);
   box-shadow: 0 4px 0 rgba(45, 10, 30, 0.6);
 }
 
@@ -415,7 +415,7 @@ body {
   color: var(--clr-dark-plum);
   background: var(--clr-coral);
   border-color: var(--clr-light-peach);
-  box-shadow: inset 0 -2px 0 rgba(0,0,0,0.2);
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.2);
 }
 
 .nav-hamburger {
@@ -670,13 +670,13 @@ body {
   flex-direction: column;
   align-items: center;
   gap: var(--space-sm);
-  margin-bottom: var(--space-lg);
+  margin-bottom: var(--space-md);
 }
 
 .mascot-container {
   position: relative;
   display: inline-block;
-  margin-bottom: var(--space-lg);
+  margin-bottom: var(--space-md);
   /* Ensure no checkerboard shows through transparent PNGs */
   isolation: isolate;
 }
@@ -684,26 +684,18 @@ body {
 /* Scroll-driven parallax lives here so .mascot-img keyframe bounce stays independent */
 .mascot-parallax {
   display: inline-block;
-  transform: translateY(var(--scroll-y, 0px)) rotate(var(--scroll-rotate, 0deg));
   transform-origin: center center;
 }
 
 .mascot-img {
-  width: 160px;
-  height: 160px;
+  width: 240px;
+  height: 240px;
   object-fit: contain;
   image-rendering: pixelated;
-  animation: mascotBounce 3s ease-in-out infinite;
   filter: drop-shadow(0 8px 24px rgba(139, 34, 82, 0.4));
-  transition: transform var(--transition-bounce);
   /* Blend away any transparency artifacts */
   mix-blend-mode: normal;
   background: transparent;
-}
-
-.mascot-img:hover {
-  transform: scale(1.1) rotate(-5deg);
-  animation-play-state: paused;
 }
 
 @keyframes mascotBounce {
@@ -1507,6 +1499,11 @@ body {
   .cta-btn {
     min-width: 100%;
   }
+
+  .fandom-tag {
+    justify-content: start;
+    flex: 1 1 auto;
+  }
 }
 
 /* --- Preloader --- */
@@ -2027,6 +2024,27 @@ button:disabled {
 /* --- Gallery Filter Section --- */
 .gallery-filter-section {
   margin-bottom: var(--space-xl);
+}
+
+.gallery-filters-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-sm);
+}
+
+.gallery-filters-group:last-child {
+  margin-bottom: 0;
+}
+
+.gallery-filter-label {
+  font-family: var(--font-pixel);
+  font-size: 0.45rem;
+  color: var(--text-secondary);
+  letter-spacing: 3px;
+  text-align: center;
+  opacity: 0.8;
 }
 
 .gallery-filter-container {

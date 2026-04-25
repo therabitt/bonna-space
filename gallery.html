@@ -111,12 +111,37 @@
 
       <!-- Filter Section -->
       <section class="gallery-filter-section reveal">
-        <div class="gallery-filter-container">
-          <button class="gallery-filter-btn active" data-filter="all">
-            <i class="fa-solid fa-border-all"></i> All
-          </button>
-          <div id="gallery-filters-dynamic">
-            <!-- Dynamic filters injected by JS -->
+        <!-- Row 1: Style (Category) Filters — Full Render, Pixel, Sketch, etc. -->
+        <div class="gallery-filters-group">
+          <span class="gallery-filter-label">✦ STYLE</span>
+          <div class="gallery-filter-container">
+            <button
+              class="gallery-filter-btn active"
+              data-filter="all"
+              data-filter-kind="category"
+            >
+              <i class="fa-solid fa-border-all"></i> All
+            </button>
+            <div id="gallery-filters-categories">
+              <!-- Dynamic category filters injected by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 2: Type Filters — Chibi, Bust, Half Body, etc. -->
+        <div class="gallery-filters-group">
+          <span class="gallery-filter-label">✦ TYPE</span>
+          <div class="gallery-filter-container">
+            <button
+              class="gallery-filter-btn active"
+              data-filter="all"
+              data-filter-kind="type"
+            >
+              <i class="fa-solid fa-border-all"></i> All
+            </button>
+            <div id="gallery-filters-dynamic">
+              <!-- Dynamic type filters injected by JS -->
+            </div>
           </div>
         </div>
       </section>

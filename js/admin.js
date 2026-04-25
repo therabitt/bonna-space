@@ -281,6 +281,7 @@ const galleryManager = {
   loadGalleryEditor() {
     this.galleryItems = state.cache?.Gallery || state.cache?.Showcase || [];
     this.renderGalleryList();
+    commissionManager.populateGalleryDropdowns();
   },
 
   renderGalleryList() {
@@ -303,6 +304,7 @@ const galleryManager = {
         const title = BonnaUtils.getVal(item, "Title") || "Untitled";
         const imageUrl = BonnaUtils.getVal(item, "ImageURL");
         const type = BonnaUtils.getVal(item, "Type") || "Uncategorized";
+        const category = BonnaUtils.getVal(item, "Category") || "";
 
         return `
         <div class="gallery-editor-item" data-id="${id}" data-index="${index}">
@@ -311,7 +313,7 @@ const galleryManager = {
           </div>
           <div class="gallery-editor-info">
             <h4 class="gallery-editor-title">${BonnaUtils.escapeHtml(title)}</h4>
-            <span class="gallery-editor-type">${BonnaUtils.escapeHtml(type)}</span>
+            <span class="gallery-editor-type">${category ? `<span style="opacity:0.6">${BonnaUtils.escapeHtml(category)} · </span>` : ""}${BonnaUtils.escapeHtml(type)}</span>
           </div>
           <div class="gallery-editor-actions">
             <button class="gallery-editor-btn edit" onclick="galleryManager.editItem(${index})" title="Edit">
@@ -345,12 +347,15 @@ const galleryManager = {
         BonnaUtils.getVal(item, "ImageURL") || "";
       document.getElementById("gallery-input-type").value =
         BonnaUtils.getVal(item, "Type") || "";
+      document.getElementById("gallery-input-category").value =
+        BonnaUtils.getVal(item, "Category") || "";
       document.getElementById("gallery-input-desc").value =
         BonnaUtils.getVal(item, "Description") || "";
     } else {
       form.reset();
     }
 
+    commissionManager.populateGalleryDropdowns();
     this.updateGalleryPreview();
     modal.classList.add("active");
   },
@@ -368,6 +373,8 @@ const galleryManager = {
     const imageUrl = document.getElementById("gallery-input-url")?.value || "";
     const type =
       document.getElementById("gallery-input-type")?.value || "Artwork";
+    const category =
+      document.getElementById("gallery-input-category")?.value || "";
 
     const previewContainer = document.getElementById(
       "gallery-preview-container",
@@ -381,7 +388,7 @@ const galleryManager = {
         </div>
         <div class="gallery-preview-info">
           <h4 class="gallery-preview-title">${BonnaUtils.escapeHtml(title)}</h4>
-          <span class="gallery-preview-type">${BonnaUtils.escapeHtml(type)}</span>
+          <span class="gallery-preview-type">${category ? BonnaUtils.escapeHtml(category) + " · " : ""}${BonnaUtils.escapeHtml(type)}</span>
         </div>
       </div>
     `;
@@ -446,6 +453,8 @@ const galleryManager = {
     const title = document.getElementById("gallery-input-title")?.value.trim();
     const imageUrl = document.getElementById("gallery-input-url")?.value.trim();
     const type = document.getElementById("gallery-input-type")?.value.trim();
+    const category =
+      document.getElementById("gallery-input-category")?.value.trim() || "";
     const desc = document.getElementById("gallery-input-desc")?.value.trim();
 
     if (!title || !imageUrl) {
@@ -469,6 +478,7 @@ const galleryManager = {
           Title: title,
           ImageURL: imageUrl,
           Type: type,
+          Category: category,
           Description: desc,
           Order: this.currentEditId + 1,
         };
@@ -482,6 +492,7 @@ const galleryManager = {
             Title: title,
             ImageURL: imageUrl,
             Type: type,
+            Category: category,
             Description: desc,
             Order: newId,
           },
@@ -565,22 +576,51 @@ const commissionManager = {
     }
 
     this.renderCommissionList();
-    this.populateTypeDropdowns();
+    this.populateGalleryDropdowns();
   },
 
-  populateTypeDropdowns() {
+  populateGalleryDropdowns() {
+    // --- Style (Category) select ---
+    const categorySelect = document.getElementById("gallery-input-category");
+    if (categorySelect) {
+      const categories = [
+        ...new Set(
+          state.cache?.Prices?.map((p) => p.Category).filter(Boolean) || [],
+        ),
+      ];
+      const currentCat = categorySelect.value;
+      categorySelect.innerHTML = `
+        <option value="">Select Style</option>
+        ${categories
+          .map(
+            (c) =>
+              `<option value="${BonnaUtils.escapeHtml(c)}">${BonnaUtils.escapeHtml(c)}</option>`,
+          )
+          .join("")}
+      `;
+      if (currentCat) categorySelect.value = currentCat;
+    }
+
+    // --- Type select ---
     const typeSelect = document.getElementById("gallery-input-type");
-    if (!typeSelect) return;
-
-    const types = [
-      ...new Set(state.cache?.Prices?.map((p) => p.Category) || []),
-    ];
-
-    typeSelect.innerHTML = `
-      <option value="">Select Type</option>
-      ${types.map((type) => `<option value="${BonnaUtils.escapeHtml(type)}">${BonnaUtils.escapeHtml(type)}</option>`).join("")}
-      <option value="Other">Other</option>
-    `;
+    if (typeSelect) {
+      const rawTypes =
+        state.cache?.Prices?.map((p) => p.Type || p.Category).filter(Boolean) ||
+        [];
+      const types = [...new Set(rawTypes)];
+      const currentType = typeSelect.value;
+      typeSelect.innerHTML = `
+        <option value="">Select Type</option>
+        ${types
+          .map(
+            (t) =>
+              `<option value="${BonnaUtils.escapeHtml(t)}">${BonnaUtils.escapeHtml(t)}</option>`,
+          )
+          .join("")}
+        <option value="Other">Other</option>
+      `;
+      if (currentType) typeSelect.value = currentType;
+    }
   },
 
   renderCommissionList() {

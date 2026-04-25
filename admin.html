@@ -239,15 +239,18 @@
             </div>
 
             <div class="admin-form-group">
+              <label class="admin-label">STYLE (CATEGORY)</label>
+              <select id="gallery-input-category" class="admin-select">
+                <option value="">Select Style</option>
+                <!-- Options injected dynamically from Prices sheet Category column -->
+              </select>
+            </div>
+
+            <div class="admin-form-group">
               <label class="admin-label">TYPE</label>
               <select id="gallery-input-type" class="admin-select">
                 <option value="">Select Type</option>
-                <option value="Chibi">Chibi</option>
-                <option value="Close Up">Close Up</option>
-                <option value="Half Body">Half Body</option>
-                <option value="Full Body">Full Body</option>
-                <option value="Scene">Scene</option>
-                <option value="Other">Other</option>
+                <!-- Options injected dynamically from Prices sheet by populateTypeDropdowns() -->
               </select>
             </div>
 
