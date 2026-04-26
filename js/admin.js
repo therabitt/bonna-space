@@ -305,21 +305,23 @@ const galleryManager = {
         const imageUrl = BonnaUtils.getVal(item, "ImageURL");
         const type = BonnaUtils.getVal(item, "Type") || "Uncategorized";
         const category = BonnaUtils.getVal(item, "Category") || "";
+        const desc = BonnaUtils.getVal(item, "Description") || "";
 
         return `
-        <div class="gallery-editor-item" data-id="${id}" data-index="${index}">
-          <div class="gallery-editor-thumb">
+        <div class="admin-editor-item" data-index="${index}">
+          <div class="admin-editor-thumb">
             ${imageUrl ? `<img src="${imageUrl}" alt="${BonnaUtils.escapeHtml(title)}" loading="lazy">` : '<i class="fa-solid fa-image"></i>'}
           </div>
-          <div class="gallery-editor-info">
-            <h4 class="gallery-editor-title">${BonnaUtils.escapeHtml(title)}</h4>
-            <span class="gallery-editor-type">${category ? `<span style="opacity:0.6">${BonnaUtils.escapeHtml(category)} · </span>` : ""}${BonnaUtils.escapeHtml(type)}</span>
+          <div class="admin-editor-info">
+            <h4 class="admin-editor-title">${BonnaUtils.escapeHtml(title)}</h4>
+            <div class="admin-editor-meta">${category ? `${BonnaUtils.escapeHtml(category)} · ` : ""}${BonnaUtils.escapeHtml(type)}</div>
+            ${desc ? `<p class="admin-editor-desc">${BonnaUtils.escapeHtml(desc)}</p>` : ""}
           </div>
-          <div class="gallery-editor-actions">
-            <button class="gallery-editor-btn edit" onclick="galleryManager.editItem(${index})" title="Edit">
+          <div class="admin-editor-actions">
+            <button class="admin-editor-btn edit" data-action="edit" title="Edit">
               <i class="fa-solid fa-pen"></i>
             </button>
-            <button class="gallery-editor-btn delete" onclick="galleryManager.deleteItem(${index})" title="Delete">
+            <button class="admin-editor-btn delete" data-action="delete" title="Delete">
               <i class="fa-solid fa-trash"></i>
             </button>
           </div>
@@ -386,9 +388,9 @@ const galleryManager = {
         <div class="gallery-preview-image">
           ${imageUrl ? `<img src="${imageUrl}" alt="${BonnaUtils.escapeHtml(title)}" onerror="this.src=''">` : '<div class="gallery-preview-placeholder"><i class="fa-solid fa-image"></i><span>No image</span></div>'}
         </div>
-        <div class="gallery-preview-info">
-          <h4 class="gallery-preview-title">${BonnaUtils.escapeHtml(title)}</h4>
-          <span class="gallery-preview-type">${category ? BonnaUtils.escapeHtml(category) + " · " : ""}${BonnaUtils.escapeHtml(type)}</span>
+        <div class="admin-editor-info" style="padding: var(--space-sm);">
+          <h4 class="admin-editor-title">${BonnaUtils.escapeHtml(title)}</h4>
+          <div class="admin-editor-meta" style="font-size: 0.7rem;">${category ? BonnaUtils.escapeHtml(category) + " · " : ""}${BonnaUtils.escapeHtml(type)}</div>
         </div>
       </div>
     `;
@@ -554,29 +556,15 @@ const galleryManager = {
 };
 
 // ============================================
-// COMMISSION MANAGER
+// ============================================
+// COMMISSION MANAGER (reads/writes Prices sheet)
 // ============================================
 const commissionManager = {
-  commissionTypes: [],
+  priceItems: [],
 
   loadCommissionEditor() {
-    this.commissionTypes = state.cache?.CommissionTypes || [];
-
-    // Fallback: generate from Prices
-    if (this.commissionTypes.length === 0 && state.cache?.Prices) {
-      const uniqueTypes = [
-        ...new Set(state.cache.Prices.map((p) => p.Category)),
-      ];
-      this.commissionTypes = uniqueTypes.map((type, index) => ({
-        Type: type,
-        SampleImage: "",
-        Description: BonnaUtils.getDefaultDescription(type),
-        DisplayOrder: index + 1,
-      }));
-    }
-
+    this.priceItems = state.cache?.Prices || [];
     this.renderCommissionList();
-    this.populateGalleryDropdowns();
   },
 
   populateGalleryDropdowns() {
@@ -584,9 +572,7 @@ const commissionManager = {
     const categorySelect = document.getElementById("gallery-input-category");
     if (categorySelect) {
       const categories = [
-        ...new Set(
-          state.cache?.Prices?.map((p) => p.Category).filter(Boolean) || [],
-        ),
+        ...new Set(this.priceItems.map((p) => p.Category).filter(Boolean)),
       ];
       const currentCat = categorySelect.value;
       categorySelect.innerHTML = `
@@ -604,9 +590,9 @@ const commissionManager = {
     // --- Type select ---
     const typeSelect = document.getElementById("gallery-input-type");
     if (typeSelect) {
-      const rawTypes =
-        state.cache?.Prices?.map((p) => p.Type || p.Category).filter(Boolean) ||
-        [];
+      const rawTypes = this.priceItems
+        .map((p) => p.Type || p.Category)
+        .filter(Boolean);
       const types = [...new Set(rawTypes)];
       const currentType = typeSelect.value;
       typeSelect.innerHTML = `
@@ -627,34 +613,46 @@ const commissionManager = {
     const container = document.getElementById("commission-editor-list");
     if (!container) return;
 
-    if (this.commissionTypes.length === 0) {
+    if (this.priceItems.length === 0) {
       container.innerHTML = `
         <div class="empty-state">
           <i class="fa-solid fa-palette"></i>
-          <p>No commission types configured.</p>
+          <p>No commission types configured. Add rows to your Prices sheet.</p>
         </div>
       `;
       return;
     }
 
-    container.innerHTML = this.commissionTypes
+    container.innerHTML = this.priceItems
       .map((item, index) => {
+        const category = BonnaUtils.getVal(item, "Category");
         const type = BonnaUtils.getVal(item, "Type");
         const sampleImage = BonnaUtils.getVal(item, "SampleImage");
-        const description = BonnaUtils.getVal(item, "Description");
+        const priceUSD = BonnaUtils.getVal(item, "PriceUSD");
+        const priceIDR = BonnaUtils.getVal(item, "PriceIDR");
+        const desc = BonnaUtils.getVal(item, "Description") || "";
+
+        const priceDisplay = priceUSD
+          ? `$${priceUSD}` + (priceIDR ? ` / Rp${priceIDR}` : "")
+          : "Contact for pricing";
 
         return `
-        <div class="commission-editor-item" data-index="${index}">
-          <div class="commission-editor-image">
-            ${sampleImage ? `<img src="${sampleImage}" alt="${BonnaUtils.escapeHtml(type)}" loading="lazy">` : '<i class="fa-solid fa-image"></i>'}
+        <div class="admin-editor-item" data-index="${index}">
+          <div class="admin-editor-thumb">
+            ${sampleImage ? `<img src="${sampleImage}" alt="${BonnaUtils.escapeHtml(type)}" loading="lazy">` : '<i class="fa-solid fa-palette"></i>'}
           </div>
-          <div class="commission-editor-info">
-            <h4 class="commission-editor-type">${BonnaUtils.escapeHtml(type)}</h4>
-            <p class="commission-editor-desc">${BonnaUtils.escapeHtml(description)}</p>
+          <div class="admin-editor-info">
+            <h4 class="admin-editor-title">${BonnaUtils.escapeHtml(type)}</h4>
+            <div class="admin-editor-meta">${BonnaUtils.escapeHtml(category)}</div>
+            <div class="admin-editor-meta" style="background: linear-gradient(135deg, var(--clr-gold), var(--clr-gold-soft)); color: var(--text-primary);">${priceDisplay}</div>
+            ${desc ? `<p class="admin-editor-desc">${BonnaUtils.escapeHtml(desc)}</p>` : ""}
           </div>
-          <div class="commission-editor-actions">
-            <button class="commission-editor-btn edit" onclick="commissionManager.editType(${index})" title="Edit">
+          <div class="admin-editor-actions">
+            <button class="admin-editor-btn edit" data-action="edit" title="Edit">
               <i class="fa-solid fa-pen"></i>
+            </button>
+            <button class="admin-editor-btn delete" data-action="delete" title="Delete">
+              <i class="fa-solid fa-trash"></i>
             </button>
           </div>
         </div>
@@ -663,22 +661,74 @@ const commissionManager = {
       .join("");
   },
 
+  // Open modal for add or edit
+  openModal(mode = "add", index = null) {
+    const modal = document.getElementById("commission-modal");
+    const title = document.getElementById("commission-modal-title");
+    const form = document.getElementById("commission-edit-form");
+
+    title.textContent = mode === "edit" ? "Edit Commission Type" : "Add New Commission Type";
+
+    // Set index (null or number)
+    document.getElementById("commission-edit-index").value = index !== null ? index : "";
+
+    const categoryInput = document.getElementById("commission-edit-category");
+    const typeInput = document.getElementById("commission-edit-type");
+
+    if (mode === "edit" && index !== null) {
+      const item = this.priceItems[index];
+      categoryInput.value = BonnaUtils.getVal(item, "Category") || "";
+      typeInput.value = BonnaUtils.getVal(item, "Type") || "";
+      document.getElementById("commission-edit-url").value = BonnaUtils.getVal(item, "SampleImage") || "";
+      document.getElementById("commission-edit-desc").value = BonnaUtils.getVal(item, "Description") || "";
+      document.getElementById("commission-edit-priceusd").value = BonnaUtils.getVal(item, "PriceUSD") || "";
+      document.getElementById("commission-edit-priceidr").value = BonnaUtils.getVal(item, "PriceIDR") || "";
+
+      // Lock keys during edit to maintain consistency
+      categoryInput.readOnly = true;
+      typeInput.readOnly = true;
+    } else {
+      form.reset();
+      categoryInput.readOnly = false;
+      typeInput.readOnly = false;
+    }
+
+    modal.classList.add("active");
+    this.updateCommissionPreview();
+  },
+
   // Edit commission type
   editType(index) {
-    const item = this.commissionTypes[index];
-    const type = BonnaUtils.getVal(item, "Type");
-    const sampleImage = BonnaUtils.getVal(item, "SampleImage");
-    const description = BonnaUtils.getVal(item, "Description");
+    this.openModal("edit", index);
+  },
 
-    // Populate edit form
-    document.getElementById("commission-edit-type").value = type;
-    document.getElementById("commission-edit-url").value = sampleImage;
-    document.getElementById("commission-edit-desc").value = description;
-    document.getElementById("commission-edit-index").value = index;
+  // Delete commission type
+  async deleteType(index) {
+    const item = this.priceItems[index];
+    const typeName = BonnaUtils.getVal(item, "Type");
 
-    // Show modal
-    document.getElementById("commission-modal").classList.add("active");
-    this.updateCommissionPreview();
+    if (!confirm(`Are you sure you want to delete "${typeName}"? This will remove it from the price list and showcase.`)) return;
+
+    const token = sessionStorage.getItem("bonna_admin_token") || "";
+    if (!token) {
+      BonnaUtils.showToast("Session expired. Please log in again.", "error");
+      setTimeout(() => window.location.replace("admin-login.html"), 1500);
+      return;
+    }
+
+    try {
+      const data = [...this.priceItems];
+      data.splice(index, 1);
+
+      await api.saveData("Prices", data, token);
+
+      state.cache.Prices = data;
+      this.priceItems = data;
+      this.renderCommissionList();
+      BonnaUtils.showToast(`✨ "${typeName}" deleted successfully!`, "success");
+    } catch (err) {
+      BonnaUtils.showToast("Error deleting: " + err.message, "error");
+    }
   },
 
   closeModal() {
@@ -687,23 +737,30 @@ const commissionManager = {
 
   // Update preview
   updateCommissionPreview() {
-    const type =
-      document.getElementById("commission-edit-type")?.value || "Commission";
-    const imageUrl =
-      document.getElementById("commission-edit-url")?.value || "";
+    const type = document.getElementById("commission-edit-type")?.value || "Commission";
+    const category = document.getElementById("commission-edit-category")?.value || "";
+    const imageUrl = document.getElementById("commission-edit-url")?.value || "";
     const desc = document.getElementById("commission-edit-desc")?.value || "";
+    const priceUSD = document.getElementById("commission-edit-priceusd")?.value || "";
+    const priceIDR = document.getElementById("commission-edit-priceidr")?.value || "";
 
     const preview = document.getElementById("commission-preview");
     if (!preview) return;
+
+    const priceDisplay = priceUSD
+      ? `$${priceUSD}` + (priceIDR ? ` / Rp${priceIDR}` : "")
+      : "Contact for pricing";
 
     preview.innerHTML = `
       <div class="commission-preview-card">
         <div class="commission-preview-image-container" style="height: 200px;">
           ${imageUrl ? `<img src="${imageUrl}" alt="${BonnaUtils.escapeHtml(type)}" style="width: 100%; height: 100%; object-fit: cover;">` : '<div class="commission-preview-image-placeholder">No Image</div>'}
         </div>
-        <div class="commission-preview-info">
-          <h4 class="commission-preview-type">${BonnaUtils.escapeHtml(type)}</h4>
-          <p class="commission-preview-desc">${BonnaUtils.escapeHtml(desc)}</p>
+        <div class="admin-editor-info" style="padding: var(--space-md);">
+          <div class="admin-editor-meta" style="font-size: 0.7rem; margin-bottom: 4px;">${BonnaUtils.escapeHtml(category)}</div>
+          <h4 class="admin-editor-title" style="font-size: 0.8rem; margin-bottom: 8px;">${BonnaUtils.escapeHtml(type)}</h4>
+          <p class="admin-editor-desc" style="margin-bottom: 12px;">${BonnaUtils.escapeHtml(desc)}</p>
+          <div class="admin-editor-meta" style="background: var(--clr-gold); color: var(--text-primary); font-weight: bold;">${priceDisplay}</div>
         </div>
       </div>
     `;
@@ -714,13 +771,9 @@ const commissionManager = {
     const file = input.files[0];
     if (!file) return;
 
-    const fileName =
-      file.name.length > 20 ? file.name.substring(0, 20) + "..." : file.name;
+    const fileName = file.name.length > 20 ? file.name.substring(0, 20) + "..." : file.name;
 
-    // Update UI
-    const uploadBtn = input
-      .closest(".file-upload-wrapper")
-      ?.querySelector(".file-upload-btn");
+    const uploadBtn = input.closest(".file-upload-wrapper")?.querySelector(".file-upload-btn");
     if (uploadBtn) {
       uploadBtn.innerHTML = `<i class="fa-solid fa-file-image"></i> ${fileName}`;
     }
@@ -732,7 +785,6 @@ const commissionManager = {
       this.updateCommissionPreview();
       BonnaUtils.showToast(`✨ "${fileName}" uploaded!`, "success");
 
-      // Reset button
       if (uploadBtn) {
         uploadBtn.innerHTML = `<i class="fa-solid fa-check"></i> Done`;
         setTimeout(() => {
@@ -747,7 +799,7 @@ const commissionManager = {
     }
   },
 
-  // Save commission type
+  // Save commission type — saves to Prices sheet
   async saveType() {
     const token = sessionStorage.getItem("bonna_admin_token") || "";
     if (!token) {
@@ -756,17 +808,19 @@ const commissionManager = {
       return;
     }
 
-    const index = parseInt(
-      document.getElementById("commission-edit-index")?.value,
-    );
-    const type = document.getElementById("commission-edit-type")?.value;
-    const imageUrl = document
-      .getElementById("commission-edit-url")
-      ?.value.trim();
-    const desc = document.getElementById("commission-edit-desc")?.value.trim();
+    const indexVal = document.getElementById("commission-edit-index")?.value;
+    const isEdit = indexVal !== "";
+    const index = isEdit ? parseInt(indexVal) : null;
 
-    if (!type) {
-      BonnaUtils.showToast("Type name is required!", "error");
+    const category = document.getElementById("commission-edit-category")?.value.trim();
+    const type = document.getElementById("commission-edit-type")?.value.trim();
+    const imageUrl = document.getElementById("commission-edit-url")?.value.trim();
+    const desc = document.getElementById("commission-edit-desc")?.value.trim();
+    const priceUSD = document.getElementById("commission-edit-priceusd")?.value.trim();
+    const priceIDR = document.getElementById("commission-edit-priceidr")?.value.trim();
+
+    if (!type || !category) {
+      BonnaUtils.showToast("Category and Type are required!", "error");
       return;
     }
 
@@ -774,22 +828,30 @@ const commissionManager = {
     BonnaUtils.showLoading(btn, "Saving...");
 
     try {
-      const data = [...this.commissionTypes];
-      data[index] = {
+      const data = [...this.priceItems];
+      const newItem = {
+        Category: category,
         Type: type,
+        PriceUSD: priceUSD,
+        PriceIDR: priceIDR,
         SampleImage: imageUrl,
         Description: desc,
-        DisplayOrder: index + 1,
       };
 
-      await api.saveData("CommissionTypes", data, token);
+      if (isEdit) {
+        data[index] = newItem;
+      } else {
+        data.push(newItem);
+      }
 
-      state.cache.CommissionTypes = data;
-      this.commissionTypes = data;
+      await api.saveData("Prices", data, token);
+
+      state.cache.Prices = data;
+      this.priceItems = data;
 
       this.renderCommissionList();
       this.closeModal();
-      BonnaUtils.showToast("✨ Commission type updated!", "success");
+      BonnaUtils.showToast(isEdit ? "✨ Updated!" : "✨ New type added!", "success");
     } catch (err) {
       BonnaUtils.showToast("Error saving: " + err.message, "error");
     } finally {
@@ -809,46 +871,32 @@ document.addEventListener("DOMContentLoaded", async () => {
   tabManager.init();
 
   // Setup form event listeners for live preview
-  const profileInputs = document.querySelectorAll(
-    "#tab-profile input, #tab-profile textarea",
-  );
+  const profileInputs = document.querySelectorAll("#tab-profile input, #tab-profile textarea");
   profileInputs.forEach((input) => {
     input.addEventListener("input", () => profileManager.updatePreview());
   });
 
   // Setup gallery form listeners
-  const galleryInputs = document.querySelectorAll(
-    "#gallery-form input, #gallery-form select, #gallery-form textarea",
-  );
+  const galleryInputs = document.querySelectorAll("#gallery-form input, #gallery-form select, #gallery-form textarea");
   galleryInputs.forEach((input) => {
-    input.addEventListener("input", () =>
-      galleryManager.updateGalleryPreview(),
-    );
+    input.addEventListener("input", () => galleryManager.updateGalleryPreview());
   });
 
   // Setup commission form listeners
-  const commissionInputs = document.querySelectorAll(
-    "#commission-edit-form input, #commission-edit-form textarea",
-  );
+  const commissionInputs = document.querySelectorAll("#commission-edit-form input, #commission-edit-form textarea");
   commissionInputs.forEach((input) => {
-    input.addEventListener("input", () =>
-      commissionManager.updateCommissionPreview(),
-    );
+    input.addEventListener("input", () => commissionManager.updateCommissionPreview());
   });
 
   // Setup file upload listeners
   const galleryFileInput = document.getElementById("gallery-input-file");
   if (galleryFileInput) {
-    galleryFileInput.addEventListener("change", (e) =>
-      galleryManager.handleFileUpload(e.target),
-    );
+    galleryFileInput.addEventListener("change", (e) => galleryManager.handleFileUpload(e.target));
   }
 
   const commissionFileInput = document.getElementById("commission-edit-file");
   if (commissionFileInput) {
-    commissionFileInput.addEventListener("change", (e) =>
-      commissionManager.handleFileUpload(e.target),
-    );
+    commissionFileInput.addEventListener("change", (e) => commissionManager.handleFileUpload(e.target));
   }
 
   // Setup save buttons
@@ -864,17 +912,57 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const saveCommissionBtn = document.getElementById("btn-save-commission");
   if (saveCommissionBtn) {
-    saveCommissionBtn.addEventListener("click", () =>
-      commissionManager.saveType(),
-    );
+    saveCommissionBtn.addEventListener("click", () => commissionManager.saveType());
   }
 
-  // Setup add new artwork button
+  // Setup add new buttons
   const addGalleryBtn = document.getElementById("btn-add-gallery-item");
   if (addGalleryBtn) {
-    addGalleryBtn.addEventListener("click", () =>
-      galleryManager.openModal("add"),
-    );
+    addGalleryBtn.addEventListener("click", () => galleryManager.openModal("add"));
+  }
+
+  const addCommissionBtn = document.getElementById("btn-add-commission-type");
+  if (addCommissionBtn) {
+    addCommissionBtn.addEventListener("click", () => commissionManager.openModal("add"));
+  }
+
+  // --- Click Delegation for Dynamic Lists ---
+  // Gallery List
+  const galleryList = document.getElementById("gallery-editor-list");
+  if (galleryList) {
+    galleryList.addEventListener("click", (e) => {
+      const btn = e.target.closest(".admin-editor-btn");
+      if (!btn) return;
+      
+      const item = btn.closest(".admin-editor-item");
+      const index = parseInt(item.dataset.index);
+      const action = btn.dataset.action;
+
+      if (action === "edit") {
+        galleryManager.editItem(index);
+      } else if (action === "delete") {
+        galleryManager.deleteItem(index);
+      }
+    });
+  }
+
+  // Commission List
+  const commissionList = document.getElementById("commission-editor-list");
+  if (commissionList) {
+    commissionList.addEventListener("click", (e) => {
+      const btn = e.target.closest(".admin-editor-btn");
+      if (!btn) return;
+      
+      const item = btn.closest(".admin-editor-item");
+      const index = parseInt(item.dataset.index);
+      const action = btn.dataset.action;
+
+      if (action === "edit") {
+        commissionManager.editType(index);
+      } else if (action === "delete") {
+        commissionManager.deleteType(index);
+      }
+    });
   }
 
   // Setup close modal buttons

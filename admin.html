@@ -180,6 +180,9 @@
                 <span class="decorative">✦</span> Commission Manager
                 <span class="decorative">✦</span>
               </h3>
+              <button class="add-btn" id="btn-add-commission-type">
+                <i class="fa-solid fa-plus"></i> Add New Type
+              </button>
             </div>
           </div>
           <div class="admin-card-body">
@@ -344,7 +347,7 @@
       <div class="modal-backdrop"></div>
       <div class="modal-content">
         <div class="modal-header">
-          <h3 class="modal-title">Edit Commission Type</h3>
+          <h3 class="modal-title" id="commission-modal-title">Edit Commission Type</h3>
           <button class="modal-close" aria-label="Close modal">
             <i class="fa-solid fa-xmark"></i>
           </button>
@@ -352,6 +355,19 @@
         <div class="modal-body">
           <form id="commission-edit-form">
             <input type="hidden" id="commission-edit-index" />
+
+            <div class="admin-form-group">
+              <label class="admin-label">CATEGORY</label>
+              <input
+                type="text"
+                id="commission-edit-category"
+                class="admin-input"
+                readonly
+              />
+              <p class="admin-input-hint">
+                Category is set in the Prices sheet
+              </p>
+            </div>
 
             <div class="admin-form-group">
               <label class="admin-label">TYPE NAME</label>
@@ -362,8 +378,30 @@
                 readonly
               />
               <p class="admin-input-hint">
-                Type name is auto-populated from your pricing sheet
+                Type name is set in the Prices sheet
               </p>
+            </div>
+
+            <div class="admin-form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md);">
+              <div>
+                <label class="admin-label">PRICE USD</label>
+                <input
+                  type="number"
+                  id="commission-edit-priceusd"
+                  class="admin-input"
+                  placeholder="e.g. 15"
+                  min="0"
+                />
+              </div>
+              <div>
+                <label class="admin-label">PRICE IDR</label>
+                <input
+                  type="text"
+                  id="commission-edit-priceidr"
+                  class="admin-input"
+                  placeholder="e.g. 240k"
+                />
+              </div>
             </div>
 
             <div class="admin-form-group">

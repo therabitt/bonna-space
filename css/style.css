@@ -2540,6 +2540,16 @@ button:disabled {
   padding: var(--space-md);
 }
 
+.commission-preview-category {
+  display: inline-block;
+  font-family: var(--font-pixel);
+  font-size: 0.45rem;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
 .commission-preview-type {
   font-family: var(--font-pixel);
   font-size: 0.65rem;

@@ -1225,63 +1225,43 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = this.dataManager.cache;
       if (!data) return;
 
-      // Get commission types data (from CommissionTypes sheet or fallback to Prices)
-      let commissionTypes = data.CommissionTypes;
+      const prices = data.Prices || [];
 
-      // Fallback: Generate from Prices if CommissionTypes doesn't exist
-      if (!commissionTypes && data.Prices) {
-        const uniqueTypes = [...new Set(data.Prices.map((p) => p.Category))];
-        commissionTypes = uniqueTypes.map((type, index) => ({
-          Type: type,
-          SampleImage: "",
-          Description: BonnaUtils.getDefaultDescription(type),
-          DisplayOrder: index + 1,
-        }));
-      }
-
-      if (!commissionTypes || commissionTypes.length === 0) {
+      if (prices.length === 0) {
         this.container.innerHTML =
           '<p style="text-align: center; color: var(--text-secondary);">No commission samples available yet.</p>';
         return;
       }
 
-      // Sort by DisplayOrder
-      commissionTypes.sort((a, b) => {
-        const orderA = parseInt(BonnaUtils.getVal(a, "DisplayOrder")) || 0;
-        const orderB = parseInt(BonnaUtils.getVal(b, "DisplayOrder")) || 0;
-        return orderA - orderB;
-      });
-
-      // Get prices for each type
-      const prices = data.Prices || [];
-
-      // Render preview cards
-      this.container.innerHTML = commissionTypes
-        .map((type) => {
-          const typeName = BonnaUtils.getVal(type, "Type");
-          const sampleImage = BonnaUtils.getVal(type, "SampleImage");
-          const description =
-            BonnaUtils.getVal(type, "Description") ||
-            BonnaUtils.getDefaultDescription(typeName);
-
-          // Find price for this type
-          const typePrice = prices.find((p) => p.Category === typeName);
-          const priceDisplay = typePrice
-            ? `From $${typePrice.PriceUSD} / Rp${typePrice.PriceIDR}`
+      // Render one preview card per Type row from Prices
+      this.container.innerHTML = prices
+        .map((item) => {
+          const category = BonnaUtils.escapeHtml(BonnaUtils.getVal(item, "Category") || "");
+          const typeName = BonnaUtils.escapeHtml(BonnaUtils.getVal(item, "Type") || "Artwork");
+          const sampleImage = BonnaUtils.getVal(item, "SampleImage");
+          const description = BonnaUtils.escapeHtml(
+            BonnaUtils.getVal(item, "Description") ||
+            BonnaUtils.getDefaultDescription(BonnaUtils.getVal(item, "Type"))
+          );
+          const priceUSD = BonnaUtils.getVal(item, "PriceUSD");
+          const priceIDR = BonnaUtils.getVal(item, "PriceIDR");
+          const priceDisplay = priceUSD
+            ? `$${priceUSD}` + (priceIDR ? ` / Rp${priceIDR}` : "")
             : "Contact for pricing";
 
           return `
-          <div class="commission-preview-card reveal" data-type="${BonnaUtils.escapeHtml(typeName)}" onclick="window.location.href='#dynamic-prices-container'">
+          <div class="commission-preview-card reveal" data-type="${typeName}">
             <div class="commission-preview-image-container">
               ${
                 sampleImage
-                  ? `<img src="${sampleImage}" alt="${BonnaUtils.escapeHtml(typeName)} sample" class="commission-preview-image" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'commission-preview-image-placeholder\\'>${BonnaUtils.escapeHtml(typeName)}<br>Sample<br>Coming Soon</div>'">`
-                  : `<div class="commission-preview-image-placeholder">${BonnaUtils.escapeHtml(typeName)}<br>Sample<br>Coming Soon</div>`
+                  ? `<img src="${sampleImage}" alt="${typeName} sample" class="commission-preview-image" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'commission-preview-image-placeholder\\'>${typeName}<br>Sample<br>Coming Soon</div>'">`
+                  : `<div class="commission-preview-image-placeholder">${typeName}<br>Sample<br>Coming Soon</div>`
               }
             </div>
             <div class="commission-preview-info">
-              <h4 class="commission-preview-type">${BonnaUtils.escapeHtml(typeName)}</h4>
-              <p class="commission-preview-desc">${BonnaUtils.escapeHtml(description)}</p>
+              ${category ? `<span class="commission-preview-category">${category}</span>` : ""}
+              <h4 class="commission-preview-type">${typeName}</h4>
+              <p class="commission-preview-desc">${description}</p>
               <div class="commission-preview-price">${priceDisplay}</div>
             </div>
           </div>
