@@ -362,26 +362,36 @@ document.addEventListener("DOMContentLoaded", () => {
     },
 
     initRetroCards() {
-      if (prefersReducedMotion) return;
+      if (prefersReducedMotion || !window.matchMedia("(pointer: fine)").matches) return;
       const cards = document.querySelectorAll(".retro-card");
       cards.forEach((card) => {
+        let rafPending = false;
+        let targetX = 0, targetY = 0;
+        
         card.addEventListener("mousemove", (e) => {
           const rect = card.getBoundingClientRect();
-          const x = e.clientX - rect.left;
-          const y = e.clientY - rect.top;
-          const centerX = rect.width / 2;
-          const centerY = rect.height / 2;
-          const baseScale = 4;
-          const dimensionFactor = Math.min(
-            1,
-            500 / Math.max(rect.width, rect.height),
-          );
-          const dynamicScale = baseScale * dimensionFactor;
-          const rotateX = ((y - centerY) / centerY) * -dynamicScale;
-          const rotateY = ((x - centerX) / centerX) * dynamicScale;
-          card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.005, 1.005, 1.005)`;
-          card.style.transition = "none";
-          card.style.boxShadow = `${-rotateY * 2}px ${rotateX * 2 + 5}px 0px var(--retro-shadow)`;
+          targetX = e.clientX - rect.left;
+          targetY = e.clientY - rect.top;
+          
+          if (!rafPending) {
+            rafPending = true;
+            requestAnimationFrame(() => {
+              const centerX = rect.width / 2;
+              const centerY = rect.height / 2;
+              const baseScale = 4;
+              const dimensionFactor = Math.min(
+                1,
+                500 / Math.max(rect.width, rect.height),
+              );
+              const dynamicScale = baseScale * dimensionFactor;
+              const rotateX = ((targetY - centerY) / centerY) * -dynamicScale;
+              const rotateY = ((targetX - centerX) / centerX) * dynamicScale;
+              card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.005, 1.005, 1.005)`;
+              card.style.transition = "none";
+              card.style.boxShadow = `${-rotateY * 2}px ${rotateX * 2 + 5}px 0px var(--retro-shadow)`;
+              rafPending = false;
+            });
+          }
         });
         card.addEventListener("mouseleave", () => {
           card.style.transform = "translate(-2px, -2px)";
@@ -570,111 +580,116 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(safeInitApp, BonnaUtils.INIT_FAILSAFE_MS);
   }
 
-  // Shared Static Visuals (Scroll listeners only added once)
+  // Shared Static Visuals (Scroll listeners optimized & consolidated)
   if (!prefersReducedMotion) {
-    // Parallax Background
-    const l1 = document.querySelector(".parallax-layer-1");
-    const l2 = document.querySelector(".parallax-layer-2");
-    const l3 = document.querySelector(".parallax-layer-3");
-    if (l1 && l2 && l3) {
-      const stars = (d) => {
-        let s = [];
-        for (let i = 0; i < d; i++)
-          s.push(
-            `${Math.floor(Math.random() * 2000)}px ${Math.floor(Math.random() * 2000)}px ${Math.random() > 0.8 ? "var(--clr-gold-soft)" : "var(--clr-light-peach)"}`,
-          );
-        return s.join(", ");
-      };
-      l1.style.boxShadow = stars(100);
-      l2.style.boxShadow = stars(200);
-      l3.style.boxShadow = stars(300);
-      window.addEventListener(
-        "scroll",
-        () => {
-          const y = window.scrollY;
-          l1.style.transform = `translateY(${y * 0.5}px)`;
-          l2.style.transform = `translateY(${y * 0.3}px)`;
-          l3.style.transform = `translateY(${y * 0.15}px)`;
-        },
-        { passive: true },
-      );
+    const isPointerFine = window.matchMedia("(pointer: fine)").matches;
+    
+    // Setup Parallax Background (Desktop Only)
+    let l1, l2, l3;
+    if (isPointerFine) {
+      l1 = document.querySelector(".parallax-layer-1");
+      l2 = document.querySelector(".parallax-layer-2");
+      l3 = document.querySelector(".parallax-layer-3");
+      if (l1 && l2 && l3) {
+        const stars = (d) => {
+          let s = [];
+          for (let i = 0; i < d; i++)
+            s.push(
+              `${Math.floor(Math.random() * 2000)}px ${Math.floor(Math.random() * 2000)}px ${Math.random() > 0.8 ? "var(--clr-gold-soft)" : "var(--clr-light-peach)"}`,
+            );
+          return s.join(", ");
+        };
+        l1.style.boxShadow = stars(100);
+        l2.style.boxShadow = stars(200);
+        l3.style.boxShadow = stars(300);
+      }
     }
 
-    // Mascot Parallax Variable (Delegated Scroll)
+    // Setup Mascot Parallax & Scroll Progress variables
+    const mascotLayers = document.querySelectorAll(".mascot-parallax");
+    const progress = document.querySelector(".scroll-progress");
+
+    // Unified RAF Scroll Listener
+    let scrollRafId = null;
     window.addEventListener(
       "scroll",
       () => {
-        const y = window.scrollY;
-        const vh = window.innerHeight;
-        const center = vh / 2;
-        document.querySelectorAll(".mascot-parallax").forEach((layer) => {
-          const rect = layer.getBoundingClientRect();
-          const rel = rect.top + rect.height / 2 - center;
-          layer.style.setProperty("--scroll-y", `${rel * 0.05}px`);
-          layer.style.setProperty(
-            "--scroll-rotate",
-            `${Math.sin(y * 0.005) * 3}deg`,
-          );
-        });
+        if (!scrollRafId) {
+          scrollRafId = requestAnimationFrame(() => {
+            const y = window.scrollY;
+            
+            // 1. Stars Parallax
+            if (isPointerFine && l1 && l2 && l3) {
+              l1.style.transform = `translateY(${y * 0.5}px)`;
+              l2.style.transform = `translateY(${y * 0.3}px)`;
+              l3.style.transform = `translateY(${y * 0.15}px)`;
+            }
+            
+            // 2. Mascot Parallax
+            if (mascotLayers.length > 0) {
+              const vh = window.innerHeight;
+              const center = vh / 2;
+              mascotLayers.forEach((layer) => {
+                const rect = layer.getBoundingClientRect();
+                const rel = rect.top + rect.height / 2 - center;
+                layer.style.setProperty("--scroll-y", `${rel * 0.05}px`);
+                layer.style.setProperty(
+                  "--scroll-rotate",
+                  `${Math.sin(y * 0.005) * 3}deg`,
+                );
+              });
+            }
+            
+            // 3. Scroll Progress
+            if (progress) {
+              const root = document.documentElement;
+              const scrollable = root.scrollHeight - root.clientHeight;
+              const pct = scrollable <= 0 ? 0 : (root.scrollTop / scrollable) * 100;
+              progress.style.width = `${Math.min(100, pct)}%`;
+            }
+
+            scrollRafId = null;
+          });
+        }
       },
-      { passive: true },
+      { passive: true }
     );
 
-    // Scroll Progress
-    const progress = document.querySelector(".scroll-progress");
-    if (progress) {
-      window.addEventListener(
-        "scroll",
-        () => {
-          const root = document.documentElement;
-          const scrollable = root.scrollHeight - root.clientHeight;
-          const pct = scrollable <= 0 ? 0 : (root.scrollTop / scrollable) * 100;
-          progress.style.width = `${Math.min(100, pct)}%`;
-        },
-        { passive: true },
-      );
-    }
-
-    // Sparkle Trail
+    // Sparkle Trail (Text-based characters)
     if (window.matchMedia("(pointer: fine)").matches) {
-      const sparkles = [];
-      for (let i = 0; i < 8; i++) {
-        const s = document.createElement("div");
-        s.classList.add("cursor-sparkle");
-        document.body.appendChild(s);
-        sparkles.push({ el: s, x: 0, y: 0, tx: 0, ty: 0 });
-      }
-      let mx = 0,
-        my = 0,
-        moving = false,
-        t;
+      const chars = ['✦', '·', '☆', '★', '*', '✨'];
+      const cols = [
+        'var(--clr-coral)', 
+        'var(--clr-warm-crimson)', 
+        'var(--clr-salmon)', 
+        'var(--clr-gold)', 
+        'var(--clr-gold-soft)'
+      ];
+      
+      let lastMove = 0;
       document.addEventListener("mousemove", (e) => {
-        mx = e.clientX;
-        my = e.clientY;
-        moving = true;
-        clearTimeout(t);
-        t = setTimeout(() => (moving = false), 100);
-      });
-      const anim = () => {
-        sparkles.forEach((s, i) => {
-          s.tx = mx;
-          s.ty = my;
-          s.x += (s.tx - s.x) / ((i + 1) * 3);
-          s.y += (s.ty - s.y) / ((i + 1) * 3);
-          s.el.style.left = `${s.x}px`;
-          s.el.style.top = `${s.y}px`;
-          s.el.style.opacity = moving ? (1 - i / 8) * 0.6 : 0;
-          s.el.style.transform = `scale(${1 - i / 8})`;
-        });
-        requestAnimationFrame(anim);
-      };
-      anim();
+        const now = Date.now();
+        // Throttle slightly and use random probability
+        if (now - lastMove > 16 && Math.random() > 0.6) {
+          lastMove = now;
+          const s = document.createElement("span");
+          s.className = "text-sparkle";
+          s.textContent = chars[Math.floor(Math.random() * chars.length)];
+          s.style.left = (e.clientX + Math.random() * 16 - 8) + "px";
+          s.style.top = (e.clientY + Math.random() * 16 - 8) + "px";
+          s.style.color = cols[Math.floor(Math.random() * cols.length)];
+          s.style.fontSize = (7 + Math.random() * 9) + "px";
+          
+          document.body.appendChild(s);
+          setTimeout(() => s.remove(), 700);
+        }
+      }, { passive: true });
     }
   }
 
-  // Floating particles
+  // Floating particles (Desktop only)
   const bg = document.querySelector(".page-background");
-  if (bg && !prefersReducedMotion) {
+  if (bg && !prefersReducedMotion && window.matchMedia("(pointer: fine)").matches) {
     for (let i = 0; i < 20; i++) {
       setTimeout(() => {
         const p = document.createElement("div");
@@ -801,8 +816,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     setupEventListeners() {
+      // Event delegation for gallery items (fixes iOS double-tap & rebind issues)
+      if (this.elements.grid) {
+        this.elements.grid.addEventListener("click", (e) => {
+          const item = e.target.closest(".gallery-item");
+          if (item) {
+            const index = parseInt(item.dataset.index);
+            this.openLightbox(index);
+          }
+        });
+      }
+
       // Filter buttons
-      // NEW — reads data-filter-kind from the static "All" buttons
       if (this.elements.filterButtons) {
         this.elements.filterButtons.forEach((btn) => {
           btn.addEventListener("click", (e) => {
@@ -1069,14 +1094,6 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
         })
         .join("");
-
-      // Add click handlers
-      this.elements.grid.querySelectorAll(".gallery-item").forEach((item) => {
-        item.addEventListener("click", () => {
-          const index = parseInt(item.dataset.index);
-          this.openLightbox(index);
-        });
-      });
 
       // Show/hide load more button
       const hasMore = endIndex < this.filteredItems.length;

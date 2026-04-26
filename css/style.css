@@ -100,8 +100,13 @@ html {
   /* Fallback canvas so tall viewports never read as “empty” behind transparent body */
   background-color: var(--clr-dark-plum);
   background-image: var(--bg-page-gradient);
-  background-attachment: fixed;
   background-size: cover;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  html {
+    background-attachment: fixed;
+  }
 }
 
 body {
@@ -263,7 +268,12 @@ body {
       transparent 42%,
       rgba(45, 10, 30, 0.2) 100%
     );
-  animation: ambientBreath 24s ease-in-out infinite alternate;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .page-background::after {
+    animation: ambientBreath 24s ease-in-out infinite alternate;
+  }
 }
 
 @keyframes ambientBreath {
@@ -547,6 +557,7 @@ body {
 .reveal {
   opacity: 0;
   transform: translateY(28px) scale(0.985);
+  will-change: transform, opacity;
   transition:
     opacity 0.75s var(--ease-out-expo),
     transform 0.75s var(--ease-out-expo);
@@ -970,6 +981,7 @@ body {
   border-radius: var(--radius-xs);
   padding: var(--space-xl);
   box-shadow: 6px 6px 0px var(--retro-shadow);
+  will-change: transform, box-shadow;
   transition:
     transform 0.2s var(--ease-out-expo),
     box-shadow 0.25s ease,
@@ -1602,18 +1614,26 @@ body {
   transform: translateX(-50%) translateY(0);
 }
 
-/* --- Cursor Trail (optional enhancement) --- */
-.cursor-sparkle {
+/* --- Cursor Trail (Text Sparkles) --- */
+.text-sparkle {
   position: fixed;
-  width: 6px;
-  height: 6px;
-  background: var(--clr-gold);
-  border-radius: 50%;
+  font-family: var(--font-pixel);
+  font-size: 0.8rem;
   pointer-events: none;
   z-index: 9998;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  box-shadow: 0 0 6px var(--clr-gold-soft);
+  animation: textSparkleFall 0.7s ease-out forwards;
+  text-shadow: 0 0 4px currentColor;
+}
+
+@keyframes textSparkleFall {
+  0% { 
+    opacity: 1; 
+    transform: translateY(0) scale(1) rotate(0deg); 
+  }
+  100% { 
+    opacity: 0; 
+    transform: translateY(20px) scale(0.4) rotate(15deg); 
+  }
 }
 
 /* --- Retro Table (for Pricing) --- */
@@ -1949,6 +1969,18 @@ button:disabled {
   .mystery-text {
     animation: none;
   }
+}
+
+/* --- Performance: Disable hover filters on touch devices to prevent lag and sticky hovers --- */
+@media (hover: none) {
+  .cta-btn:hover, .back-home-btn:hover, .social-icon:hover {
+    filter: none !important;
+    transform: none !important;
+  }
+  .gallery-item:hover .gallery-item-image {
+    transform: none !important;
+  }
+}
 
   .footer-credits .heart {
     animation: none;
