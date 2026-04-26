@@ -105,6 +105,36 @@ document.addEventListener("DOMContentLoaded", () => {
       if (priceContainer && data.Prices) {
         this.renderPrices(data.Prices, priceContainer);
       }
+
+      // 3. Inject Gallery Preview (Index Page)
+      const galleryPreviewContainer = document.getElementById(
+        "dynamic-gallery-preview",
+      );
+      if (galleryPreviewContainer && (data.Gallery || data.Showcase)) {
+        this.renderGalleryPreview(data.Gallery || data.Showcase, galleryPreviewContainer);
+      }
+    }
+
+    renderGalleryPreview(items, container) {
+      container.innerHTML = "";
+      const previewItems = items.slice(0, 3);
+      
+      if (previewItems.length === 0) {
+        container.innerHTML = "<p style='grid-column: 1/-1; text-align: center; font-family: var(--font-pixel); font-size: 0.5rem; color: var(--clr-coral);'>No memories found yet.</p>";
+        return;
+      }
+
+      previewItems.forEach((item, index) => {
+        const title = BonnaUtils.escapeHtml(BonnaUtils.getVal(item, "Title") || "Artwork");
+        const imgUrl = BonnaUtils.getVal(item, "ImageURL");
+        
+        const div = document.createElement("a");
+        div.href = "gallery.html";
+        div.className = `gallery-preview-item reveal reveal-delay-${index}`;
+        div.setAttribute("aria-label", `View ${title} in gallery`);
+        div.innerHTML = `<div class="gallery-preview-bg" style="background-image: url('${imgUrl}')" title="${title}"></div>`;
+        container.appendChild(div);
+      });
     }
 
     renderPrices(prices, container) {

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BONNA ✦ Digital Artist Portfolio</title>
+    <title>BONNA ✦ Profile</title>
     <meta
       name="description"
       content="Welcome to Bonna's space — a digital artist who draws OCs, fanarts, and pixel art. Commission open!"
@@ -40,7 +40,7 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
     />
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/style.css?v=1.1" />
   </head>
   <body>
     <div class="page-transition-overlay"></div>
@@ -50,7 +50,7 @@
     <!-- Preloader -->
     <div class="preloader" id="preloader">
       <div class="preloader-spinner"></div>
-      <span class="preloader-text">LOADING...</span>
+      <span class="preloader-text">LOADING<span class="dots"></span></span>
     </div>
 
     <!-- Background Parallax Layers -->
@@ -66,7 +66,7 @@
     <nav class="site-nav" id="site-nav" aria-label="Site navigation">
       <div class="nav-inner">
         <a href="index.html" class="nav-brand" aria-label="Bonna - Home">
-          <span class="nav-brand-icon">🦋</span>
+          <img src="assets/bonna.png" alt="Bonna" class="nav-brand-icon" style="width: 54px;" />
           <span class="nav-brand-name">BONNA</span>
         </a>
         <button
@@ -126,14 +126,6 @@
           Welcome to Bonna's space ༉‧₊˚ I'm a digital artist who likes to draw
           OCs and fanarts!
         </p>
-
-        <div class="commission-status-area">
-          <span
-            id="field-commission_status"
-            class="commission-status-badge status-open"
-            >OPEN</span
-          >
-        </div>
 
         <!-- Social Icons -->
         <nav
@@ -328,39 +320,16 @@
           style="text-align: center; padding: var(--space-2xl)"
         >
           <div
-            class="gallery-preview-grid"
+            class="gallery-preview-grid" id="dynamic-gallery-preview"
             style="
               display: grid;
               grid-template-columns: repeat(3, 1fr);
               gap: var(--space-md);
               margin-bottom: var(--space-xl);
-              opacity: 0.6;
             "
           >
-            <div
-              style="
-                aspect-ratio: 1;
-                background: var(--clr-salmon);
-                border: 2px solid var(--retro-border);
-                border-radius: var(--radius-xs);
-              "
-            ></div>
-            <div
-              style="
-                aspect-ratio: 1;
-                background: var(--clr-coral);
-                border: 2px solid var(--retro-border);
-                border-radius: var(--radius-xs);
-              "
-            ></div>
-            <div
-              style="
-                aspect-ratio: 1;
-                background: var(--clr-salmon);
-                border: 2px solid var(--retro-border);
-                border-radius: var(--radius-xs);
-              "
-            ></div>
+            <!-- Injected by script.js -->
+            <div class="preloader-mini" style="grid-column: 1 / -1; text-align: center; color: var(--clr-coral); font-family: var(--font-pixel); font-size: 0.6rem; padding: var(--space-xl);">LOADING MEMORIES...</div>
           </div>
           <p
             style="
@@ -465,7 +434,7 @@
       </button>
     </main>
 
-    <script src="js/utils.js"></script>
-    <script src="js/script.js"></script>
+    <script src="js/utils.js?v=1.1"></script>
+    <script src="js/script.js?v=1.1"></script>
   </body>
 </html>
