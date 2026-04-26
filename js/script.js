@@ -669,7 +669,7 @@ document.addEventListener("DOMContentLoaded", () => {
       let lastMove = 0;
       document.addEventListener("mousemove", (e) => {
         const now = Date.now();
-        // Throttle slightly and use random probability
+        // Throttle slightly and use random probability for a balanced, airy trail
         if (now - lastMove > 16 && Math.random() > 0.6) {
           lastMove = now;
           const s = document.createElement("span");
