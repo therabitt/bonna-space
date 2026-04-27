@@ -35,7 +35,7 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
     />
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/style.css?v=1.6" />
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to content</a>
@@ -260,50 +260,59 @@
       </button>
 
 
-    <!-- Lightbox Modal -->
-    <div class="gallery-lightbox" id="gallery-lightbox" aria-hidden="true">
-      <div class="gallery-lightbox-backdrop"></div>
-      <div class="gallery-lightbox-content">
-        <button class="gallery-lightbox-close" aria-label="Close lightbox">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
+      <!-- Lightbox Modal (Retro OS Window Style) -->
+      <div class="gallery-lightbox" id="gallery-lightbox" aria-hidden="true">
+        <div class="gallery-lightbox-backdrop"></div>
+        
+        <div class="gallery-lightbox-window">
+          <!-- Window Title Bar -->
+          <div class="gallery-window-header">
+            <div class="window-title">
+              <i class="fa-solid fa-image"></i> view_artwork.exe
+            </div>
+            <div class="window-controls">
+              <button class="gallery-lightbox-nav gallery-lightbox-prev" aria-label="Previous">
+                <i class="fa-solid fa-chevron-left"></i>
+              </button>
+              <button class="gallery-lightbox-nav gallery-lightbox-next" aria-label="Next">
+                <i class="fa-solid fa-chevron-right"></i>
+              </button>
+              <button class="gallery-lightbox-close" aria-label="Close window">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+          </div>
 
-        <button
-          class="gallery-lightbox-nav gallery-lightbox-prev"
-          aria-label="Previous image"
-        >
-          <i class="fa-solid fa-chevron-left"></i>
-        </button>
+          <div class="gallery-window-body">
+            <!-- Main Content Area -->
+            <div class="gallery-window-content">
+              <div class="gallery-window-main">
+                <!-- Image Section -->
+                <div class="gallery-lightbox-image-container">
+                  <img src="" alt="" class="gallery-lightbox-image" id="lightbox-image" />
+                  <div class="gallery-lightbox-loading">
+                    <div class="preloader-spinner"></div>
+                  </div>
+                  <div class="crt-overlay"></div>
+                </div>
 
-        <div class="gallery-lightbox-image-container">
-          <img
-            src=""
-            alt=""
-            class="gallery-lightbox-image"
-            id="lightbox-image"
-          />
-          <div class="gallery-lightbox-loading">
-            <div class="preloader-spinner"></div>
+                <!-- Info Section -->
+                <div class="gallery-lightbox-info">
+                  <div class="info-header">
+                    <h3 class="gallery-lightbox-title" id="lightbox-title"></h3>
+                    <span class="gallery-lightbox-type" id="lightbox-type"></span>
+                  </div>
+                  <div class="section-divider" style="margin: var(--space-sm) 0; opacity: 0.3;"></div>
+                  <p class="gallery-lightbox-desc" id="lightbox-desc"></p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-
-        <button
-          class="gallery-lightbox-nav gallery-lightbox-next"
-          aria-label="Next image"
-        >
-          <i class="fa-solid fa-chevron-right"></i>
-        </button>
-
-        <div class="gallery-lightbox-info">
-          <h3 class="gallery-lightbox-title" id="lightbox-title"></h3>
-          <span class="gallery-lightbox-type" id="lightbox-type"></span>
-          <p class="gallery-lightbox-desc" id="lightbox-desc"></p>
-        </div>
       </div>
-    </div>
-  </main>
+    </main>
 
-    <script src="js/utils.js"></script>
-    <script src="js/script.js"></script>
+    <script src="js/utils.js?v=1.6"></script>
+    <script src="js/script.js?v=1.6"></script>
   </body>
 </html>

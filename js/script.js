@@ -426,12 +426,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const overlay = document.querySelector(".page-transition-overlay");
     if (overlay) {
       overlay.style.display = "block";
-      overlay.classList.remove("exit");
-      overlay.classList.add("active");
+      // Small delay to ensure display:block is applied before adding .active
+      setTimeout(() => {
+        overlay.classList.add("active");
+        overlay.classList.remove("exit");
+      }, 10);
     }
 
     try {
-      const response = await fetch(url);
+      // Add cache-busting timestamp
+      const cacheBustUrl = url + (url.includes("?") ? "&" : "?") + "t=" + Date.now();
+      const response = await fetch(cacheBustUrl);
       const html = await response.text();
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, "text/html");
@@ -439,14 +444,19 @@ document.addEventListener("DOMContentLoaded", () => {
       const newContent = doc.getElementById("main-content").innerHTML;
       const newTitle = doc.title;
 
-      // Small delay to let overlay reach 0
+      // Small delay to let overlay reach 100%
       setTimeout(() => {
-        document.getElementById("main-content").innerHTML = newContent;
-        document.title = newTitle;
-        window.scrollTo(0, 0);
+        const mainContent = document.getElementById("main-content");
+        if (mainContent) {
+          mainContent.innerHTML = newContent;
+          document.title = newTitle;
+          window.scrollTo(0, 0);
 
-        // Re-run all effects
-        reinitAll();
+          // Force a small reflow/repaint before re-initializing
+          requestAnimationFrame(() => {
+            reinitAll();
+          });
+        }
 
         // Finalize transition
         if (overlay) {
@@ -468,6 +478,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let _commissionPreviewManager = null;
 
   const reinitAll = () => {
+    console.log("🔄 Re-initializing page components...");
+    
     // Re-inject dynamic data if already cached
     if (dataManager.cache) dataManager.injectAll(dataManager.cache);
 
@@ -476,7 +488,11 @@ document.addEventListener("DOMContentLoaded", () => {
     visualEffects.initTypewriter();
     visualEffects.initRetroCards();
     visualEffects.initMascots();
-    audioManager.attachUIListeners();
+    
+    // Audio listeners need rebinding to new elements
+    if (typeof audioManager !== "undefined") {
+      audioManager.attachUIListeners();
+    }
 
     // Gallery Manager — only on gallery page
     const galleryGrid = document.getElementById("gallery-grid");
@@ -484,10 +500,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (_galleryManager) _galleryManager.destroy();
       _galleryManager = new GalleryManager(dataManager);
     } else {
-      if (_galleryManager) {
-        _galleryManager.destroy();
-        _galleryManager = null;
-      }
+      _galleryManager = null;
     }
 
     // Commission Preview Manager — only on commission page
@@ -498,10 +511,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (_commissionPreviewManager) _commissionPreviewManager.destroy();
       _commissionPreviewManager = new CommissionPreviewManager(dataManager);
     } else {
-      if (_commissionPreviewManager) {
-        _commissionPreviewManager.destroy();
-        _commissionPreviewManager = null;
-      }
+      _commissionPreviewManager = null;
     }
 
     updateNavActive();
@@ -1085,10 +1095,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
           return `
           <div class="gallery-item reveal" data-index="${index}" data-title="${BonnaUtils.escapeHtml(title)}" data-type="${BonnaUtils.escapeHtml(type)}" data-desc="${BonnaUtils.escapeHtml(desc)}" data-image="${BonnaUtils.escapeHtml(imageUrl)}">
-            <img src="${imageUrl}" alt="${BonnaUtils.escapeHtml(title)}" class="gallery-item-image" loading="lazy">
-            <div class="gallery-item-overlay">
-              <h4 class="gallery-item-title">${BonnaUtils.escapeHtml(title)}</h4>
-              <span class="gallery-item-type">${BonnaUtils.escapeHtml(type)}</span>
+            <div class="gallery-item-image-wrapper">
+              <img src="${imageUrl}" alt="${BonnaUtils.escapeHtml(title)}" class="gallery-item-image" loading="lazy">
+              <div class="gallery-item-overlay">
+                <div class="gallery-item-title-tag">${BonnaUtils.escapeHtml(title)}</div>
+              </div>
             </div>
           </div>
         `;
@@ -1359,26 +1370,37 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!scroller || !prevBtn || !nextBtn) return;
 
       const getScrollAmount = () => {
-        const card = scroller.querySelector(".commission-preview-card");
+        const card = scroller.querySelector(".commission-preview-card:not([style*='display: none'])");
         return card ? card.offsetWidth + 24 : 320; // width + gap
       };
 
       prevBtn.addEventListener("click", () => {
-        scroller.scrollBy({ left: -getScrollAmount(), behavior: "smooth" });
+        const { scrollLeft } = scroller;
+        if (scrollLeft <= 10) {
+          // Loop to end
+          scroller.scrollTo({ left: scroller.scrollWidth, behavior: "smooth" });
+        } else {
+          scroller.scrollBy({ left: -getScrollAmount(), behavior: "smooth" });
+        }
       });
 
       nextBtn.addEventListener("click", () => {
-        scroller.scrollBy({ left: getScrollAmount(), behavior: "smooth" });
+        const { scrollLeft, scrollWidth, clientWidth } = scroller;
+        if (scrollLeft + clientWidth >= scrollWidth - 15) {
+          // Loop to start
+          scroller.scrollTo({ left: 0, behavior: "smooth" });
+        } else {
+          scroller.scrollBy({ left: getScrollAmount(), behavior: "smooth" });
+        }
       });
 
-      // Update button visibility on scroll
+      // Arrows always visible for "infinite" feel
       const updateArrows = () => {
-        const { scrollLeft, scrollWidth, clientWidth } = scroller;
-        prevBtn.style.opacity = scrollLeft > 10 ? "1" : "0.3";
-        prevBtn.style.pointerEvents = scrollLeft > 10 ? "auto" : "none";
-        
-        nextBtn.style.opacity = scrollLeft + clientWidth < scrollWidth - 10 ? "1" : "0.3";
-        nextBtn.style.pointerEvents = scrollLeft + clientWidth < scrollWidth - 10 ? "auto" : "none";
+        const { scrollWidth, clientWidth } = scroller;
+        // Only hide if content doesn't overflow at all
+        const isOverflowing = scrollWidth > clientWidth + 10;
+        prevBtn.style.display = isOverflowing ? "flex" : "none";
+        nextBtn.style.display = isOverflowing ? "flex" : "none";
       };
 
       scroller.addEventListener("scroll", BonnaUtils.debounce(updateArrows, 50));
