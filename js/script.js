@@ -1233,46 +1233,159 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // Render one preview card per Type row from Prices
-      this.container.innerHTML = prices
-        .map((item) => {
-          const category = BonnaUtils.escapeHtml(BonnaUtils.getVal(item, "Category") || "");
-          const typeName = BonnaUtils.escapeHtml(BonnaUtils.getVal(item, "Type") || "Artwork");
-          const sampleImage = BonnaUtils.getVal(item, "SampleImage");
-          const description = BonnaUtils.escapeHtml(
-            BonnaUtils.getVal(item, "Description") ||
-            BonnaUtils.getDefaultDescription(BonnaUtils.getVal(item, "Type"))
-          );
-          const priceUSD = BonnaUtils.getVal(item, "PriceUSD");
-          const priceIDR = BonnaUtils.getVal(item, "PriceIDR");
-          const priceDisplay = priceUSD
-            ? `$${priceUSD}` + (priceIDR ? ` / Rp${priceIDR}` : "")
-            : "Contact for pricing";
+      // Extract unique categories
+      const rawCategories = prices.map(item => BonnaUtils.getVal(item, "Category")).filter(c => c);
+      const categories = [...new Set(rawCategories)];
 
-          return `
-          <div class="commission-preview-card reveal" data-type="${typeName}">
-            <div class="commission-preview-image-container">
-              ${
-                sampleImage
-                  ? `<img src="${sampleImage}" alt="${typeName} sample" class="commission-preview-image" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'commission-preview-image-placeholder\\'>${typeName}<br>Sample<br>Coming Soon</div>'">`
-                  : `<div class="commission-preview-image-placeholder">${typeName}<br>Sample<br>Coming Soon</div>`
-              }
-            </div>
-            <div class="commission-preview-info">
-              ${category ? `<span class="commission-preview-category">${category}</span>` : ""}
-              <h4 class="commission-preview-type">${typeName}</h4>
-              <p class="commission-preview-desc">${description}</p>
-              <div class="commission-preview-price">${priceDisplay}</div>
-            </div>
+      // Render structure
+      let html = "";
+
+      // 1. Tabs
+      if (categories.length > 0) {
+        html += `
+          <div class="commission-preview-tabs reveal">
+            <button class="commission-tab active" data-category="all">
+              <i class="fa-solid fa-border-all"></i> ALL
+            </button>
+            ${categories.map(cat => `
+              <button class="commission-tab" data-category="${cat}">
+                ${cat.toUpperCase()}
+              </button>
+            `).join("")}
           </div>
         `;
-        })
-        .join("");
+      }
+
+      // 2. Scroller Wrapper
+      html += `
+        <div class="commission-preview-scroller-wrapper reveal">
+          <button class="scroller-nav scroller-prev" aria-label="Previous">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          
+          <div class="commission-preview-scroller" id="commission-scroller">
+            ${prices.map(item => this.renderCard(item)).join("")}
+          </div>
+
+          <button class="scroller-nav scroller-next" aria-label="Next">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+      `;
+
+      this.container.innerHTML = html;
+
+      // Setup Listeners
+      this.setupTabs();
+      this.setupScroller();
 
       // Re-trigger reveal animations
       if (typeof visualEffects !== "undefined" && visualEffects.initReveal) {
         visualEffects.initReveal();
       }
+    }
+
+    renderCard(item) {
+      const category = BonnaUtils.escapeHtml(BonnaUtils.getVal(item, "Category") || "");
+      const typeName = BonnaUtils.escapeHtml(BonnaUtils.getVal(item, "Type") || "Artwork");
+      const sampleImage = BonnaUtils.getVal(item, "SampleImage");
+      const description = BonnaUtils.escapeHtml(
+        BonnaUtils.getVal(item, "Description") ||
+        BonnaUtils.getDefaultDescription(BonnaUtils.getVal(item, "Type"))
+      );
+      const priceUSD = BonnaUtils.getVal(item, "PriceUSD");
+      const priceIDR = BonnaUtils.getVal(item, "PriceIDR");
+      const priceDisplay = priceUSD
+        ? `$${priceUSD}` + (priceIDR ? ` / Rp${priceIDR}` : "")
+        : "Contact for pricing";
+
+      return `
+        <div class="commission-preview-card" data-category="${category}">
+          <div class="commission-preview-image-container">
+            ${
+              sampleImage
+                ? `<img src="${sampleImage}" alt="${typeName} sample" class="commission-preview-image" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'commission-preview-image-placeholder\\'>${typeName}<br>Sample<br>Coming Soon</div>'">`
+                : `<div class="commission-preview-image-placeholder">${typeName}<br>Sample<br>Coming Soon</div>`
+            }
+          </div>
+          <div class="commission-preview-info">
+            ${category ? `<span class="commission-preview-category">${category}</span>` : ""}
+            <h4 class="commission-preview-type">${typeName}</h4>
+            <p class="commission-preview-desc">${description}</p>
+            <div class="commission-preview-price">${priceDisplay}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    setupTabs() {
+      const tabs = this.container.querySelectorAll(".commission-tab");
+      const scroller = this.container.querySelector(".commission-preview-scroller");
+      if (!tabs.length || !scroller) return;
+
+      tabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+          const category = tab.dataset.category;
+
+          // Update active UI
+          tabs.forEach(t => t.classList.remove("active"));
+          tab.classList.add("active");
+
+          // Filter with animation
+          scroller.style.opacity = "0";
+          
+          setTimeout(() => {
+            const cards = scroller.querySelectorAll(".commission-preview-card");
+            cards.forEach(card => {
+              if (category === "all" || card.dataset.category === category) {
+                card.style.display = "block";
+              } else {
+                card.style.display = "none";
+              }
+            });
+            
+            scroller.scrollTo({ left: 0 });
+            scroller.style.opacity = "1";
+          }, 200);
+        });
+      });
+    }
+
+    setupScroller() {
+      const scroller = this.container.querySelector(".commission-preview-scroller");
+      const prevBtn = this.container.querySelector(".scroller-prev");
+      const nextBtn = this.container.querySelector(".scroller-next");
+      
+      if (!scroller || !prevBtn || !nextBtn) return;
+
+      const getScrollAmount = () => {
+        const card = scroller.querySelector(".commission-preview-card");
+        return card ? card.offsetWidth + 24 : 320; // width + gap
+      };
+
+      prevBtn.addEventListener("click", () => {
+        scroller.scrollBy({ left: -getScrollAmount(), behavior: "smooth" });
+      });
+
+      nextBtn.addEventListener("click", () => {
+        scroller.scrollBy({ left: getScrollAmount(), behavior: "smooth" });
+      });
+
+      // Update button visibility on scroll
+      const updateArrows = () => {
+        const { scrollLeft, scrollWidth, clientWidth } = scroller;
+        prevBtn.style.opacity = scrollLeft > 10 ? "1" : "0.3";
+        prevBtn.style.pointerEvents = scrollLeft > 10 ? "auto" : "none";
+        
+        nextBtn.style.opacity = scrollLeft + clientWidth < scrollWidth - 10 ? "1" : "0.3";
+        nextBtn.style.pointerEvents = scrollLeft + clientWidth < scrollWidth - 10 ? "auto" : "none";
+      };
+
+      scroller.addEventListener("scroll", BonnaUtils.debounce(updateArrows, 50));
+      window.addEventListener("resize", BonnaUtils.debounce(updateArrows, 100));
+      
+      // Initial check
+      setTimeout(updateArrows, 500);
     }
 
     destroy() {

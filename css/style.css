@@ -2472,15 +2472,110 @@ button:disabled {
 /* --- Commission Preview Section --- */
 .commission-preview-section {
   margin-bottom: var(--space-xl);
+  position: relative;
 }
 
-.commission-preview-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+.commission-preview-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xl);
+}
+
+.commission-tab {
+  padding: 8px 16px;
+  font-family: var(--font-pixel);
+  font-size: 0.55rem;
+  background: var(--clr-light-peach);
+  border: 2px solid var(--retro-border);
+  box-shadow: 3px 3px 0 var(--retro-shadow);
+  cursor: pointer;
+  color: var(--text-primary);
+  transition: all 0.2s var(--ease-out-expo);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.commission-tab:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--retro-shadow);
+  background: var(--clr-peach);
+}
+
+.commission-tab.active {
+  background: var(--clr-coral);
+  color: var(--text-light);
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--retro-shadow);
+}
+
+.commission-preview-scroller-wrapper {
+  position: relative;
+  margin: 0 calc(var(--space-md) * -1);
+}
+
+.commission-preview-scroller {
+  display: flex;
   gap: var(--space-lg);
+  overflow-x: auto;
+  padding: var(--space-md) var(--space-md) var(--space-xl);
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--clr-coral) transparent;
+  transition: opacity 0.3s ease;
+}
+
+.commission-preview-scroller::-webkit-scrollbar {
+  height: 6px;
+}
+.commission-preview-scroller::-webkit-scrollbar-track {
+  background: rgba(45, 10, 30, 0.05);
+}
+.commission-preview-scroller::-webkit-scrollbar-thumb {
+  background: var(--clr-coral);
+  border-radius: 3px;
+}
+
+.scroller-nav {
+  position: absolute;
+  top: 40%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  background: var(--clr-coral);
+  border: 2px solid var(--retro-border);
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 3px 3px 0 var(--retro-shadow);
+  transition: all 0.2s var(--ease-out-expo);
+}
+
+.scroller-nav:hover {
+  background: var(--clr-warm-crimson);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.scroller-nav:active {
+  transform: translateY(-50%) scale(0.95);
+  box-shadow: 1px 1px 0 var(--retro-shadow);
+}
+
+.scroller-prev {
+  left: 10px;
+}
+.scroller-next {
+  right: 10px;
 }
 
 .commission-preview-card {
+  flex: 0 0 300px;
+  scroll-snap-align: center;
   background: var(--retro-bg);
   border: 3px solid var(--retro-border);
   border-radius: var(--radius-xs);
@@ -2488,7 +2583,8 @@ button:disabled {
   overflow: hidden;
   transition:
     transform 0.2s var(--ease-out-expo),
-    box-shadow 0.2s ease;
+    box-shadow 0.2s ease,
+    opacity 0.3s ease;
   cursor: pointer;
 }
 
@@ -2576,22 +2672,26 @@ button:disabled {
 
 /* --- Commission Preview Responsive --- */
 @media (max-width: 768px) {
-  .commission-preview-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .commission-preview-scroller {
     gap: var(--space-md);
   }
-
+  
   .commission-preview-card {
+    flex: 0 0 260px;
     box-shadow: 4px 4px 0 var(--retro-shadow);
   }
 
   .commission-preview-card:hover {
     box-shadow: 5px 5px 0 var(--retro-shadow);
   }
+  
+  .scroller-nav {
+    display: none;
+  }
 }
 
 @media (max-width: 480px) {
-  .commission-preview-grid {
-    grid-template-columns: 1fr;
+  .commission-preview-card {
+    flex: 0 0 85vw;
   }
 }
