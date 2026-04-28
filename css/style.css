@@ -2102,16 +2102,18 @@ button:disabled {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  text-align: center;
   gap: var(--space-sm);
   padding: var(--space-sm);
   width: 100%;
+  position: relative;
 }
 
 .gallery-filter-btn {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-xs);
-  padding: 10px 16px;
+  gap: var(--space-sm);
+  padding: 10px 14px;
   background: var(--clr-dark-plum);
   border: 2px solid var(--clr-warm-crimson);
   border-radius: var(--radius-xs);
@@ -2134,7 +2136,9 @@ button:disabled {
 .gallery-filter-btn.active {
   background: var(--clr-warm-crimson);
   color: var(--text-light);
-  border-color: var(--clr-coral);
+  border-color: var(--clr-light-peach);
+  border-bottom-width: 2px;
+  transform: translateY(3px);
   box-shadow: inset 2px 2px 0 rgba(0,0,0,0.3), 0 0 10px rgba(232, 114, 90, 0.4);
 }
 
@@ -2148,13 +2152,22 @@ button:disabled {
 }
 
 .gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: var(--space-xl);
+  column-count: 2;
+  column-gap: var(--space-xl);
   margin-bottom: var(--space-xl);
 }
 
+@media (min-width: 900px) {
+  .gallery-grid {
+    column-count: 3;
+  }
+}
+
 .gallery-item {
+  display: inline-block;
+  width: 100%;
+  margin-bottom: var(--space-xl);
+  break-inside: avoid;
   position: relative;
   background: var(--clr-cream);
   padding: var(--space-sm);
@@ -2184,7 +2197,6 @@ button:disabled {
 
 .gallery-item-image-wrapper {
   position: relative;
-  aspect-ratio: 1;
   overflow: hidden;
   background: var(--clr-dark-plum);
   border: 2px solid var(--retro-border);
@@ -2192,8 +2204,8 @@ button:disabled {
 
 .gallery-item-image {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  display: block;
   transition: transform 0.5s var(--ease-out-expo);
 }
 
@@ -2437,7 +2449,7 @@ button:disabled {
 
 @media (max-width: 600px) {
   .gallery-grid {
-    grid-template-columns: repeat(2, 1fr);
+    column-count: 2;
     gap: var(--space-md);
   }
   
@@ -2458,7 +2470,7 @@ button:disabled {
 
 @media (max-width: 450px) {
   .gallery-grid {
-    grid-template-columns: 1fr;
+    column-count: 1;
   }
 }
 

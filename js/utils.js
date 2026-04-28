@@ -10,7 +10,7 @@ const BonnaUtils = {
   // ==========================================
 
   /** Number of gallery items loaded per batch */
-  ITEMS_PER_LOAD: 6,
+  ITEMS_PER_LOAD: 12,
 
   /** Page transition duration in ms */
   TRANSITION_MS: 600,

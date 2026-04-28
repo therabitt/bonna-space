@@ -796,6 +796,7 @@ document.addEventListener("DOMContentLoaded", () => {
         lightboxType: document.getElementById("lightbox-type"),
         lightboxDesc: document.getElementById("lightbox-desc"),
         filterButtons: document.querySelectorAll(".gallery-filter-btn"),
+        stats: document.getElementById("gallery-stats"),
       };
 
       if (this.elements.grid) {
@@ -1066,7 +1067,7 @@ document.addEventListener("DOMContentLoaded", () => {
       this.renderGallery();
     }
 
-    renderGallery() {
+    renderGallery(isLoadMore = false) {
       if (!this.elements.grid) return;
 
       // Show no results if empty
@@ -1080,12 +1081,14 @@ document.addEventListener("DOMContentLoaded", () => {
       this.elements.noResults.style.display = "none";
 
       // Get items to show
+      const startIndex = isLoadMore ? (this.currentPage - 1) * this.itemsPerPage : 0;
       const endIndex = this.currentPage * this.itemsPerPage;
-      const itemsToShow = this.filteredItems.slice(0, endIndex);
+      const itemsToShow = this.filteredItems.slice(startIndex, endIndex);
 
-      // Render items
-      this.elements.grid.innerHTML = itemsToShow
+      // Create fragment for better performance
+      const html = itemsToShow
         .map((item, index) => {
+          const actualIndex = startIndex + index;
           const title = BonnaUtils.getVal(item, "Title") || "Untitled";
           const imageUrl = BonnaUtils.getVal(item, "ImageURL");
           const type = BonnaUtils.getVal(item, "Type") || "Artwork";
@@ -1094,7 +1097,7 @@ document.addEventListener("DOMContentLoaded", () => {
           if (!imageUrl) return "";
 
           return `
-          <div class="gallery-item reveal" data-index="${index}" data-title="${BonnaUtils.escapeHtml(title)}" data-type="${BonnaUtils.escapeHtml(type)}" data-desc="${BonnaUtils.escapeHtml(desc)}" data-image="${BonnaUtils.escapeHtml(imageUrl)}">
+          <div class="gallery-item reveal" data-index="${actualIndex}" data-title="${BonnaUtils.escapeHtml(title)}" data-type="${BonnaUtils.escapeHtml(type)}" data-desc="${BonnaUtils.escapeHtml(desc)}" data-image="${BonnaUtils.escapeHtml(imageUrl)}">
             <div class="gallery-item-image-wrapper">
               <img src="${imageUrl}" alt="${BonnaUtils.escapeHtml(title)}" class="gallery-item-image" loading="lazy">
               <div class="gallery-item-overlay">
@@ -1105,6 +1108,19 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
         })
         .join("");
+
+      if (isLoadMore) {
+        this.elements.grid.insertAdjacentHTML("beforeend", html);
+      } else {
+        this.elements.grid.innerHTML = html;
+      }
+
+      // Update stats
+      if (this.elements.stats) {
+        const count = Math.min(endIndex, this.filteredItems.length);
+        this.elements.stats.textContent = `Showing ${count} of ${this.filteredItems.length} Artworks`;
+        this.elements.stats.style.display = "block";
+      }
 
       // Show/hide load more button
       const hasMore = endIndex < this.filteredItems.length;
@@ -1129,7 +1145,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Simulate loading delay for better UX
       setTimeout(() => {
         this.currentPage++;
-        this.renderGallery();
+        this.renderGallery(true);
       }, 500);
     }
 
