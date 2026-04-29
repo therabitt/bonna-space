@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderGalleryPreview(items, container) {
       container.innerHTML = "";
       const previewItems = items.slice(0, 3);
-      
+
       if (previewItems.length === 0) {
         container.innerHTML = "<p style='grid-column: 1/-1; text-align: center; font-family: var(--font-pixel); font-size: 0.5rem; color: var(--clr-coral);'>No memories found yet.</p>";
         return;
@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
       previewItems.forEach((item, index) => {
         const title = BonnaUtils.escapeHtml(BonnaUtils.getVal(item, "Title") || "Artwork");
         const imgUrl = BonnaUtils.getVal(item, "ImageURL");
-        
+
         const div = document.createElement("a");
         div.href = "gallery.html";
         div.className = `gallery-preview-item reveal reveal-delay-${index}`;
@@ -198,7 +198,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "click",
         () => {
           if (!this.isMuted && this.bgm.paused) {
-            this.bgm.play().catch(() => {});
+            this.bgm.play().catch(() => { });
           }
         },
         { once: true },
@@ -240,7 +240,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (this.isMuted) {
         this.bgm.pause();
       } else {
-        this.bgm.play().catch(() => {});
+        this.bgm.play().catch(() => { });
       }
     }
 
@@ -259,7 +259,7 @@ document.addEventListener("DOMContentLoaded", () => {
     playSFX(audio) {
       if (!this.isMuted) {
         audio.currentTime = 0;
-        audio.play().catch(() => {});
+        audio.play().catch(() => { });
       }
     }
   }
@@ -367,12 +367,12 @@ document.addEventListener("DOMContentLoaded", () => {
       cards.forEach((card) => {
         let rafPending = false;
         let targetX = 0, targetY = 0;
-        
+
         card.addEventListener("mousemove", (e) => {
           const rect = card.getBoundingClientRect();
           targetX = e.clientX - rect.left;
           targetY = e.clientY - rect.top;
-          
+
           if (!rafPending) {
             rafPending = true;
             requestAnimationFrame(() => {
@@ -479,7 +479,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const reinitAll = () => {
     console.log("🔄 Re-initializing page components...");
-    
+
     // Re-inject dynamic data if already cached
     if (dataManager.cache) dataManager.injectAll(dataManager.cache);
 
@@ -488,7 +488,7 @@ document.addEventListener("DOMContentLoaded", () => {
     visualEffects.initTypewriter();
     visualEffects.initRetroCards();
     visualEffects.initMascots();
-    
+
     // Audio listeners need rebinding to new elements
     if (typeof audioManager !== "undefined") {
       audioManager.attachUIListeners();
@@ -593,7 +593,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Shared Static Visuals (Scroll listeners optimized & consolidated)
   if (!prefersReducedMotion) {
     const isPointerFine = window.matchMedia("(pointer: fine)").matches;
-    
+
     // Setup Parallax Background (Desktop Only)
     let l1, l2, l3;
     if (isPointerFine) {
@@ -627,14 +627,14 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!scrollRafId) {
           scrollRafId = requestAnimationFrame(() => {
             const y = window.scrollY;
-            
+
             // 1. Stars Parallax
             if (isPointerFine && l1 && l2 && l3) {
               l1.style.transform = `translateY(${y * 0.5}px)`;
               l2.style.transform = `translateY(${y * 0.3}px)`;
               l3.style.transform = `translateY(${y * 0.15}px)`;
             }
-            
+
             // 2. Mascot Parallax
             if (mascotLayers.length > 0) {
               const vh = window.innerHeight;
@@ -649,7 +649,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
               });
             }
-            
+
             // 3. Scroll Progress
             if (progress) {
               const root = document.documentElement;
@@ -669,13 +669,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (window.matchMedia("(pointer: fine)").matches) {
       const chars = ['✦', '·', '☆', '★', '*', '✨'];
       const cols = [
-        'var(--clr-coral)', 
-        'var(--clr-warm-crimson)', 
-        'var(--clr-salmon)', 
-        'var(--clr-gold)', 
+        'var(--clr-coral)',
+        'var(--clr-warm-crimson)',
+        'var(--clr-salmon)',
+        'var(--clr-gold)',
         'var(--clr-gold-soft)'
       ];
-      
+
       let lastMove = 0;
       document.addEventListener("mousemove", (e) => {
         const now = Date.now();
@@ -689,7 +689,7 @@ document.addEventListener("DOMContentLoaded", () => {
           s.style.top = (e.clientY + Math.random() * 16 - 8) + "px";
           s.style.color = cols[Math.floor(Math.random() * cols.length)];
           s.style.fontSize = (7 + Math.random() * 9) + "px";
-          
+
           document.body.appendChild(s);
           setTimeout(() => s.remove(), 700);
         }
@@ -780,6 +780,7 @@ document.addEventListener("DOMContentLoaded", () => {
       this.currentFilter = "all";
       this.currentCategoryFilter = "all";
       this.currentTypeFilter = "all";
+      this.currentSort = "most-liked";
       this.currentLightboxIndex = 0;
 
       this.elements = {
@@ -795,7 +796,10 @@ document.addEventListener("DOMContentLoaded", () => {
         lightboxTitle: document.getElementById("lightbox-title"),
         lightboxType: document.getElementById("lightbox-type"),
         lightboxDesc: document.getElementById("lightbox-desc"),
+        lightboxLikeBtn: document.getElementById("lightbox-like-btn"),
+        lightboxLikeCount: document.getElementById("lightbox-like-count"),
         filterButtons: document.querySelectorAll(".gallery-filter-btn"),
+        sortButtons: document.querySelectorAll(".gallery-sort-btn"),
         stats: document.getElementById("gallery-stats"),
       };
 
@@ -830,6 +834,15 @@ document.addEventListener("DOMContentLoaded", () => {
       // Event delegation for gallery items (fixes iOS double-tap & rebind issues)
       if (this.elements.grid) {
         this.elements.grid.addEventListener("click", (e) => {
+          // Like button on card
+          const likeBtn = e.target.closest(".gallery-item-like-btn");
+          if (likeBtn) {
+            e.stopPropagation();
+            const id = likeBtn.closest(".gallery-item")?.dataset.id;
+            if (id) this.handleLike(id, likeBtn);
+            return;
+          }
+
           const item = e.target.closest(".gallery-item");
           if (item) {
             const index = parseInt(item.dataset.index);
@@ -845,6 +858,16 @@ document.addEventListener("DOMContentLoaded", () => {
             const filter = e.currentTarget.dataset.filter;
             const kind = e.currentTarget.dataset.filterKind || "type";
             this.setFilter(filter, kind);
+          });
+        });
+      }
+
+      // Sort buttons
+      if (this.elements.sortButtons) {
+        this.elements.sortButtons.forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            const sort = e.currentTarget.dataset.sort;
+            this.setSort(sort);
           });
         });
       }
@@ -887,6 +910,15 @@ document.addEventListener("DOMContentLoaded", () => {
           this.navigateLightbox(1);
         });
 
+      // Lightbox like button
+      if (this.elements.lightboxLikeBtn) {
+        this.elements.lightboxLikeBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const id = this.elements.lightboxLikeBtn.dataset.artworkId;
+          if (id) this.handleLike(id, this.elements.lightboxLikeBtn, true);
+        });
+      }
+
       // Keyboard navigation
       document.addEventListener(
         "keydown",
@@ -907,18 +939,16 @@ document.addEventListener("DOMContentLoaded", () => {
       // Get gallery data (support both Showcase and Gallery)
       this.allGalleryItems = data.Gallery || data.Showcase || [];
 
-      // Sort by Order (if available)
-      this.allGalleryItems.sort((a, b) => {
-        const orderA = parseInt(BonnaUtils.getVal(a, "Order")) || 0;
-        const orderB = parseInt(BonnaUtils.getVal(b, "Order")) || 0;
-        return orderA - orderB;
-      });
-
-      this.filteredItems = [...this.allGalleryItems];
-
       // Reset both filters on fresh data load
       this.currentCategoryFilter = "all";
       this.currentTypeFilter = "all";
+      this.currentSort = "most-liked";
+
+      // Apply default sort (Most Liked)
+      this.applySort(false);
+
+      // Initialize filtered items
+      this.filteredItems = [...this.allGalleryItems];
 
       // Generate dynamic filters
       this.generateFilters();
@@ -1084,6 +1114,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const startIndex = isLoadMore ? (this.currentPage - 1) * this.itemsPerPage : 0;
       const endIndex = this.currentPage * this.itemsPerPage;
       const itemsToShow = this.filteredItems.slice(startIndex, endIndex);
+      const likedIds = this.getLikedIds();
 
       // Create fragment for better performance
       const html = itemsToShow
@@ -1093,15 +1124,24 @@ document.addEventListener("DOMContentLoaded", () => {
           const imageUrl = BonnaUtils.getVal(item, "ImageURL");
           const type = BonnaUtils.getVal(item, "Type") || "Artwork";
           const desc = BonnaUtils.getVal(item, "Description") || "";
+          const id = BonnaUtils.getVal(item, "ID") || actualIndex;
+          const likes = parseInt(BonnaUtils.getVal(item, "Likes")) || 0;
+          const isLiked = likedIds.includes(String(id));
 
           if (!imageUrl) return "";
 
           return `
-          <div class="gallery-item reveal" data-index="${actualIndex}" data-title="${BonnaUtils.escapeHtml(title)}" data-type="${BonnaUtils.escapeHtml(type)}" data-desc="${BonnaUtils.escapeHtml(desc)}" data-image="${BonnaUtils.escapeHtml(imageUrl)}">
+          <div class="gallery-item reveal" data-index="${actualIndex}" data-id="${BonnaUtils.escapeHtml(String(id))}" data-title="${BonnaUtils.escapeHtml(title)}" data-type="${BonnaUtils.escapeHtml(type)}" data-desc="${BonnaUtils.escapeHtml(desc)}" data-image="${BonnaUtils.escapeHtml(imageUrl)}">
             <div class="gallery-item-image-wrapper">
               <img src="${imageUrl}" alt="${BonnaUtils.escapeHtml(title)}" class="gallery-item-image" loading="lazy">
               <div class="gallery-item-overlay">
                 <div class="gallery-item-title-tag">${BonnaUtils.escapeHtml(title)}</div>
+              </div>
+              <div class="gallery-item-like-bar">
+                <button class="gallery-item-like-btn ${isLiked ? 'liked' : ''}" data-artwork-id="${BonnaUtils.escapeHtml(String(id))}" aria-label="Like ${BonnaUtils.escapeHtml(title)}">
+                  <i class="${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+                </button>
+                <span class="gallery-item-like-count">${likes}</span>
               </div>
             </div>
           </div>
@@ -1181,6 +1221,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const imageUrl = BonnaUtils.getVal(item, "ImageURL");
       const type = BonnaUtils.getVal(item, "Type") || "Artwork";
       const desc = BonnaUtils.getVal(item, "Description") || "";
+      const id = BonnaUtils.getVal(item, "ID") || this.currentLightboxIndex;
+      const likes = parseInt(BonnaUtils.getVal(item, "Likes")) || 0;
+      const liked = this.isLiked(id);
 
       // Show loading state
       this.elements.lightboxImage.classList.remove("loaded");
@@ -1190,6 +1233,19 @@ document.addEventListener("DOMContentLoaded", () => {
       this.elements.lightboxTitle.textContent = title;
       this.elements.lightboxType.textContent = type;
       this.elements.lightboxDesc.textContent = desc;
+
+      // Update like button in lightbox
+      if (this.elements.lightboxLikeCount) {
+        this.elements.lightboxLikeCount.textContent = likes;
+      }
+      if (this.elements.lightboxLikeBtn) {
+        this.elements.lightboxLikeBtn.dataset.artworkId = String(id);
+        this.elements.lightboxLikeBtn.classList.toggle("liked", liked);
+        const icon = this.elements.lightboxLikeBtn.querySelector("i");
+        if (icon) {
+          icon.className = liked ? "fa-solid fa-heart" : "fa-regular fa-heart";
+        }
+      }
 
       // Handle image load
       this.elements.lightboxImage.onload = () => {
@@ -1210,6 +1266,116 @@ document.addEventListener("DOMContentLoaded", () => {
         this.currentLightboxIndex < this.filteredItems.length - 1
           ? "visible"
           : "hidden";
+    }
+
+    applySort(refilter = true) {
+      const sort = this.currentSort;
+
+      const getDate = (item) => {
+        const d = BonnaUtils.getVal(item, "Date");
+        if (d) return new Date(d).getTime();
+        const o = parseInt(BonnaUtils.getVal(item, "Order")) || 0;
+        return o;
+      };
+
+      this.allGalleryItems.sort((a, b) => {
+        if (sort === "most-liked") {
+          const la = parseInt(BonnaUtils.getVal(a, "Likes")) || 0;
+          const lb = parseInt(BonnaUtils.getVal(b, "Likes")) || 0;
+          return lb - la;
+        }
+        if (sort === "newest") return getDate(b) - getDate(a);
+        if (sort === "oldest") return getDate(a) - getDate(b);
+        // default
+        const oa = parseInt(BonnaUtils.getVal(a, "Order")) || 0;
+        const ob = parseInt(BonnaUtils.getVal(b, "Order")) || 0;
+        return oa - ob;
+      });
+
+      if (refilter) {
+        this.setFilter(this.currentCategoryFilter, "category");
+      }
+    }
+
+    setSort(sort) {
+      this.currentSort = sort;
+      this.currentPage = 1;
+
+      // Update active UI
+      document.querySelectorAll(".gallery-sort-btn").forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.sort === sort);
+      });
+
+      this.applySort(true);
+    }
+
+    getLikedIds() {
+      try {
+        const raw = localStorage.getItem(BonnaUtils.LIKED_ARTWORKS_KEY);
+        return raw ? JSON.parse(raw) : [];
+      } catch {
+        return [];
+      }
+    }
+
+    isLiked(id) {
+      return this.getLikedIds().includes(String(id));
+    }
+
+    async handleLike(id, btnElement, isLightbox = false) {
+      const strId = String(id);
+      if (this.isLiked(strId)) {
+        BonnaUtils.showToast("You already liked this artwork!", "info");
+        return;
+      }
+
+      // Optimistic UI update
+      const likedIds = this.getLikedIds();
+      likedIds.push(strId);
+      localStorage.setItem(BonnaUtils.LIKED_ARTWORKS_KEY, JSON.stringify(likedIds));
+
+      if (isLightbox) {
+        btnElement.classList.add("liked");
+        const icon = btnElement.querySelector("i");
+        if (icon) icon.className = "fa-solid fa-heart";
+        const countEl = this.elements.lightboxLikeCount;
+        if (countEl) {
+          const current = parseInt(countEl.textContent) || 0;
+          countEl.textContent = current + 1;
+        }
+      } else {
+        btnElement.classList.add("liked");
+        const icon = btnElement.querySelector("i");
+        if (icon) icon.className = "fa-solid fa-heart";
+        const countEl = btnElement.nextElementSibling;
+        if (countEl) {
+          const current = parseInt(countEl.textContent) || 0;
+          countEl.textContent = current + 1;
+        }
+      }
+
+      // Send to backend
+      this.sendLikeToSheet(strId);
+
+      // If sorted by most-liked, re-apply sort after a brief delay so item can bubble up
+      if (this.currentSort === "most-liked") {
+        setTimeout(() => {
+          this.applySort(true);
+        }, 400);
+      }
+    }
+
+    sendLikeToSheet(artworkId) {
+      try {
+        fetch(API_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "like", artworkId }),
+        });
+      } catch (err) {
+        console.error("Like send failed:", err);
+      }
     }
 
     destroy() {
@@ -1329,11 +1495,10 @@ document.addEventListener("DOMContentLoaded", () => {
       return `
         <div class="commission-preview-card" data-category="${category}">
           <div class="commission-preview-image-container">
-            ${
-              sampleImage
-                ? `<img src="${sampleImage}" alt="${typeName} sample" class="commission-preview-image" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'commission-preview-image-placeholder\\'>${typeName}<br>Sample<br>Coming Soon</div>'">`
-                : `<div class="commission-preview-image-placeholder">${typeName}<br>Sample<br>Coming Soon</div>`
-            }
+            ${sampleImage
+          ? `<img src="${sampleImage}" alt="${typeName} sample" class="commission-preview-image" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'commission-preview-image-placeholder\\'>${typeName}<br>Sample<br>Coming Soon</div>'">`
+          : `<div class="commission-preview-image-placeholder">${typeName}<br>Sample<br>Coming Soon</div>`
+        }
           </div>
           <div class="commission-preview-info">
             ${category ? `<span class="commission-preview-category">${category}</span>` : ""}
@@ -1360,7 +1525,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
           // Filter with animation
           scroller.style.opacity = "0";
-          
+
           setTimeout(() => {
             const cards = scroller.querySelectorAll(".commission-preview-card");
             cards.forEach(card => {
@@ -1370,7 +1535,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 card.style.display = "none";
               }
             });
-            
+
             scroller.scrollTo({ left: 0 });
             scroller.style.opacity = "1";
           }, 200);
@@ -1382,7 +1547,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const scroller = this.container.querySelector(".commission-preview-scroller");
       const prevBtn = this.container.querySelector(".scroller-prev");
       const nextBtn = this.container.querySelector(".scroller-next");
-      
+
       if (!scroller || !prevBtn || !nextBtn) return;
 
       const getScrollAmount = () => {
@@ -1421,7 +1586,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       scroller.addEventListener("scroll", BonnaUtils.debounce(updateArrows, 50));
       window.addEventListener("resize", BonnaUtils.debounce(updateArrows, 100));
-      
+
       // Initial check
       setTimeout(updateArrows, 500);
     }

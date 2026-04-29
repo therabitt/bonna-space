@@ -24,6 +24,9 @@ const BonnaUtils = {
   /** App initialization failsafe timeout in ms */
   INIT_FAILSAFE_MS: 5000,
 
+  /** localStorage key for tracking liked artwork IDs */
+  LIKED_ARTWORKS_KEY: 'bonna_liked_artworks',
+
   // ==========================================
   // DATA HELPERS
   // ==========================================
@@ -64,11 +67,11 @@ const BonnaUtils = {
    */
   getDefaultDescription(type) {
     const descriptions = {
-      'Chibi':     'Cute chibi characters with big heads and tiny bodies',
-      'Close Up':  'Portrait style focusing on face and expression',
+      'Chibi': 'Cute chibi characters with big heads and tiny bodies',
+      'Close Up': 'Portrait style focusing on face and expression',
       'Half Body': 'Upper body with some pose and details',
       'Full Body': 'Complete character from head to toe',
-      'Scene':     'Full scene with background and environment',
+      'Scene': 'Full scene with background and environment',
     };
     return descriptions[type] || 'Commission artwork';
   },
