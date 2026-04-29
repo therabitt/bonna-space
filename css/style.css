@@ -2165,6 +2165,7 @@ button:disabled {
 .gallery-item {
   display: inline-block;
   width: 100%;
+  margin-bottom: var(--space-md);
   break-inside: avoid;
   position: relative;
   background: var(--clr-cream);
@@ -2471,7 +2472,7 @@ button:disabled {
   }
 }
 
-@media (min-width: 450px) {
+@media (max-width: 450px) {
   .gallery-grid {
     column-count: 2;
     gap: var(--space-md);
