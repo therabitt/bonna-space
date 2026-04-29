@@ -309,8 +309,7 @@ body {
 .main-container {
   max-width: 900px;
   margin: 0 auto;
-  padding: calc(var(--nav-height) + var(--space-xl)) var(--space-md)
-    max(var(--space-3xl), 8vh);
+  padding: calc(var(--nav-height) + var(--space-xl)) var(--space-md) max(var(--space-3xl), 8vh);
   position: relative;
   z-index: 2;
 }
@@ -466,7 +465,7 @@ body {
   transform: rotate(-45deg) translate(5px, -5px);
 }
 
-@media (max-width: 480px) {
+@media (max-width: 560px) {
   .nav-hamburger {
     display: flex;
   }
