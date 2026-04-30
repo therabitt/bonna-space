@@ -834,15 +834,21 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       // Wait for data to be loaded
-      const checkData = setInterval(() => {
+      this._checkDataInterval = setInterval(() => {
         if (this.dataManager.cache) {
-          clearInterval(checkData);
+          clearInterval(this._checkDataInterval);
+          this._checkDataInterval = null;
           this.loadGalleryData();
         }
       }, 100);
 
       // Timeout after 10 seconds
-      setTimeout(() => clearInterval(checkData), 10000);
+      setTimeout(() => {
+        if (this._checkDataInterval) {
+          clearInterval(this._checkDataInterval);
+          this._checkDataInterval = null;
+        }
+      }, 10000);
     }
 
     setupEventListeners() {
@@ -1395,6 +1401,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     destroy() {
       this._abortController.abort();
+      if (this._checkDataInterval) {
+        clearInterval(this._checkDataInterval);
+        this._checkDataInterval = null;
+      }
     }
   }
 
