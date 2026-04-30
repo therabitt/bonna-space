@@ -1067,8 +1067,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    setFilter(filter, kind = "type") {
-      this.currentPage = 1;
+    setFilter(filter, kind = "type", resetPage = true) {
+      if (resetPage) this.currentPage = 1;
 
       if (kind === "category") {
         this.currentCategoryFilter = filter;
@@ -1289,7 +1289,7 @@ document.addEventListener("DOMContentLoaded", () => {
           : "hidden";
     }
 
-    applySort(refilter = true) {
+    applySort(refilter = true, resetPage = true) {
       const sort = this.currentSort;
 
       const getDate = (item) => {
@@ -1314,7 +1314,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       if (refilter) {
-        this.setFilter(this.currentCategoryFilter, "category");
+        this.setFilter(this.currentCategoryFilter, "category", resetPage);
       }
     }
 
@@ -1359,10 +1359,11 @@ document.addEventListener("DOMContentLoaded", () => {
       );
       if (sourceItem) {
         const currentLikes = parseInt(BonnaUtils.getVal(sourceItem, "Likes")) || 0;
+        // Find existing key or use "Likes"
         const likesKey = Object.keys(sourceItem).find(
           (k) => k.toLowerCase().replace(/[\s_]/g, "") === "likes"
-        );
-        if (likesKey) sourceItem[likesKey] = currentLikes + 1;
+        ) || "Likes";
+        sourceItem[likesKey] = currentLikes + 1;
       }
 
       if (isLightbox) {
@@ -1391,7 +1392,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // If sorted by most-liked, re-apply sort after a brief delay so item can bubble up
       if (this.currentSort === "most-liked") {
         setTimeout(() => {
-          this.applySort(true);
+          this.applySort(true, false); // Refilter but don't reset page
         }, 400);
       }
     }

@@ -55,7 +55,7 @@ const api = {
       await fetch(CONFIG.API_URL, {
         method: "POST",
         mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "text/plain" },
         body: JSON.stringify(payload),
       });
 
@@ -489,6 +489,7 @@ const galleryManager = {
       } else {
         // Add new
         const newId = this.galleryItems.length + 1;
+        const today = new Date().toISOString().split('T')[0]; // "YYYY-MM-DD"
         data = [
           ...this.galleryItems,
           {
