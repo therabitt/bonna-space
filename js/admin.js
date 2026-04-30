@@ -483,6 +483,8 @@ const galleryManager = {
           Category: category,
           Description: desc,
           Order: this.currentEditId + 1,
+          Date: BonnaUtils.getVal(this.galleryItems[this.currentEditId], "Date") || "",  
+          Likes: BonnaUtils.getVal(this.galleryItems[this.currentEditId], "Likes") || 0,
         };
       } else {
         // Add new
@@ -497,6 +499,8 @@ const galleryManager = {
             Category: category,
             Description: desc,
             Order: newId,
+            Date: today,
+            Likes: 0,
           },
         ];
       }

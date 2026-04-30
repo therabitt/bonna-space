@@ -1350,10 +1350,20 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // Optimistic UI update
       const likedIds = this.getLikedIds();
       likedIds.push(strId);
       localStorage.setItem(BonnaUtils.LIKED_ARTWORKS_KEY, JSON.stringify(likedIds));
+
+      const sourceItem = this.allGalleryItems.find(
+        (item) => String(BonnaUtils.getVal(item, "ID")) === strId
+      );
+      if (sourceItem) {
+        const currentLikes = parseInt(BonnaUtils.getVal(sourceItem, "Likes")) || 0;
+        const likesKey = Object.keys(sourceItem).find(
+          (k) => k.toLowerCase().replace(/[\s_]/g, "") === "likes"
+        );
+        if (likesKey) sourceItem[likesKey] = currentLikes + 1;
+      }
 
       if (isLightbox) {
         btnElement.classList.add("liked");
@@ -1391,7 +1401,7 @@ document.addEventListener("DOMContentLoaded", () => {
         fetch(API_URL, {
           method: "POST",
           mode: "no-cors",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "text/plain" },
           body: JSON.stringify({ action: "like", artworkId }),
         });
       } catch (err) {
