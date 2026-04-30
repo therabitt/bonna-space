@@ -591,82 +591,98 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Shared Static Visuals (Scroll listeners optimized & consolidated)
-  if (!prefersReducedMotion) {
-    const isPointerFine = window.matchMedia("(pointer: fine)").matches;
+  const isPointerFine = window.matchMedia("(pointer: fine)").matches;
+  const siteNav = document.getElementById("site-nav");
+  const navLinksList = document.getElementById("nav-links");
+  let lastScrollY = window.scrollY;
 
-    // Setup Parallax Background (Desktop Only)
-    let l1, l2, l3;
-    if (isPointerFine) {
-      l1 = document.querySelector(".parallax-layer-1");
-      l2 = document.querySelector(".parallax-layer-2");
-      l3 = document.querySelector(".parallax-layer-3");
-      if (l1 && l2 && l3) {
-        const stars = (d) => {
-          let s = [];
-          for (let i = 0; i < d; i++)
-            s.push(
-              `${Math.floor(Math.random() * 2000)}px ${Math.floor(Math.random() * 2000)}px ${Math.random() > 0.8 ? "var(--clr-gold-soft)" : "var(--clr-light-peach)"}`,
-            );
-          return s.join(", ");
-        };
-        l1.style.boxShadow = stars(100);
-        l2.style.boxShadow = stars(200);
-        l3.style.boxShadow = stars(300);
-      }
+  // Setup Parallax Background (Desktop Only)
+  let l1, l2, l3;
+  if (!prefersReducedMotion && isPointerFine) {
+    l1 = document.querySelector(".parallax-layer-1");
+    l2 = document.querySelector(".parallax-layer-2");
+    l3 = document.querySelector(".parallax-layer-3");
+    if (l1 && l2 && l3) {
+      const stars = (d) => {
+        let s = [];
+        for (let i = 0; i < d; i++)
+          s.push(
+            `${Math.floor(Math.random() * 2000)}px ${Math.floor(Math.random() * 2000)}px ${Math.random() > 0.8 ? "var(--clr-gold-soft)" : "var(--clr-light-peach)"}`,
+          );
+        return s.join(", ");
+      };
+      l1.style.boxShadow = stars(100);
+      l2.style.boxShadow = stars(200);
+      l3.style.boxShadow = stars(300);
     }
+  }
 
-    // Setup Mascot Parallax & Scroll Progress variables
-    const mascotLayers = document.querySelectorAll(".mascot-parallax");
-    const progress = document.querySelector(".scroll-progress");
+  // Setup Mascot Parallax & Scroll Progress variables
+  const mascotLayers = document.querySelectorAll(".mascot-parallax");
+  const progress = document.querySelector(".scroll-progress");
 
-    // Unified RAF Scroll Listener
-    let scrollRafId = null;
-    window.addEventListener(
-      "scroll",
-      () => {
-        if (!scrollRafId) {
-          scrollRafId = requestAnimationFrame(() => {
-            const y = window.scrollY;
+  // Unified RAF Scroll Listener
+  let scrollRafId = null;
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (!scrollRafId) {
+        scrollRafId = requestAnimationFrame(() => {
+          const y = window.scrollY;
 
-            // 1. Stars Parallax
-            if (isPointerFine && l1 && l2 && l3) {
-              l1.style.transform = `translateY(${y * 0.5}px)`;
-              l2.style.transform = `translateY(${y * 0.3}px)`;
-              l3.style.transform = `translateY(${y * 0.15}px)`;
+          // 1. Navbar Toggle (Hide on Scroll Down, Show on Scroll Up)
+          if (siteNav) {
+            const isNavOpen = navLinksList && navLinksList.classList.contains("open");
+            // Only hide if mobile menu is NOT open
+            if (!isNavOpen) {
+              if (y > lastScrollY && y > 100) {
+                siteNav.classList.add("nav-hidden");
+              } else {
+                siteNav.classList.remove("nav-hidden");
+              }
             }
+          }
+          lastScrollY = y;
 
-            // 2. Mascot Parallax
-            if (mascotLayers.length > 0) {
-              const vh = window.innerHeight;
-              const center = vh / 2;
-              mascotLayers.forEach((layer) => {
-                const rect = layer.getBoundingClientRect();
-                const rel = rect.top + rect.height / 2 - center;
-                layer.style.setProperty("--scroll-y", `${rel * 0.05}px`);
-                layer.style.setProperty(
-                  "--scroll-rotate",
-                  `${Math.sin(y * 0.005) * 3}deg`,
-                );
-              });
-            }
+          // 2. Stars Parallax (Motion sensitive)
+          if (!prefersReducedMotion && isPointerFine && l1 && l2 && l3) {
+            l1.style.transform = `translateY(${y * 0.5}px)`;
+            l2.style.transform = `translateY(${y * 0.3}px)`;
+            l3.style.transform = `translateY(${y * 0.15}px)`;
+          }
 
-            // 3. Scroll Progress
-            if (progress) {
-              const root = document.documentElement;
-              const scrollable = root.scrollHeight - root.clientHeight;
-              const pct = scrollable <= 0 ? 0 : (root.scrollTop / scrollable) * 100;
-              progress.style.width = `${Math.min(100, pct)}%`;
-            }
+          // 3. Mascot Parallax (Motion sensitive)
+          if (!prefersReducedMotion && mascotLayers.length > 0) {
+            const vh = window.innerHeight;
+            const center = vh / 2;
+            mascotLayers.forEach((layer) => {
+              const rect = layer.getBoundingClientRect();
+              const rel = rect.top + rect.height / 2 - center;
+              layer.style.setProperty("--scroll-y", `${rel * 0.05}px`);
+              layer.style.setProperty(
+                "--scroll-rotate",
+                `${Math.sin(y * 0.005) * 3}deg`,
+              );
+            });
+          }
 
-            scrollRafId = null;
-          });
-        }
-      },
-      { passive: true }
-    );
+          // 4. Scroll Progress
+          if (progress) {
+            const root = document.documentElement;
+            const scrollable = root.scrollHeight - root.clientHeight;
+            const pct = scrollable <= 0 ? 0 : (root.scrollTop / scrollable) * 100;
+            progress.style.width = `${Math.min(100, pct)}%`;
+          }
+
+          scrollRafId = null;
+        });
+      }
+    },
+    { passive: true }
+  );
 
     // Sparkle Trail (Text-based characters)
-    if (window.matchMedia("(pointer: fine)").matches) {
+    if (!prefersReducedMotion && window.matchMedia("(pointer: fine)").matches) {
       const chars = ['✦', '·', '☆', '★', '*', '✨'];
       const cols = [
         'var(--clr-coral)',
@@ -695,7 +711,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }, { passive: true });
     }
-  }
 
   // Floating particles (Desktop only)
   const bg = document.querySelector(".page-background");
