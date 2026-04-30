@@ -1174,6 +1174,22 @@ body {
   width: auto;
 }
 
+@media (max-width: 560px) {
+  .fandom-tag.special-tag {
+    display: none;
+  }
+}
+
+.fandom-tag.mobile-tag {
+  display: none;
+}
+
+@media (max-width: 560px) {
+  .fandom-tag.mobile-tag {
+    display: flex;
+  }
+}
+
 .fandom-tag:hover {
   background: var(--clr-coral);
   color: var(--text-light);
