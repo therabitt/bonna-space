@@ -1192,6 +1192,7 @@ body {
 @media (max-width: 560px) {
   .fandom-tag.mobile-tag {
     display: flex;
+    width: 90%;
   }
 }
 
