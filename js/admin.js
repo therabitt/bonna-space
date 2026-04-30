@@ -573,11 +573,13 @@ const commissionManager = {
   },
 
   populateGalleryDropdowns() {
+    const priceItems = state.cache?.Prices || [];
+    
     // --- Style (Category) select ---
     const categorySelect = document.getElementById("gallery-input-category");
     if (categorySelect) {
       const categories = [
-        ...new Set(this.priceItems.map((p) => p.Category).filter(Boolean)),
+        ...new Set(priceItems.map((p) => p.Category).filter(Boolean)),
       ];
       const currentCat = categorySelect.value;
       categorySelect.innerHTML = `
@@ -595,7 +597,7 @@ const commissionManager = {
     // --- Type select ---
     const typeSelect = document.getElementById("gallery-input-type");
     if (typeSelect) {
-      const rawTypes = this.priceItems
+      const rawTypes = priceItems
         .map((p) => p.Type || p.Category)
         .filter(Boolean);
       const types = [...new Set(rawTypes)];
