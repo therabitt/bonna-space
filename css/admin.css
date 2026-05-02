@@ -666,8 +666,8 @@
 /* --- Editor Lists --- */
 .editor-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: var(--space-lg);
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--space-md);
 }
 
 .editor-list-header {
@@ -685,45 +685,32 @@
   color: var(--clr-warm-crimson);
 }
 
-/* --- Unified Editor Item Styles (Gallery & Commission) --- */
+/* --- MEDIA POOL STYLES (Gallery & Commission) --- */
 .admin-editor-item {
-  display: flex;
-  flex-direction: column;
-  background: white;
+  position: relative;
+  aspect-ratio: 1;
+  background: var(--clr-dark-plum);
   border: 3px solid var(--retro-border);
   border-radius: var(--radius-xs);
-  box-shadow: 5px 5px 0 var(--retro-shadow);
-  transition: all 0.25s var(--ease-out-expo);
-  position: relative;
+  box-shadow: 4px 4px 0 var(--retro-shadow);
+  transition: transform 0.2s var(--ease-out-expo);
   overflow: hidden;
 }
 
-.admin-editor-item::before {
-  content: "";
+.admin-editor-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 6px 6px 0 var(--retro-shadow), 0 0 15px rgba(232, 114, 90, 0.3);
+}
+
+.admin-editor-thumb {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 4px;
-  background: linear-gradient(90deg, var(--clr-coral), var(--clr-salmon));
-  z-index: 2;
-}
-
-.admin-editor-item:hover {
-  transform: translate(-4px, -4px);
-  box-shadow: 8px 8px 0 var(--retro-shadow), 0 0 20px rgba(232, 114, 90, 0.2);
-}
-
-.admin-editor-thumb {
-  width: 100%;
-  aspect-ratio: 1;
-  background: linear-gradient(135deg, var(--clr-dark-plum), var(--clr-deep-maroon));
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom: 3px solid var(--retro-border);
-  position: relative;
-  overflow: hidden;
 }
 
 .admin-editor-thumb img {
@@ -739,129 +726,79 @@
 
 .admin-editor-thumb i {
   color: var(--clr-salmon);
-  font-size: 3.5rem;
-  opacity: 0.5;
-}
-
-.admin-editor-info {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-  padding: var(--space-md);
-  flex-grow: 1;
+  font-size: 3rem;
+  opacity: 0.3;
+}.admin-editor-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 70%, transparent 100%);
+  padding: 30px 10px 10px;
+  pointer-events: none; /* Let clicks pass through */
 }
 
 .admin-editor-title {
   font-family: var(--font-pixel);
-  font-size: 0.75rem;
-  color: var(--clr-warm-crimson);
+  font-size: 0.6rem;
+  color: white;
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   letter-spacing: 1px;
+  text-shadow: 1px 1px 0 black;
 }
 
-.admin-editor-meta-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-xs);
-  margin-top: 2px;
-}
-
-.admin-editor-meta {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 8px;
-  background: linear-gradient(135deg, var(--clr-salmon), var(--clr-coral));
-  color: white;
-  font-family: var(--font-retro);
-  font-size: 0.8rem;
-  border-radius: var(--radius-xs);
-  box-shadow: 2px 2px 0 var(--retro-shadow);
-  font-weight: bold;
-}
-
-.admin-editor-meta.price {
-  background: linear-gradient(135deg, var(--clr-gold), var(--clr-gold-soft));
-  color: var(--text-primary);
-}
-
-.admin-editor-meta::before {
-  content: "✦";
-  color: var(--clr-gold);
-  font-size: 0.7rem;
-}
-
+/* Hide unneeded info for Media Pool style */
+.admin-editor-meta-container,
+.admin-editor-meta,
 .admin-editor-desc {
-  font-family: var(--font-retro);
-  font-size: 0.95rem;
-  color: var(--text-secondary);
-  line-height: 1.4;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  margin-top: var(--space-xs);
+  display: none !important;
 }
 
+/* Floating Action Buttons */
 .admin-editor-actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  border-top: 2px dashed rgba(0, 0, 0, 0.1);
-  background: rgba(0, 0, 0, 0.02);
-  margin-top: auto;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  gap: 5px;
 }
 
 .admin-editor-btn {
-  width: 100%;
-  padding: var(--space-sm);
-  background: transparent;
-  border: none;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid var(--retro-border);
+  border-radius: var(--radius-xs);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-xs);
-  font-family: var(--font-pixel);
-  font-size: 0.55rem;
-  color: var(--text-secondary);
+  font-size: 0.8rem;
+  color: var(--text-primary);
   transition: all 0.2s ease;
-}
-
-.admin-editor-btn:first-child {
-  border-right: 2px dashed rgba(0, 0, 0, 0.1);
-}
-
-.admin-editor-btn i {
-  font-size: 0.9rem;
-  transition: transform 0.15s ease;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+  padding: 0;
 }
 
 .admin-editor-btn:hover {
-  background: rgba(0, 0, 0, 0.04);
+  background: white;
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 rgba(0,0,0,0.6);
 }
 
-.admin-editor-btn.edit:hover {
+.admin-editor-btn.edit {
   color: var(--clr-gold);
-  background: rgba(255, 215, 0, 0.1);
 }
 
-.admin-editor-btn.delete:hover {
+.admin-editor-btn.delete {
   color: var(--clr-coral);
-  background: rgba(232, 114, 90, 0.1);
 }
 
-.admin-editor-btn:hover i {
-  transform: scale(1.1);
-}
-
-.admin-editor-btn.delete i,
-.admin-editor-btn.edit i {
-  color: white;
-  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
+.admin-editor-btn span {
+  display: none; /* Hide the text label we added earlier */
 }
 
 /* --- Empty State --- */
@@ -1083,24 +1020,6 @@
 }
 
 /* --- Responsive Admin --- */
-@media (max-width: 900px) {
-  .admin-editor-item {
-    grid-template-columns: 80px 1fr;
-    gap: var(--space-md);
-  }
-
-  .admin-editor-thumb {
-    width: 80px;
-    height: 80px;
-  }
-
-  .admin-editor-actions {
-    grid-column: 1 / -1;
-    flex-direction: row;
-    justify-content: flex-end;
-  }
-}
-
 @media (max-width: 768px) {
   .admin-container {
     padding: var(--space-md);
@@ -1155,29 +1074,9 @@
     font-size: 1rem;
   }
 
-  .admin-editor-item {
-    grid-template-columns: 1fr;
-    gap: var(--space-md);
-    text-align: center;
-  }
-
-  .admin-editor-thumb {
-    width: 100%;
-    height: 120px;
-  }
-
-  .admin-editor-info {
-    align-items: center;
-  }
-
-  .admin-editor-meta {
-    justify-content: center;
-  }
-
-  .admin-editor-actions {
-    flex-direction: row;
-    justify-content: center;
-    width: 100%;
+  .editor-list {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: var(--space-sm);
   }
 
   .editor-list-header {

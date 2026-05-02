@@ -322,10 +322,10 @@ const galleryManager = {
           </div>
           <div class="admin-editor-actions">
             <button class="admin-editor-btn edit" data-action="edit" title="Edit">
-              <i class="fa-solid fa-pen"></i> Edit
+              <i class="fa-solid fa-pen"></i>
             </button>
             <button class="admin-editor-btn delete" data-action="delete" title="Delete">
-              <i class="fa-solid fa-trash"></i> Delete
+              <i class="fa-solid fa-trash"></i>
             </button>
           </div>
         </div>
@@ -661,10 +661,10 @@ const commissionManager = {
           </div>
           <div class="admin-editor-actions">
             <button class="admin-editor-btn edit" data-action="edit" title="Edit">
-              <i class="fa-solid fa-pen"></i> Edit
+              <i class="fa-solid fa-pen"></i>
             </button>
             <button class="admin-editor-btn delete" data-action="delete" title="Delete">
-              <i class="fa-solid fa-trash"></i> Delete
+              <i class="fa-solid fa-trash"></i>
             </button>
           </div>
         </div>
