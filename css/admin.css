@@ -369,12 +369,12 @@
 }
 
 .admin-card-body {
-  padding: var(--space-xl);
+  padding: var(--space-lg);
 }
 
 /* --- Form Styles --- */
 .admin-form-group {
-  margin-bottom: var(--space-lg);
+  margin-bottom: var(--space-sm);
 }
 
 .admin-label {
@@ -1065,7 +1065,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 560px) {
   .admin-header .site-title {
     font-size: 1.3rem;
   }
