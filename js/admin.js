@@ -314,15 +314,18 @@ const galleryManager = {
           </div>
           <div class="admin-editor-info">
             <h4 class="admin-editor-title">${BonnaUtils.escapeHtml(title)}</h4>
-            <div class="admin-editor-meta">${category ? `${BonnaUtils.escapeHtml(category)} · ` : ""}${BonnaUtils.escapeHtml(type)}</div>
+            <div class="admin-editor-meta-container">
+              ${category ? `<span class="admin-editor-meta">${BonnaUtils.escapeHtml(category)}</span>` : ""}
+              <span class="admin-editor-meta">${BonnaUtils.escapeHtml(type)}</span>
+            </div>
             ${desc ? `<p class="admin-editor-desc">${BonnaUtils.escapeHtml(desc)}</p>` : ""}
           </div>
           <div class="admin-editor-actions">
             <button class="admin-editor-btn edit" data-action="edit" title="Edit">
-              <i class="fa-solid fa-pen"></i>
+              <i class="fa-solid fa-pen"></i> Edit
             </button>
             <button class="admin-editor-btn delete" data-action="delete" title="Delete">
-              <i class="fa-solid fa-trash"></i>
+              <i class="fa-solid fa-trash"></i> Delete
             </button>
           </div>
         </div>
@@ -650,16 +653,18 @@ const commissionManager = {
           </div>
           <div class="admin-editor-info">
             <h4 class="admin-editor-title">${BonnaUtils.escapeHtml(type)}</h4>
-            <div class="admin-editor-meta">${BonnaUtils.escapeHtml(category)}</div>
-            <div class="admin-editor-meta" style="background: linear-gradient(135deg, var(--clr-gold), var(--clr-gold-soft)); color: var(--text-primary);">${priceDisplay}</div>
+            <div class="admin-editor-meta-container">
+              ${category ? `<span class="admin-editor-meta">${BonnaUtils.escapeHtml(category)}</span>` : ""}
+              <span class="admin-editor-meta price">${priceDisplay}</span>
+            </div>
             ${desc ? `<p class="admin-editor-desc">${BonnaUtils.escapeHtml(desc)}</p>` : ""}
           </div>
           <div class="admin-editor-actions">
             <button class="admin-editor-btn edit" data-action="edit" title="Edit">
-              <i class="fa-solid fa-pen"></i>
+              <i class="fa-solid fa-pen"></i> Edit
             </button>
             <button class="admin-editor-btn delete" data-action="delete" title="Delete">
-              <i class="fa-solid fa-trash"></i>
+              <i class="fa-solid fa-trash"></i> Delete
             </button>
           </div>
         </div>
