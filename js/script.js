@@ -783,6 +783,21 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // --- Anti-Copy Protection ---
+  document.addEventListener("contextmenu", (e) => {
+    if (e.target.tagName === "IMG" || e.target.classList.contains("gallery-item-image") || e.target.closest(".gallery-lightbox-image")) {
+      e.preventDefault();
+      return false;
+    }
+  }, false);
+
+  document.addEventListener("dragstart", (e) => {
+    if (e.target.tagName === "IMG") {
+      e.preventDefault();
+      return false;
+    }
+  }, false);
+
   // --- 5. Gallery Page Management ---
   class GalleryManager {
     constructor(dataManager) {
@@ -1102,8 +1117,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Apply BOTH active filters simultaneously
       this.filteredItems = this.allGalleryItems.filter((item) => {
-        const itemCategory = BonnaUtils.getVal(item, "Category").toLowerCase();
-        const itemType = BonnaUtils.getVal(item, "Type").toLowerCase();
+        const itemCategory = (BonnaUtils.getVal(item, "Category") || "").toLowerCase();
+        const itemType = (BonnaUtils.getVal(item, "Type") || "").toLowerCase();
 
         const categoryMatch =
           this.currentCategoryFilter === "all" ||
@@ -1303,10 +1318,23 @@ document.addEventListener("DOMContentLoaded", () => {
         if (sort === "most-liked") {
           const la = parseInt(BonnaUtils.getVal(a, "Likes")) || 0;
           const lb = parseInt(BonnaUtils.getVal(b, "Likes")) || 0;
-          return lb - la;
+          if (la !== lb) return lb - la;
+          return getDate(b) - getDate(a); // Secondary sort by newest
         }
-        if (sort === "newest") return getDate(b) - getDate(a);
-        if (sort === "oldest") return getDate(a) - getDate(b);
+        if (sort === "newest") {
+          const diff = getDate(b) - getDate(a);
+          if (diff !== 0) return diff;
+          const oa = parseInt(BonnaUtils.getVal(a, "Order")) || 0;
+          const ob = parseInt(BonnaUtils.getVal(b, "Order")) || 0;
+          return oa - ob;
+        }
+        if (sort === "oldest") {
+          const diff = getDate(a) - getDate(b);
+          if (diff !== 0) return diff;
+          const oa = parseInt(BonnaUtils.getVal(a, "Order")) || 0;
+          const ob = parseInt(BonnaUtils.getVal(b, "Order")) || 0;
+          return oa - ob;
+        }
         // default
         const oa = parseInt(BonnaUtils.getVal(a, "Order")) || 0;
         const ob = parseInt(BonnaUtils.getVal(b, "Order")) || 0;
@@ -1357,6 +1385,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const sourceItem = this.allGalleryItems.find(
         (item) => String(BonnaUtils.getVal(item, "ID")) === strId
       );
+      
+      let newLikesCount = 1;
       if (sourceItem) {
         const currentLikes = parseInt(BonnaUtils.getVal(sourceItem, "Likes")) || 0;
         // Find existing key or use "Likes"
@@ -1364,37 +1394,31 @@ document.addEventListener("DOMContentLoaded", () => {
           (k) => k.toLowerCase().replace(/[\s_]/g, "") === "likes"
         ) || "Likes";
         sourceItem[likesKey] = currentLikes + 1;
+        newLikesCount = sourceItem[likesKey];
       }
 
-      if (isLightbox) {
-        btnElement.classList.add("liked");
-        const icon = btnElement.querySelector("i");
+      // Update grid item visually (if it's in the DOM)
+      const gridBtn = document.querySelector(`.gallery-item-like-btn[data-artwork-id="${strId}"]`);
+      if (gridBtn) {
+        gridBtn.classList.add("liked");
+        const icon = gridBtn.querySelector("i");
         if (icon) icon.className = "fa-solid fa-heart";
-        const countEl = this.elements.lightboxLikeCount;
-        if (countEl) {
-          const current = parseInt(countEl.textContent) || 0;
-          countEl.textContent = current + 1;
-        }
-      } else {
-        btnElement.classList.add("liked");
-        const icon = btnElement.querySelector("i");
+        const countEl = gridBtn.nextElementSibling;
+        if (countEl) countEl.textContent = newLikesCount;
+      }
+
+      // Update lightbox visually (if it's open and shows the same artwork)
+      if (this.elements.lightboxLikeBtn && this.elements.lightboxLikeBtn.dataset.artworkId === strId) {
+        this.elements.lightboxLikeBtn.classList.add("liked");
+        const icon = this.elements.lightboxLikeBtn.querySelector("i");
         if (icon) icon.className = "fa-solid fa-heart";
-        const countEl = btnElement.nextElementSibling;
-        if (countEl) {
-          const current = parseInt(countEl.textContent) || 0;
-          countEl.textContent = current + 1;
+        if (this.elements.lightboxLikeCount) {
+          this.elements.lightboxLikeCount.textContent = newLikesCount;
         }
       }
 
       // Send to backend
       this.sendLikeToSheet(strId);
-
-      // If sorted by most-liked, re-apply sort after a brief delay so item can bubble up
-      if (this.currentSort === "most-liked") {
-        setTimeout(() => {
-          this.applySort(true, false); // Refilter but don't reset page
-        }, 400);
-      }
     }
 
     sendLikeToSheet(artworkId) {
