@@ -873,6 +873,80 @@ const commissionManager = {
 };
 
 // ============================================
+// EASTER EGGS
+// ============================================
+const easterEggs = {
+  hoverTimer: null,
+  keywordBuffer: "",
+  secretWord: "BONNA",
+
+  init() {
+    this.setupHoverEgg();
+    this.setupKeywordEgg();
+  },
+
+  setupHoverEgg() {
+    const subtitle = document.querySelector(".admin-subtitle");
+    if (!subtitle) return;
+
+    const originalText = subtitle.textContent;
+    const loveText = "YOU ARE MY FAVORITE PERSON ❤️";
+
+    subtitle.addEventListener("mouseenter", () => {
+      this.hoverTimer = setTimeout(() => {
+        subtitle.textContent = loveText;
+        subtitle.classList.add("love-activated");
+        BonnaUtils.showToast("❤️ Sent with love!", "info");
+      }, 3000);
+    });
+
+    subtitle.addEventListener("mouseleave", () => {
+      clearTimeout(this.hoverTimer);
+      subtitle.textContent = originalText;
+      subtitle.classList.remove("love-activated");
+    });
+  },
+
+  setupKeywordEgg() {
+    window.addEventListener("keydown", (e) => {
+      // Only capture single characters to avoid modifier keys
+      if (e.key.length !== 1) return;
+
+      this.keywordBuffer += e.key.toUpperCase();
+      if (this.keywordBuffer.length > 10) {
+        this.keywordBuffer = this.keywordBuffer.substring(1);
+      }
+
+      if (this.keywordBuffer.endsWith(this.secretWord) || this.keywordBuffer.endsWith("LOVE")) {
+        this.triggerHeartRain();
+        this.keywordBuffer = ""; // Reset buffer
+      }
+    });
+  },
+
+  triggerHeartRain() {
+    BonnaUtils.showToast("✨ Love is in the air! ✨", "success");
+    
+    for (let i = 0; i < 30; i++) {
+      setTimeout(() => {
+        const heart = document.createElement("div");
+        heart.className = "heart-particle";
+        heart.innerHTML = ["❤️", "💖", "💝", "💕", "🌸"][Math.floor(Math.random() * 5)];
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.animationDuration = Math.random() * 2 + 2 + "s";
+        heart.style.opacity = Math.random();
+        heart.style.fontSize = Math.random() * 20 + 15 + "px";
+        
+        document.body.appendChild(heart);
+
+        // Remove after animation
+        setTimeout(() => heart.remove(), 4000);
+      }, i * 100);
+    }
+  }
+};
+
+// ============================================
 // INITIALIZATION
 // ============================================
 document.addEventListener("DOMContentLoaded", async () => {
@@ -881,6 +955,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Initialize tabs
   tabManager.init();
+
+  // Initialize Easter Eggs
+  easterEggs.init();
 
   // Setup form event listeners for live preview
   const profileInputs = document.querySelectorAll("#tab-profile input, #tab-profile textarea");
@@ -938,22 +1015,134 @@ document.addEventListener("DOMContentLoaded", async () => {
     addCommissionBtn.addEventListener("click", () => commissionManager.openModal("add"));
   }
 
+  const detailsPanel = {
+    currentType: null,
+    currentIndex: null,
+  
+    open(type, index) {
+      this.currentType = type;
+      this.currentIndex = index;
+      const modal = document.getElementById("details-modal");
+      if (!modal) return;
+  
+      const img = document.getElementById("details-image");
+      const title = document.getElementById("details-title");
+      const meta = document.getElementById("details-meta");
+      const desc = document.getElementById("details-desc");
+  
+      let item, imageUrl, itemTitle, itemDesc, itemTagsHTML;
+  
+      if (type === "gallery") {
+        item = galleryManager.galleryItems[index];
+        imageUrl = BonnaUtils.getVal(item, "ImageURL");
+        itemTitle = BonnaUtils.getVal(item, "Title") || "Untitled";
+        itemDesc = BonnaUtils.getVal(item, "Description") || "No description provided.";
+        const category = BonnaUtils.getVal(item, "Category");
+        const typeName = BonnaUtils.getVal(item, "Type");
+        itemTagsHTML = `
+          ${category ? `<span class="admin-editor-meta">${BonnaUtils.escapeHtml(category)}</span>` : ""}
+          ${typeName ? `<span class="admin-editor-meta">${BonnaUtils.escapeHtml(typeName)}</span>` : ""}
+        `;
+      } else {
+        item = commissionManager.priceItems[index];
+        imageUrl = BonnaUtils.getVal(item, "SampleImage");
+        itemTitle = BonnaUtils.getVal(item, "Type") || "Untitled Commission";
+        itemDesc = BonnaUtils.getVal(item, "Description") || "No description provided.";
+        const category = BonnaUtils.getVal(item, "Category");
+        const priceUSD = BonnaUtils.getVal(item, "PriceUSD");
+        const priceIDR = BonnaUtils.getVal(item, "PriceIDR");
+        const priceDisplay = priceUSD ? `$${priceUSD}` + (priceIDR ? ` / Rp${priceIDR}` : "") : "Contact for pricing";
+        itemTagsHTML = `
+          ${category ? `<span class="admin-editor-meta">${BonnaUtils.escapeHtml(category)}</span>` : ""}
+          <span class="admin-editor-meta price">${priceDisplay}</span>
+        `;
+      }
+  
+      // Handle image loading like the public gallery
+      img.classList.remove("loaded");
+      img.src = imageUrl || "";
+      img.onload = () => img.classList.add("loaded");
+      img.style.display = imageUrl ? "block" : "none";
+      
+      title.textContent = itemTitle;
+      desc.textContent = itemDesc;
+      meta.innerHTML = itemTagsHTML;
+  
+      modal.classList.add("active");
+    },
+  
+    close() {
+      const modal = document.getElementById("details-modal");
+      if (modal) modal.classList.remove("active");
+    },
+  
+    next() {
+      const items = this.currentType === "gallery" ? galleryManager.galleryItems : commissionManager.priceItems;
+      if (this.currentIndex < items.length - 1) {
+        this.open(this.currentType, this.currentIndex + 1);
+      } else {
+        this.open(this.currentType, 0); // Loop to start
+      }
+    },
+  
+    prev() {
+      const items = this.currentType === "gallery" ? galleryManager.galleryItems : commissionManager.priceItems;
+      if (this.currentIndex > 0) {
+        this.open(this.currentType, this.currentIndex - 1);
+      } else {
+        this.open(this.currentType, items.length - 1); // Loop to end
+      }
+    },
+  
+    edit() {
+      this.close();
+      if (this.currentType === "gallery") {
+        galleryManager.editItem(this.currentIndex);
+      } else {
+        commissionManager.editType(this.currentIndex);
+      }
+    },
+  
+    delete() {
+      this.close();
+      if (this.currentType === "gallery") {
+        galleryManager.deleteItem(this.currentIndex);
+      } else {
+        commissionManager.deleteType(this.currentIndex);
+      }
+    }
+  };
+
+  // Setup Details Panel buttons
+  const btnDetailsEdit = document.getElementById("btn-details-edit");
+  const btnDetailsDelete = document.getElementById("btn-details-delete");
+  const btnDetailsNext = document.getElementById("btn-details-next");
+  const btnDetailsPrev = document.getElementById("btn-details-prev");
+
+  if (btnDetailsEdit) btnDetailsEdit.addEventListener("click", () => detailsPanel.edit());
+  if (btnDetailsDelete) btnDetailsDelete.addEventListener("click", () => detailsPanel.delete());
+  if (btnDetailsNext) btnDetailsNext.addEventListener("click", () => detailsPanel.next());
+  if (btnDetailsPrev) btnDetailsPrev.addEventListener("click", () => detailsPanel.prev());
+
   // --- Click Delegation for Dynamic Lists ---
   // Gallery List
   const galleryList = document.getElementById("gallery-editor-list");
   if (galleryList) {
     galleryList.addEventListener("click", (e) => {
-      const btn = e.target.closest(".admin-editor-btn");
-      if (!btn) return;
-      
-      const item = btn.closest(".admin-editor-item");
+      const item = e.target.closest(".admin-editor-item");
+      if (!item) return;
       const index = parseInt(item.dataset.index);
-      const action = btn.dataset.action;
-
-      if (action === "edit") {
-        galleryManager.editItem(index);
-      } else if (action === "delete") {
-        galleryManager.deleteItem(index);
+      
+      const btn = e.target.closest(".admin-editor-btn");
+      if (btn) {
+        const action = btn.dataset.action;
+        if (action === "edit") {
+          galleryManager.editItem(index);
+        } else if (action === "delete") {
+          galleryManager.deleteItem(index);
+        }
+      } else {
+        detailsPanel.open("gallery", index);
       }
     });
   }
@@ -962,26 +1151,30 @@ document.addEventListener("DOMContentLoaded", async () => {
   const commissionList = document.getElementById("commission-editor-list");
   if (commissionList) {
     commissionList.addEventListener("click", (e) => {
-      const btn = e.target.closest(".admin-editor-btn");
-      if (!btn) return;
-      
-      const item = btn.closest(".admin-editor-item");
+      const item = e.target.closest(".admin-editor-item");
+      if (!item) return;
       const index = parseInt(item.dataset.index);
-      const action = btn.dataset.action;
-
-      if (action === "edit") {
-        commissionManager.editType(index);
-      } else if (action === "delete") {
-        commissionManager.deleteType(index);
+      
+      const btn = e.target.closest(".admin-editor-btn");
+      if (btn) {
+        const action = btn.dataset.action;
+        if (action === "edit") {
+          commissionManager.editType(index);
+        } else if (action === "delete") {
+          commissionManager.deleteType(index);
+        }
+      } else {
+        detailsPanel.open("commission", index);
       }
     });
   }
 
   // Setup close modal buttons
-  document.querySelectorAll(".modal-close, .modal-backdrop").forEach((el) => {
+  document.querySelectorAll(".modal-close, .modal-backdrop, .admin-lightbox-close").forEach((el) => {
     el.addEventListener("click", () => {
       galleryManager.closeModal();
       commissionManager.closeModal();
+      if (typeof detailsPanel !== 'undefined') detailsPanel.close();
     });
   });
 
@@ -990,6 +1183,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (e.key === "Escape") {
       galleryManager.closeModal();
       commissionManager.closeModal();
+      if (typeof detailsPanel !== 'undefined') detailsPanel.close();
     }
   });
 

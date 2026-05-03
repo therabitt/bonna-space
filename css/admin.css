@@ -23,23 +23,28 @@
 .admin-header {
   margin-bottom: var(--space-2xl);
   padding: var(--space-xl) 0;
+  border-bottom: 2px dashed rgba(255, 184, 114, 0.2);
 }
 
 .admin-header-inner {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-lg);
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  width: 100%;
 }
 
 .admin-header-inner > div {
-  text-align: left;
+  text-align: center;
 }
 
 .admin-header .site-title {
-  font-size: clamp(1.5rem, 4vw, 2rem);
-  margin-bottom: var(--space-md);
+  font-size: clamp(1.5rem, 6vw, 2.5rem);
+  margin-bottom: var(--space-sm);
+  color: var(--clr-peach);
+  text-shadow: 0 0 15px rgba(255, 184, 114, 0.4);
 }
 
 .admin-subtitle {
@@ -51,10 +56,13 @@
 
 /* --- Logout Button --- */
 .admin-logout-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: var(--space-xs) var(--space-md);
+  padding: 8px 12px;
   background: transparent;
   border: 2px solid var(--clr-coral);
   border-radius: var(--radius-xs);
@@ -66,7 +74,6 @@
   transition: all 0.2s ease;
   box-shadow: 2px 2px 0 var(--retro-shadow);
   white-space: nowrap;
-  margin-top: var(--space-sm);
 }
 
 .admin-logout-btn:hover {
@@ -262,10 +269,16 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 480px) {
+@media (max-width: 987px) {
   .admin-header-inner {
-    flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+  }
+
+  .admin-logout-btn {
+    position: relative;
+    margin-top: var(--space-md);
+    top: auto;
+    right: auto;
   }
 
   .login-card {
@@ -908,6 +921,8 @@
   animation: modalSlideIn 0.3s var(--ease-out-expo);
 }
 
+
+
 @keyframes modalSlideIn {
   from {
     opacity: 0;
@@ -1063,6 +1078,8 @@
   .split-input {
     flex-direction: column;
   }
+
+
 }
 
 @media (max-width: 560px) {
@@ -1084,4 +1101,77 @@
     gap: var(--space-sm);
     align-items: flex-start;
   }
+}
+
+/* --- Details Modal Responsive --- */
+@media (max-width: 900px) {
+  #details-modal .gallery-window-main {
+    grid-template-columns: 1fr;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  #details-modal .gallery-lightbox-image-container {
+    min-height: 250px;
+    max-height: 40vh;
+  }
+
+  #details-modal .gallery-lightbox-info {
+    height: auto !important;
+    padding: var(--space-md);
+  }
+
+  #details-modal .gallery-window-body {
+    padding: var(--space-xs);
+  }
+}
+
+@media (max-width: 480px) {
+  #details-modal .gallery-window-header {
+    padding: 4px 8px;
+  }
+
+  #details-modal .window-title {
+    font-size: 0.5rem;
+  }
+
+  #details-modal .gallery-lightbox-nav,
+  #details-modal .gallery-lightbox-close {
+    width: 24px;
+    height: 24px;
+    font-size: 0.7rem;
+  }
+}
+
+/* ============================================
+   EASTER EGGS & SPECIAL EFFECTS
+   ============================================ */
+
+/* Heart Rain */
+.heart-particle {
+  position: fixed;
+  top: -20px;
+  font-size: 24px;
+  user-select: none;
+  pointer-events: none;
+  z-index: 99999;
+  animation: fall linear forwards;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(100vh) rotate(360deg);
+  }
+}
+
+/* Hover Effect Hint */
+.admin-subtitle {
+  transition: all 0.5s ease;
+  cursor: help;
+}
+
+.admin-subtitle.love-activated {
+  color: var(--clr-coral);
+  text-shadow: 0 0 10px var(--clr-coral);
+  transform: scale(1.1);
 }

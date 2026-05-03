@@ -40,7 +40,7 @@
           </div>
           <button class="admin-logout-btn" id="btn-logout" aria-label="Logout">
             <i class="fa-solid fa-right-from-bracket"></i>
-            <span>LOGOUT</span>
+            <span>Zzzz...</span>
           </button>
         </div>
       </header>
@@ -218,6 +218,66 @@
       <!-- Status Toast -->
       <div id="status-toast" class="admin-status"></div>
     </main>
+
+    <!-- Details Modal (Retro OS Window Style) -->
+    <div class="gallery-lightbox admin-modal" id="details-modal" aria-hidden="true">
+      <div class="gallery-lightbox-backdrop modal-backdrop"></div>
+
+      <div class="gallery-lightbox-window">
+        <!-- Window Title Bar -->
+        <div class="gallery-window-header">
+          <div class="window-title">
+            <i class="fa-solid fa-image"></i> view_artwork.exe
+          </div>
+          <div class="window-controls">
+            <button class="gallery-lightbox-nav gallery-lightbox-prev" id="btn-details-prev" aria-label="Previous">
+              <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <button class="gallery-lightbox-nav gallery-lightbox-next" id="btn-details-next" aria-label="Next">
+              <i class="fa-solid fa-chevron-right"></i>
+            </button>
+            <button class="gallery-lightbox-close admin-lightbox-close" aria-label="Close window">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="gallery-window-body">
+          <!-- Main Content Area -->
+          <div class="gallery-window-content">
+            <div class="gallery-window-main">
+              <!-- Image Section -->
+              <div class="gallery-lightbox-image-container">
+                <img src="" alt="" class="gallery-lightbox-image" id="details-image" />
+                <div class="crt-overlay"></div>
+              </div>
+
+              <!-- Info Section -->
+              <div class="gallery-lightbox-info" style="display: flex; flex-direction: column; height: 100%;">
+                <div class="info-header">
+                  <h3 class="gallery-lightbox-title" id="details-title" style="margin-bottom: 0;"></h3>
+                  <div id="details-meta" style="display: flex; gap: 5px; flex-wrap: wrap; margin-top: var(--space-xs);"></div>
+                </div>
+                <div class="section-divider" style="margin: var(--space-sm) 0; opacity: 0.3;"></div>
+                
+                <div style="flex-grow: 1; overflow-y: auto; padding-right: 5px; margin-bottom: var(--space-md);">
+                  <p class="gallery-lightbox-desc" id="details-desc"></p>
+                </div>
+                
+                <div style="display: flex; gap: var(--space-sm); width: 100%; margin-top: auto; padding-top: var(--space-md); border-top: 1px dashed rgba(45, 10, 30, 0.2);">
+                  <button class="cta-btn cta-btn-secondary" id="btn-details-edit" style="flex: 1; min-width: 0; padding: 8px; font-size: 0.65rem;">
+                    <i class="fa-solid fa-pen"></i> Edit
+                  </button>
+                  <button class="cta-btn cta-btn-secondary" id="btn-details-delete" style="flex: 1; min-width: 0; padding: 8px; font-size: 0.65rem; color: var(--clr-coral); border-color: var(--clr-coral);">
+                    <i class="fa-solid fa-trash"></i> Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Gallery Modal -->
     <div class="admin-modal" id="gallery-modal">
