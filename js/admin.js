@@ -13,6 +13,134 @@ const CONFIG = {
 };
 
 // ============================================
+// PRESENCE CONFIGURATION
+// Single source of truth for all personal dates & settings
+// ============================================
+const PRESENCE_CONFIG = {
+  togetherSince: '2026-04-17',        // The day we were both there at the same time
+  letterActivationDays: 14,            // Days after first login before letters begin
+  midnightWindow: { start: 0, end: 1 }, // Hour range for midnight mode
+  greetingPool: [
+    'Bonjour, belle âme.',
+    'Welcome home.',
+    'Your art makes the world a little more honest. ✨',
+    'Still my favorite person. Day [X].',
+    'Something good is waiting for you today.',
+    'The studio missed you. I did too.',
+    'Je t’aime plus qu’hier, moins que demain.',
+    'You showed up. That’s already enough.',
+    'Akhirnya. I’ve been here, waiting.',
+    'Every time you open this, I’m glad you did.',
+  ],
+  loginSubtitles: [
+    'A quiet corner of the internet, made for you.',
+    'Un sanctuaire numérique, fait avec soin.',
+    'Pixel by pixel. With intention.',
+    'Everything here was made thinking of you.',
+    'Come in. You’re always welcome here.',
+    'This space has been waiting, quietly.',
+  ],
+};
+
+// ============================================
+// PRESENCE SYSTEM — Layer 1
+// ============================================
+const presenceSystem = {
+
+  // --- Together Since Counter ---
+  getTogetherSinceDays() {
+    const since = new Date(PRESENCE_CONFIG.togetherSince);
+    const now = new Date();
+    // Zero out time for clean day diff
+    since.setHours(0, 0, 0, 0);
+    now.setHours(0, 0, 0, 0);
+    const diff = Math.floor((now - since) / (1000 * 60 * 60 * 24));
+    return diff;
+  },
+
+  renderCounter() {
+    const el = document.getElementById('admin-together-since');
+    if (!el) return;
+    const days = this.getTogetherSinceDays();
+    el.innerHTML = `[ SYS.UPTIME: ${String(days).padStart(3, '0')} ]`;
+  },
+
+  // --- Daily Greeting Rotation ---
+  // Same greeting for the whole day; does not repeat within 7 days
+  renderGreeting() {
+    const el = document.getElementById('admin-daily-greeting');
+    if (!el) return;
+
+    const today = new Date().toISOString().split('T')[0]; // 'YYYY-MM-DD'
+    const pool = PRESENCE_CONFIG.greetingPool;
+    const days = this.getTogetherSinceDays();
+
+    let stored = {};
+    try {
+      stored = JSON.parse(localStorage.getItem('bonna_last_greeting') || '{}');
+    } catch(_) { stored = {}; }
+
+    // If already picked today, use that
+    if (stored.date === today && typeof stored.index === 'number') {
+      let text = pool[stored.index];
+      text = text.replace('[X]', days);
+      el.textContent = text;
+      return;
+    }
+
+    // Build a list of indices not used in the last 7 days
+    const recentIndices = (stored.recent || []).slice(-6); // keep last 6
+    const available = pool.map((_, i) => i).filter(i => !recentIndices.includes(i));
+    const pick = available.length > 0
+      ? available[Math.floor(Math.random() * available.length)]
+      : Math.floor(Math.random() * pool.length);
+
+    const recent = [...(stored.recent || []), pick].slice(-7);
+    localStorage.setItem('bonna_last_greeting', JSON.stringify({
+      date: today,
+      index: pick,
+      recent,
+    }));
+
+    let text = pool[pick];
+    text = text.replace('[X]', days);
+    el.textContent = text;
+  },
+
+  // --- The First Time marker ---
+  // A single, unrepeatable moment. Never shown twice.
+  showFirstTime() {
+    if (localStorage.getItem('bonna_first_visit')) return;
+    localStorage.setItem('bonna_first_visit', '1');
+
+    const overlay = document.createElement('div');
+    overlay.id = 'first-time-overlay';
+    overlay.innerHTML = `<span class="first-time-text">You found it. I made this for you.</span>`;
+    document.body.appendChild(overlay);
+
+    // Hold for 3 seconds, then fade and remove
+    setTimeout(() => {
+      overlay.classList.add('first-time-fade');
+      setTimeout(() => overlay.remove(), 1200);
+    }, 3000);
+  },
+
+  // --- Logout tooltip ---
+  initLogoutTooltip() {
+    const btn = document.getElementById('btn-logout');
+    if (!btn) return;
+    btn.setAttribute('title', 'Leaving so soon? 🦥');
+  },
+
+  init() {
+    this.showFirstTime();
+    this.renderGreeting();
+    this.renderCounter();
+    this.initLogoutTooltip();
+  },
+};
+
+// ============================================
 // STATE MANAGEMENT
 // ============================================
 const state = {
@@ -29,16 +157,16 @@ const api = {
   // Fetch all data from Google Sheets
   async fetchData() {
     try {
-      BonnaUtils.showToast("Connecting to Kingdom data...", "info");
+      BonnaUtils.showToast("Just a moment, ma chérie...", "info");
       const response = await fetch(CONFIG.API_URL);
       const data = await response.json();
       state.cache = data;
-      console.log("✨ Admin Data Synced:", data);
-      BonnaUtils.showToast("Connected! Data synced.", "success");
+      console.log("✨ Presence data synced:", data);
+      BonnaUtils.showToast("Connected. Everything’s here. 💫", "success");
       return data;
     } catch (err) {
-      console.error("❌ Data Sync Failed:", err);
-      BonnaUtils.showToast("Connection failed. Using offline mode.", "error");
+      console.error("❌ Data sync failed:", err);
+      BonnaUtils.showToast("Something went quietly wrong. Try once more?", "error");
       return null;
     }
   },
@@ -262,7 +390,7 @@ const profileManager = {
       ];
 
       await api.saveData("Profile", data, token);
-      BonnaUtils.showToast("✨ Profile updated successfully!", "success");
+      BonnaUtils.showToast("Saved. The world sees you a little more clearly now. 💫", "success");
     } catch (err) {
       BonnaUtils.showToast("Error saving profile: " + err.message, "error");
     } finally {
@@ -418,14 +546,14 @@ const galleryManager = {
     }
 
     try {
-      BonnaUtils.showToast(`Uploading "${fileName}" to Imgur...`, "info");
+      BonnaUtils.showToast(`Uploading “${fileName}”…`, "info");
       const imageUrl = await api.uploadToImgur(file);
 
       document.getElementById("gallery-input-url").value = imageUrl;
       this.updateGalleryPreview();
 
       BonnaUtils.showToast(
-        `✨ "${fileName}" uploaded successfully!`,
+        `Archived. Another piece of your world, kept safe. ✨`,
         "success",
       );
 
@@ -437,7 +565,7 @@ const galleryManager = {
         }, 2000);
       }
     } catch (err) {
-      BonnaUtils.showToast(`Upload failed: ${err.message}`, "error");
+      BonnaUtils.showToast(`Something went quietly wrong: ${err.message}`, "error");
 
       // Reset button on error
       if (uploadBtn) {
@@ -517,7 +645,7 @@ const galleryManager = {
 
       this.renderGalleryList();
       this.closeModal();
-      BonnaUtils.showToast("✨ Artwork saved!", "success");
+      BonnaUtils.showToast("Archived. Another piece of your world, kept safe. ✨", "success");
     } catch (err) {
       BonnaUtils.showToast("Error saving: " + err.message, "error");
     } finally {
@@ -556,7 +684,7 @@ const galleryManager = {
       this.galleryItems = data;
       this.renderGalleryList();
 
-      BonnaUtils.showToast("✨ Artwork deleted!", "success");
+      BonnaUtils.showToast("Let go. Brave, as always. 💙", "success");
     } catch (err) {
       BonnaUtils.showToast("Error deleting: " + err.message, "error");
     }
@@ -863,12 +991,548 @@ const commissionManager = {
 
       this.renderCommissionList();
       this.closeModal();
-      BonnaUtils.showToast(isEdit ? "✨ Updated!" : "✨ New type added!", "success");
+      BonnaUtils.showToast(isEdit ? "Your work is worth every number in that form. 💫" : "Commission type added. The world is ready when you are. ✨", "success");
     } catch (err) {
       BonnaUtils.showToast("Error saving: " + err.message, "error");
     } finally {
       BonnaUtils.hideLoading(btn);
     }
+  },
+};
+
+// ============================================
+// MASCOT SYSTEM — Layer 2
+// ============================================
+const mascotSystem = {
+  clickCount: 0,
+  clickTimer: null,
+  whisperTimer: null,
+  typewriterTimer: null,
+  whisperedThisSession: false,
+  sessionStartTime: Date.now(),
+  isDragging: false,
+  currentMood: 'default',
+
+  setMood(mood) {
+    const img = document.getElementById('mascot-img');
+    if (!img) return;
+    const moodClasses = ['mascot-attentive', 'mascot-happy', 'mascot-still', 'mascot-drowsy', 'mascot-midnight'];
+    moodClasses.forEach(c => img.classList.remove(c));
+    if (mood !== 'default') img.classList.add(`mascot-${mood}`);
+    this.currentMood = mood;
+  },
+
+  typewriterWithDelete(element, targetText, options = {}, onComplete = null) {
+    const minAdd = options.minAddDelay || 80;
+    const maxAdd = options.maxAddDelay || 160;
+    const minDel = options.minDeleteDelay || 20;
+    const maxDel = options.maxDeleteDelay || 60;
+    
+    clearTimeout(this.typewriterTimer);
+    
+    let currentText = element.textContent;
+    let deleting = currentText.length > 0;
+    let i = 0;
+    
+    const tick = () => {
+      if (deleting) {
+        currentText = currentText.slice(0, -1);
+        element.textContent = currentText;
+        if (currentText.length === 0) {
+          deleting = false;
+          this.typewriterTimer = setTimeout(tick, 300); // Pause before typing new text
+          return;
+        }
+        const delay = Math.random() * (maxDel - minDel) + minDel;
+        this.typewriterTimer = setTimeout(tick, delay);
+      } else {
+        element.textContent += targetText.charAt(i);
+        i++;
+        if (i >= targetText.length) {
+          if (onComplete) onComplete();
+          return;
+        }
+        const delay = Math.random() * (maxAdd - minAdd) + minAdd;
+        this.typewriterTimer = setTimeout(tick, delay);
+      }
+    };
+    
+    this.typewriterTimer = setTimeout(tick, 50);
+  },
+
+  showWhisper(text, duration = 7000) {
+    const bubble = document.getElementById('mascot-whisper');
+    if (!bubble) return;
+    clearTimeout(this.whisperTimer);
+    
+    bubble.classList.add('visible');
+    
+    // Close comfort panel if it's open to prevent overlap
+    if (typeof comfortCorner !== 'undefined' && comfortCorner.isOpen) {
+      comfortCorner.toggle();
+    }
+    
+    this.typewriterWithDelete(bubble, text, {
+      minAddDelay: 80,
+      maxAddDelay: 180, // Jeda acak untuk kesan manusiawi
+      minDeleteDelay: 20,
+      maxDeleteDelay: 60  // Hapus lebih cepat dari mengetik
+    }, () => {
+      // Selesai mengetik, set timer untuk menghilang
+      this.whisperTimer = setTimeout(() => {
+        bubble.classList.remove('visible');
+      }, duration);
+    });
+  },
+
+  handleClick() {
+    this.clickCount++;
+    clearTimeout(this.clickTimer);
+    this.clickTimer = setTimeout(() => { this.clickCount = 0; }, 3000);
+
+    if (this.clickCount >= 5) {
+      this.clickCount = 0;
+      this._triggerClickEgg();
+      return;
+    }
+
+    // Single click: wave and toggle comfort panel
+    const img = document.getElementById('mascot-img');
+    if (img) {
+      img.classList.add('mascot-wave');
+      setTimeout(() => img.classList.remove('mascot-wave'), 800);
+    }
+    
+    // Toggle comfort corner panel
+    if (typeof comfortCorner !== 'undefined') {
+      comfortCorner.toggle();
+      const mascotBtn = document.getElementById('mascot-btn');
+      if (mascotBtn) mascotBtn.style.animation = ''; // Remove glow if present
+    }
+  },
+
+  _triggerClickEgg() {
+    this.showWhisper('You were curious enough to look. That means something.\n\nJe t\u2019aime, mon \u00e9toile. \u2014 R');
+    this.setMood('happy');
+    const eggs = JSON.parse(localStorage.getItem('bonna_eggs_found') || '[]');
+    if (!eggs.includes('mascot_click5')) {
+      eggs.push('mascot_click5');
+      localStorage.setItem('bonna_eggs_found', JSON.stringify(eggs));
+    }
+  },
+
+  // Spontaneous whisper — max 1/session, ~35% probability, 5+ min delay
+  scheduleWhisper() {
+    if (this.whisperedThisSession) return;
+    if (Math.random() > 0.35) return;
+
+    const delay = (5 + Math.random() * 5) * 60 * 1000; // 5–10 min
+    setTimeout(() => {
+      if (this.whisperedThisSession) return;
+      const mins = (Date.now() - this.sessionStartTime) / 60000;
+      let text;
+      if (mins > 30) {
+        text = 'Don\u2019t forget to rest. I mean it.';
+      } else {
+        text = 'I hope today is being kind to you.';
+      }
+      this.showWhisper(text);
+      this.whisperedThisSession = true;
+    }, delay);
+  },
+
+  // Idle whisper — fires after 10 min of no activity
+  scheduleIdleWhisper() {
+    let idleTimer = null;
+    const resetIdle = () => {
+      clearTimeout(idleTimer);
+      idleTimer = setTimeout(() => {
+        if (!this.whisperedThisSession) {
+          this.showWhisper('Still here? Me too. \ud83c\udf19');
+          this.whisperedThisSession = true;
+          this.setMood('drowsy');
+        }
+      }, 10 * 60 * 1000);
+    };
+    ['mousemove', 'keydown', 'click', 'scroll'].forEach(ev =>
+      document.addEventListener(ev, resetIdle, { passive: true })
+    );
+    resetIdle();
+  },
+
+  // Midnight atmosphere — 00:00–01:00
+  checkMidnight() {
+    const hour = new Date().getHours();
+    const { start, end } = PRESENCE_CONFIG.midnightWindow;
+    if (hour >= start && hour < end) {
+      document.body.classList.add('midnight-mode');
+      this.setMood('midnight');
+      setTimeout(() => {
+        if (!this.whisperedThisSession) {
+          this.showWhisper('Still awake? You should be dreaming. But I\u2019m glad you\u2019re here. \ud83c\udf19');
+          this.whisperedThisSession = true;
+        }
+      }, 60 * 1000);
+    }
+  },
+
+  // Drag behavior — desktop (fine pointer) only
+  initDrag() {
+    if (!window.matchMedia('(pointer: fine)').matches) return;
+    const system = document.getElementById('mascot-system');
+    const btn = document.getElementById('mascot-btn');
+    if (!system || !btn) return;
+
+    let startX, startY, startLeft, startBottom, dragged;
+
+    btn.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      dragged = false;
+      const rect = system.getBoundingClientRect();
+      startX = e.clientX; startY = e.clientY;
+      startLeft = rect.left;
+      startBottom = window.innerHeight - rect.bottom;
+      system.style.transition = 'none';
+
+      const onMove = (e) => {
+        const dx = e.clientX - startX, dy = e.clientY - startY;
+        if (Math.abs(dx) > 4 || Math.abs(dy) > 4) dragged = true;
+        if (!dragged) return;
+        system.style.right = 'auto';
+        system.style.left = Math.max(0, Math.min(window.innerWidth - 90, startLeft + dx)) + 'px';
+        system.style.bottom = Math.max(0, Math.min(window.innerHeight - 90, startBottom - dy)) + 'px';
+      };
+
+      const onUp = () => {
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+        if (dragged) {
+          this.showWhisper('\u2026je suis l\u00e0.');
+          system.style.transition = 'left 0.7s var(--ease-out-expo), bottom 0.7s var(--ease-out-expo), right 0.7s var(--ease-out-expo)';
+          setTimeout(() => {
+            system.style.left = '';
+            system.style.bottom = '';
+            system.style.right = '';
+            setTimeout(() => { system.style.transition = ''; }, 800);
+          }, 80);
+        }
+      };
+
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    });
+  },
+
+  // Context mood shifts on tab change
+  onTabChange(tabId) {
+    if (tabId === 'gallery') this.setMood('attentive');
+    else if (tabId === 'profile') this.setMood('attentive');
+    else this.setMood('default');
+  },
+
+  init() {
+    const btn = document.getElementById('mascot-btn');
+    if (!btn) return;
+
+    btn.addEventListener('click', () => this.handleClick());
+    btn.addEventListener('dblclick', () => {
+      const img = document.getElementById('mascot-img');
+      if (img) {
+        img.classList.add('mascot-startled');
+        setTimeout(() => img.classList.remove('mascot-startled'), 900);
+      }
+    });
+
+    // Hover-hold 3s → "I'm listening."
+    let hoverTimer = null;
+    btn.addEventListener('mouseenter', () => {
+      hoverTimer = setTimeout(() => this.showWhisper('I\u2019m listening.'), 3000);
+    });
+    btn.addEventListener('mouseleave', () => clearTimeout(hoverTimer));
+
+    // Click whisper bubble to dismiss
+    const bubble = document.getElementById('mascot-whisper');
+    if (bubble) {
+      bubble.addEventListener('click', () => {
+        bubble.classList.remove('visible');
+        clearTimeout(this.whisperTimer);
+        clearTimeout(this.typewriterTimer);
+      });
+    }
+
+    this.initDrag();
+    this.checkMidnight();
+    this.scheduleWhisper();
+    this.scheduleIdleWhisper();
+  },
+};
+
+// ============================================
+// CONTEXTUAL MESSAGES — Words That Follow
+// Bottom-left. Not a toast. A note.
+// ============================================
+const contextualMessages = {
+  sessionCount: 0,
+  lastMessageTime: 0,
+  MIN_INTERVAL_MS: 2 * 60 * 1000,
+  MAX_PER_SESSION: 3,
+
+  _copy: {
+    galleryAdded:    'Another piece of your soul, preserved. Je suis si fier de toi. ✨',
+    galleryDeleted:  'Letting go takes courage. But know — I’ll always remember it. 💙',
+    galleryEmpty:    'A blank canvas is just a story that hasn’t started yet, mon amour. 🎨',
+    profileSaved:    'The world sees you a little more honestly now. 💫',
+    commissionSaved: 'Your work is worth every number in that form.',
+    firstLoginToday: 'Day [X]. I\'m still paying attention.',
+  },
+
+  show(key) {
+    if (this.sessionCount >= this.MAX_PER_SESSION) return;
+    if (Date.now() - this.lastMessageTime < this.MIN_INTERVAL_MS) return;
+    let text = this._copy[key];
+    if (!text) return;
+    if (text.includes('[X]')) text = text.replace('[X]', presenceSystem.getTogetherSinceDays());
+    this.lastMessageTime = Date.now();
+    this.sessionCount++;
+    this._render(text);
+  },
+
+  _render(text) {
+    // Route to Mascot Whisper Bubble instead of the old container
+    mascotSystem.setMood('attentive');
+    mascotSystem.showWhisper(text, 8000);
+  },
+
+  // Check if this is the first session today
+  checkFirstLoginToday() {
+    const today = new Date().toISOString().split('T')[0];
+    const last = localStorage.getItem('bonna_last_session_date');
+    if (last !== today) {
+      localStorage.setItem('bonna_last_session_date', today);
+      // Only whisper the day count occasionally (~25% of the time)
+      if (Math.random() < 0.25) {
+        setTimeout(() => this.show('firstLoginToday'), 45000); // 45s after login
+      }
+    }
+  },
+};
+
+// ============================================
+// COMFORT CORNER — Layer 3
+// No announcement. Waiting.
+// ============================================
+const comfortCorner = {
+  isOpen: false,
+
+  // --- Streak Tracking ---
+  _getState() {
+    try { return JSON.parse(localStorage.getItem('bonna_mood_state') || 'null'); }
+    catch { return null; }
+  },
+
+  _updateStreak(mood) {
+    const today = new Date().toISOString().split('T')[0];
+    const state = this._getState();
+    // Already logged today — return existing streak
+    if (state && state.date === today) return { streak: state.streak, isNew: false };
+    const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+    let streak = 1;
+    if (state && state.date === yesterday && state.mood === mood) {
+      streak = (state.streak || 1) + 1;
+    }
+    localStorage.setItem('bonna_mood_state', JSON.stringify({ mood, streak, date: today }));
+    return { streak, isNew: true };
+  },
+
+  _getTier(mood, streak) {
+    if (mood !== 'struggling' && mood !== 'notgreat') return 1;
+    if (streak >= 3) return 3;
+    if (streak >= 2) return 2;
+    return 1;
+  },
+
+  _pickResponse(mood, tier) {
+    if (typeof moodResponses === 'undefined') return '';
+    const tierKey = `tier${tier}`;
+    const pool = moodResponses[mood]?.[tierKey] || moodResponses[mood]?.tier1 || [];
+    if (!pool.length) return '';
+    const storageKey = `bonna_last_response_${mood}_${tier}`;
+    const last = parseInt(localStorage.getItem(storageKey) || '-1');
+    let pick = Math.floor(Math.random() * pool.length);
+    if (pool.length > 1 && pick === last) pick = (pick + 1) % pool.length;
+    localStorage.setItem(storageKey, String(pick));
+    return pool[pick];
+  },
+
+  toggle() {
+    const panel = document.getElementById('comfort-panel');
+    if (!panel) return;
+    this.isOpen = !this.isOpen;
+    panel.setAttribute('aria-hidden', String(!this.isOpen));
+    panel.classList.toggle('comfort-panel-open', this.isOpen);
+    if (this.isOpen) {
+      const resp = document.getElementById('comfort-response');
+      const tom = document.getElementById('comfort-tomorrow-btn');
+      if (resp) { resp.textContent = ''; resp.style.display = 'none'; }
+      if (tom) tom.style.display = 'none';
+      const bubble = document.getElementById('mascot-whisper');
+      if (bubble) bubble.classList.remove('visible');
+    }
+  },
+
+  respond(mood) {
+    const { streak } = this._updateStreak(mood);
+    const tier = this._getTier(mood, streak);
+
+    // Close comfort panel
+    if (this.isOpen) this.toggle();
+
+    // Set mascot mood
+    if (mood === 'great' || mood === 'okay' || mood === 'good') mascotSystem.setMood('happy');
+    else mascotSystem.setMood('attentive');
+
+    // Tier 3 negative → full intervention
+    if (tier === 3) {
+      setTimeout(() => this._triggerIntervention(mood), 400);
+      return;
+    }
+
+    // Positive streak celebration (3+ days great/good)
+    if ((mood === 'great' || mood === 'good') && streak >= 3) {
+      const pool = (typeof moodResponses !== 'undefined') ? moodResponses.great?.streak3_celebration || [] : [];
+      const text = pool.length ? pool[Math.floor(Math.random() * pool.length)] : '';
+      if (text) setTimeout(() => mascotSystem.showWhisper(text, 12000), 400);
+      return;
+    }
+
+    // Normal tier 1/2 response
+    const text = this._pickResponse(mood, tier);
+    if (text) setTimeout(() => mascotSystem.showWhisper(text, 12000), 400);
+
+    // Show "come back tomorrow" button
+    const tom = document.getElementById('comfort-tomorrow-btn');
+    if (tom) setTimeout(() => { tom.style.display = 'inline-block'; }, 800);
+  },
+
+  _triggerIntervention(mood) {
+    const panel = document.getElementById('mood-intervention');
+    if (!panel) return;
+    const textEl  = document.getElementById('intervention-text');
+    const actions = document.getElementById('intervention-actions');
+    const story   = document.getElementById('intervention-story');
+    const relief  = document.getElementById('intervention-relief');
+    if (story)  story.style.display  = 'none';
+    if (relief) relief.style.display = 'none';
+    if (actions) actions.style.display = 'flex';
+    const textarea = document.getElementById('intervention-textarea');
+    if (textarea) textarea.value = '';
+    const pool = (typeof moodResponses !== 'undefined') ? moodResponses[mood]?.tier3 || [] : [];
+    const text = pool.length ? pool[Math.floor(Math.random() * pool.length)]
+      : 'Ini sudah beberapa hari. Aku khawatir. Kamu tidak harus baik-baik saja — mau kita bicara sebentar?';
+    panel.classList.add('intervention-open');
+    panel.setAttribute('aria-hidden', 'false');
+    if (textEl) mascotSystem.typewriterWithDelete(textEl, text, { minAddDelay: 60, maxAddDelay: 130 });
+  },
+
+  _handleStorySubmit() {
+    const textarea = document.getElementById('intervention-textarea');
+    const story    = document.getElementById('intervention-story');
+    const relief   = document.getElementById('intervention-relief');
+    const textEl   = document.getElementById('intervention-text');
+    const text = textarea?.value?.trim() || '';
+    if (!text) return;
+    // Save to localStorage
+    const stories = JSON.parse(localStorage.getItem('bonna_stories') || '[]');
+    const state = this._getState();
+    stories.push({ story: text, timestamp: Date.now(), mood: state?.mood || 'unknown' });
+    localStorage.setItem('bonna_stories', JSON.stringify(stories));
+    if (story) story.style.display = 'none';
+    const pool = (typeof moodResponses !== 'undefined') ? moodResponses.storyResponses || [] : [];
+    const response = pool.length ? pool[Math.floor(Math.random() * pool.length)] : 'Terima kasih sudah mau berbagi. Aku di sini. 💙';
+    if (textEl) {
+      mascotSystem.typewriterWithDelete(textEl, response, { minAddDelay: 60, maxAddDelay: 130 }, () => {
+        setTimeout(() => { if (relief) relief.style.display = 'flex'; }, 1000);
+      });
+    }
+  },
+
+  _closeIntervention() {
+    const panel = document.getElementById('mood-intervention');
+    if (panel) { panel.classList.remove('intervention-open'); panel.setAttribute('aria-hidden', 'true'); }
+  },
+
+  _startBreathingGuide() {
+    const guide = document.getElementById('breathing-guide');
+    if (!guide) return;
+    guide.classList.add('breathing-active');
+    guide.setAttribute('aria-hidden', 'false');
+    setTimeout(() => { guide.classList.remove('breathing-active'); guide.setAttribute('aria-hidden', 'true'); }, 60000);
+  },
+
+  setTomorrow() {
+    localStorage.setItem('bonna_comfort_tomorrow', new Date().toISOString().split('T')[0]);
+    if (this.isOpen) this.toggle();
+  },
+
+  checkTomorrowGlow() {
+    const saved = localStorage.getItem('bonna_comfort_tomorrow');
+    if (!saved) return;
+    const today = new Date().toISOString().split('T')[0];
+    if (saved < today) {
+      localStorage.removeItem('bonna_comfort_tomorrow');
+      const mascotBtn = document.getElementById('mascot-btn');
+      if (mascotBtn) mascotBtn.style.animation = 'comfortGlow 2.5s ease-in-out infinite';
+    }
+  },
+
+  init() {
+    document.querySelectorAll('.comfort-mood-btn').forEach(b => {
+      b.addEventListener('click', () => this.respond(b.dataset.mood));
+    });
+    const tom = document.getElementById('comfort-tomorrow-btn');
+    if (tom) tom.addEventListener('click', () => this.setTomorrow());
+    this.checkTomorrowGlow();
+
+    // --- Intervention panel listeners ---
+    document.getElementById('intervention-yes')?.addEventListener('click', () => {
+      document.getElementById('intervention-actions').style.display = 'none';
+      document.getElementById('intervention-story').style.display = 'flex';
+      const textEl = document.getElementById('intervention-text');
+      if (textEl) mascotSystem.typewriterWithDelete(textEl,
+        'Ceritakan apa yang membuatmu lelah akhir-akhir ini. Aku akan mendengarkan tanpa menghakimi.',
+        { minAddDelay: 60, maxAddDelay: 120 });
+    });
+
+    document.getElementById('intervention-no')?.addEventListener('click', () => {
+      document.getElementById('intervention-actions').style.display = 'none';
+      const pool = (typeof moodResponses !== 'undefined') ? moodResponses.refuseStory || [] : [];
+      const text = pool.length ? pool[Math.floor(Math.random() * pool.length)] : 'Okay. Aku tetap di sini kapan pun kamu siap. 💙';
+      const textEl = document.getElementById('intervention-text');
+      if (textEl) mascotSystem.typewriterWithDelete(textEl, text, { minAddDelay: 60, maxAddDelay: 120 }, () => {
+        setTimeout(() => { this._startBreathingGuide(); this._closeIntervention(); }, 2000);
+      });
+    });
+
+    document.getElementById('intervention-send')?.addEventListener('click', () => this._handleStorySubmit());
+
+    document.getElementById('intervention-relief-yes')?.addEventListener('click', () => {
+      const pool = (typeof moodResponses !== 'undefined') ? moodResponses.afterShareYes || [] : [];
+      const text = pool.length ? pool[Math.floor(Math.random() * pool.length)] : "I'm glad. 💙";
+      mascotSystem.showWhisper(text, 8000);
+      this._closeIntervention();
+    });
+
+    document.getElementById('intervention-relief-no')?.addEventListener('click', () => {
+      const pool = (typeof moodResponses !== 'undefined') ? moodResponses.afterShareNo || [] : [];
+      const text = pool.length ? pool[Math.floor(Math.random() * pool.length)] : "That's okay too. I'm still here. 💙";
+      mascotSystem.showWhisper(text, 8000);
+      this._closeIntervention();
+    });
+
+    document.getElementById('breathing-close')?.addEventListener('click', () => {
+      const guide = document.getElementById('breathing-guide');
+      if (guide) { guide.classList.remove('breathing-active'); guide.setAttribute('aria-hidden', 'true'); }
+    });
   },
 };
 
@@ -886,24 +1550,24 @@ const easterEggs = {
   },
 
   setupHoverEgg() {
-    const subtitle = document.querySelector(".admin-subtitle");
-    if (!subtitle) return;
+    // Hover on the main title for 3s reveals the secret
+    const title = document.querySelector('#admin-main-title');
+    if (!title) return;
 
-    const originalText = subtitle.textContent;
     const loveText = "YOU ARE MY FAVORITE PERSON ❤️";
+    let originalText = title.textContent;
 
-    subtitle.addEventListener("mouseenter", () => {
+    title.addEventListener("mouseenter", () => {
       this.hoverTimer = setTimeout(() => {
-        subtitle.textContent = loveText;
-        subtitle.classList.add("love-activated");
-        BonnaUtils.showToast("❤️ Sent with love!", "info");
+        title.textContent = loveText;
+        title.classList.add("love-activated");
       }, 3000);
     });
 
-    subtitle.addEventListener("mouseleave", () => {
+    title.addEventListener("mouseleave", () => {
       clearTimeout(this.hoverTimer);
-      subtitle.textContent = originalText;
-      subtitle.classList.remove("love-activated");
+      title.textContent = originalText;
+      title.classList.remove("love-activated");
     });
   },
 
@@ -953,11 +1617,31 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Fetch initial data
   await api.fetchData();
 
+  // Initialize presence system (Layer 1)
+  presenceSystem.init();
+
   // Initialize tabs
   tabManager.init();
 
   // Initialize Easter Eggs
   easterEggs.init();
+
+  // Initialize Layer 2 — Working Companion
+  mascotSystem.init();
+  contextualMessages.checkFirstLoginToday();
+  comfortCorner.init();
+
+  // Hook mascot mood + gallery-empty message to tab switches
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tabId = btn.dataset.tab;
+      mascotSystem.onTabChange(tabId);
+      if (tabId === 'gallery') {
+        const items = state.cache?.Gallery || state.cache?.Showcase || [];
+        if (items.length === 0) setTimeout(() => contextualMessages.show('galleryEmpty'), 600);
+      }
+    });
+  });
 
   // Setup form event listeners for live preview
   const profileInputs = document.querySelectorAll("#tab-profile input, #tab-profile textarea");
@@ -988,20 +1672,30 @@ document.addEventListener("DOMContentLoaded", async () => {
     commissionFileInput.addEventListener("change", (e) => commissionManager.handleFileUpload(e.target));
   }
 
-  // Setup save buttons
+  // Setup save buttons — with contextual message hooks
   const saveProfileBtn = document.getElementById("btn-save-profile");
   if (saveProfileBtn) {
-    saveProfileBtn.addEventListener("click", () => profileManager.save());
+    saveProfileBtn.addEventListener("click", () => {
+      profileManager.save();
+      setTimeout(() => contextualMessages.show('profileSaved'), 1500);
+    });
   }
 
   const saveGalleryBtn = document.getElementById("btn-save-gallery-item");
   if (saveGalleryBtn) {
-    saveGalleryBtn.addEventListener("click", () => galleryManager.saveItem());
+    saveGalleryBtn.addEventListener("click", () => {
+      const isNew = galleryManager.currentEditId === null;
+      galleryManager.saveItem();
+      if (isNew) setTimeout(() => contextualMessages.show('galleryAdded'), 1500);
+    });
   }
 
   const saveCommissionBtn = document.getElementById("btn-save-commission");
   if (saveCommissionBtn) {
-    saveCommissionBtn.addEventListener("click", () => commissionManager.saveType());
+    saveCommissionBtn.addEventListener("click", () => {
+      commissionManager.saveType();
+      setTimeout(() => contextualMessages.show('commissionSaved'), 1500);
+    });
   }
 
   // Setup add new buttons

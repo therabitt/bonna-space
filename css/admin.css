@@ -34,6 +34,7 @@
   text-align: center;
   position: relative;
   width: 100%;
+  min-height: 100px; /* Prevent layout jump */
 }
 
 .admin-header-inner > div {
@@ -57,7 +58,7 @@
 /* --- Logout Button --- */
 .admin-logout-btn {
   position: absolute;
-  top: 0;
+  top: -10px;
   right: 0;
   display: inline-flex;
   align-items: center;
@@ -1167,11 +1168,681 @@
 /* Hover Effect Hint */
 .admin-subtitle {
   transition: all 0.5s ease;
-  cursor: help;
 }
 
-.admin-subtitle.love-activated {
+/* Love easter egg — works on both subtitle and main title */
+.admin-subtitle.love-activated,
+#admin-main-title.love-activated {
   color: var(--clr-coral);
   text-shadow: 0 0 10px var(--clr-coral);
-  transform: scale(1.1);
+  transform: scale(1);
+  font-size: clamp(1.2rem, 4.5vw, 1.8rem); /* Smaller to fit without overlapping */
+  cursor: default;
+}
+
+#admin-main-title {
+  cursor: default;
+  transition: color 0.5s ease, text-shadow 0.5s ease, transform 0.5s ease;
+}
+
+/* ============================================
+   PRESENCE SYSTEM — PHASE 1 STYLES
+   ============================================ */
+
+/* --- Daily Greeting --- */
+#admin-daily-greeting {
+  font-family: var(--font-retro);
+  font-size: clamp(1rem, 2.5vw, 1.3rem);
+  color: var(--clr-gold);
+  letter-spacing: 1px;
+  margin-bottom: var(--space-xs);
+  transition: opacity 0.6s ease;
+  min-height: 1.5em;
+}
+
+/* --- Together Since Counter (SYS.UPTIME) --- */
+.admin-together-since {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  font-family: var(--font-pixel);
+  font-size: 0.45rem;
+  color: var(--text-light);
+  letter-spacing: 1px;
+  opacity: 0.3;
+  margin: 0;
+  pointer-events: none;
+}
+
+/* --- The First Time Overlay --- */
+/* A single, unrepeatable moment. Centered. Silent. */
+#first-time-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(45, 10, 30, 0.97);
+  backdrop-filter: blur(6px);
+  opacity: 1;
+  transition: opacity 1.2s ease;
+  pointer-events: none;
+}
+
+#first-time-overlay.first-time-fade {
+  opacity: 0;
+}
+
+.first-time-text {
+  font-family: var(--font-retro);
+  font-size: clamp(1.4rem, 4vw, 2.2rem);
+  color: var(--clr-light-peach);
+  text-align: center;
+  letter-spacing: 1px;
+  line-height: 1.5;
+  padding: 0 var(--space-xl);
+  /* Gentle fade-in over 1.5s so she has time to read it */
+  animation: firstTimeAppear 1.5s ease forwards;
+}
+
+@keyframes firstTimeAppear {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Login Page — Rotating Subtitle --- */
+#login-rotating-subtitle {
+  /* Each load shows a different line; the transition makes it feel intentional */
+  animation: subtitleSettle 0.8s ease forwards;
+}
+
+@keyframes subtitleSettle {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Reduced motion — respect her system preference */
+@media (prefers-reduced-motion: reduce) {
+  #first-time-overlay,
+  .first-time-text,
+  #login-rotating-subtitle,
+  #admin-daily-greeting,
+  .admin-together-since {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* ============================================
+   PHASE 2 — WORKING COMPANION
+   ============================================ */
+
+/* --- Mascot System (fixed, bottom-left) --- */
+.mascot-system {
+  position: fixed;
+  bottom: 28px;
+  left: 28px;
+  z-index: 5000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none; /* container is transparent; button is interactive */
+}
+
+.mascot-btn {
+  pointer-events: all;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s var(--ease-out-expo);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.mascot-btn:hover { transform: scale(1.08); }
+.mascot-btn:focus-visible {
+  outline: 2px solid var(--clr-gold);
+  outline-offset: 4px;
+}
+
+.mascot-img {
+  width: 86px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 2px 8px rgba(45, 10, 30, 0.35));
+  transition: transform 0.3s var(--ease-out-expo), filter 0.3s ease;
+}
+
+/* Mood states — CSS only, no extra images */
+.mascot-img.mascot-attentive {
+  animation: mascotAttentiveBreathe 3s ease-in-out infinite;
+  filter: drop-shadow(0 4px 12px rgba(255, 215, 0, 0.4));
+}
+@keyframes mascotAttentiveBreathe {
+  0%, 100% { transform: scale(1.04) rotate(-4deg) translateY(0); }
+  50%      { transform: scale(1.04) rotate(-4deg) translateY(-3px); }
+}
+
+.mascot-img.mascot-happy {
+  animation: mascotBounce 0.6s var(--ease-out-expo) forwards, mascotBreathe 4s 0.6s ease-in-out infinite;
+  filter: drop-shadow(0 4px 14px rgba(232, 114, 90, 0.5));
+}
+.mascot-img.mascot-still {
+  opacity: 0.7;
+  filter: saturate(0.5) drop-shadow(0 2px 6px rgba(0,0,0,0.2));
+}
+.mascot-img.mascot-drowsy {
+  animation: mascotDrowsyBreathe 5s ease-in-out infinite;
+  opacity: 0.75;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.2));
+}
+@keyframes mascotDrowsyBreathe {
+  0%, 100% { transform: rotate(6deg) scale(0.95) translateY(0); }
+  50%      { transform: rotate(6deg) scale(0.95) translateY(-2px); }
+}
+.mascot-img.mascot-midnight {
+  filter: drop-shadow(0 0 14px rgba(126, 200, 227, 0.5)) brightness(0.85) hue-rotate(200deg);
+  animation: mascotPulse 4s ease-in-out infinite;
+}
+.mascot-img.mascot-wave {
+  animation: mascotWave 0.8s var(--ease-out-expo) forwards;
+}
+.mascot-img.mascot-startled {
+  animation: mascotStartled 0.9s ease forwards;
+}
+
+@keyframes mascotBounce {
+  0%   { transform: translateY(0) scale(1); }
+  35%  { transform: translateY(-14px) scale(1.06); }
+  60%  { transform: translateY(-4px) scale(0.98); }
+  80%  { transform: translateY(-8px) scale(1.02); }
+  100% { transform: translateY(0) scale(1); }
+}
+@keyframes mascotWave {
+  0%   { transform: rotate(0deg) scale(1); }
+  25%  { transform: rotate(-10deg) scale(1.05); }
+  50%  { transform: rotate(8deg) scale(1.05); }
+  75%  { transform: rotate(-5deg) scale(1.02); }
+  100% { transform: rotate(0deg) scale(1); }
+}
+@keyframes mascotStartled {
+  0%   { transform: scale(1) rotate(0deg); }
+  20%  { transform: scale(0.88) rotate(-8deg); }
+  50%  { transform: scale(1.1) rotate(5deg); }
+  80%  { transform: scale(0.97) rotate(-2deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+@keyframes mascotPulse {
+  0%, 100% { opacity: 0.75; }
+  50%       { opacity: 1; }
+}
+
+/* --- Whisper Bubble --- */
+.mascot-whisper-bubble {
+  pointer-events: all;
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 0;
+  width: 220px;
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(4px);
+  color: rgba(0, 0, 0, 0.85);
+  font-family: var(--font-pixel);
+  font-size: 0.55rem;
+  line-height: 1.6;
+  padding: 14px 16px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 0;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.15);
+  white-space: pre-line;
+  opacity: 0;
+  transform: translateY(6px) scale(0.97);
+  transition: opacity 0.4s ease, transform 0.4s var(--ease-out-expo);
+  pointer-events: none;
+  cursor: pointer;
+}
+.mascot-whisper-bubble.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: all;
+}
+/* Bubble tail - Pixel Staircase */
+.mascot-whisper-bubble::before {
+  content: '';
+  position: absolute;
+  bottom: -3px; /* Hang below the 1px border */
+  left: 18px;
+  width: 6px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.65);
+  border-left: 1px solid rgba(0, 0, 0, 0.15);
+  border-right: 1px solid rgba(0, 0, 0, 0.15);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+}
+.mascot-whisper-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -5px; /* Second step */
+  left: 20px;
+  width: 2px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.65);
+  border-left: 1px solid rgba(0, 0, 0, 0.15);
+  border-right: 1px solid rgba(0, 0, 0, 0.15);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.15); /* Tiny shadow for the tip */
+}
+
+/* --- Words That Follow (Contextual Notes) --- */
+/* Bottom-left. Never overlaps standard toasts. */
+.presence-note-container {
+  position: fixed;
+  bottom: 100px; /* above comfort corner button */
+  left: 20px;
+  z-index: 5000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+  max-width: 300px;
+}
+
+.presence-note {
+  background: var(--clr-dark-plum);
+  color: var(--clr-light-peach);
+  font-family: var(--font-retro);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  padding: 13px 16px;
+  border: 2px solid rgba(255, 184, 114, 0.3);
+  border-radius: 8px 8px 8px 2px;
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.25), 0 0 14px rgba(255, 184, 114, 0.08);
+  opacity: 0;
+  transform: translateX(-12px) rotate(-1deg);
+  transition: opacity 0.5s ease, transform 0.5s var(--ease-out-expo);
+}
+.presence-note.presence-note-in {
+  opacity: 1;
+  transform: translateX(0) rotate(0deg);
+}
+.presence-note.presence-note-out {
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+
+/* --- Comfort Corner --- */
+.comfort-corner-system {
+  position: fixed;
+  bottom: 28px;
+  left: 28px; /* Same position as mascot */
+  width: 72px;
+  height: 72px;
+  z-index: 5001; /* Slightly above mascot */
+  pointer-events: none;
+}
+
+.comfort-btn {
+  display: none !important;
+}
+.comfort-btn:hover {
+  background: rgba(45, 10, 30, 0.92);
+  border-color: rgba(255, 184, 114, 0.5);
+  transform: scale(1.08);
+}
+.comfort-btn:focus-visible {
+  outline: 2px solid var(--clr-gold);
+  outline-offset: 3px;
+}
+.comfort-btn-active {
+  background: rgba(45, 10, 30, 0.95);
+  border-color: var(--clr-gold);
+}
+/* Soft glow when "come back tomorrow" reminder fires */
+.comfort-btn-glow {
+  animation: comfortGlow 2.5s ease-in-out infinite;
+}
+@keyframes comfortGlow {
+  0%, 100% { box-shadow: 0 0 6px rgba(255, 184, 114, 0.3); }
+  50%       { box-shadow: 0 0 16px rgba(255, 184, 114, 0.65); border-color: rgba(255, 184, 114, 0.6); }
+}
+
+.comfort-panel {
+  position: absolute;
+  bottom: calc(100% + 15px);
+  left: 0;
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 0;
+  padding: 18px 20px;
+  width: 260px; 
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.15);
+  /* Hidden by default */
+  opacity: 0;
+  transform: translateY(10px) scale(0.97);
+  pointer-events: none;
+  transition: opacity 0.35s ease, transform 0.35s var(--ease-out-expo);
+}
+
+.comfort-panel::before {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 18px;
+  width: 6px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.65);
+  border-left: 1px solid rgba(0, 0, 0, 0.15);
+  border-right: 1px solid rgba(0, 0, 0, 0.15);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.comfort-panel::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 20px;
+  width: 2px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.65);
+  border-left: 1px solid rgba(0, 0, 0, 0.15);
+  border-right: 1px solid rgba(0, 0, 0, 0.15);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.15);
+}
+
+.comfort-panel.comfort-panel-open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: all;
+}
+
+.comfort-question {
+  font-family: var(--font-pixel);
+  font-size: 0.55rem;
+  color: rgba(0, 0, 0, 0.85);
+  margin-bottom: 14px;
+  line-height: 1.6;
+}
+
+.comfort-moods {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.comfort-mood-btn {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 0;
+  color: rgba(0, 0, 0, 0.85);
+  font-family: var(--font-pixel);
+  font-size: 0.55rem;
+  padding: 8px 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.comfort-mood-btn:hover {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(0, 0, 0, 0.3);
+  transform: translateX(2px);
+}
+
+.comfort-response {
+  display: none;
+  font-family: var(--font-retro);
+  font-size: 0.95rem;
+  color: var(--clr-peach);
+  line-height: 1.6;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(255, 184, 114, 0.2);
+  animation: comfortResponseIn 0.4s ease forwards;
+}
+@keyframes comfortResponseIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.comfort-tomorrow-btn {
+  display: none;
+  margin-top: 14px;
+  background: none;
+  border: 1px dashed rgba(0, 0, 0, 0.2);
+  border-radius: 0;
+  color: rgba(0, 0, 0, 0.5);
+  font-family: var(--font-pixel);
+  font-size: 0.5rem;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+.comfort-tomorrow-btn:hover {
+  border-color: rgba(0, 0, 0, 0.4);
+  color: rgba(0, 0, 0, 0.8);
+}
+
+/* --- Mood Intervention (Tier 3) --- */
+.mood-intervention {
+  position: fixed;
+  bottom: 120px;
+  left: 28px;
+  width: 270px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 0;
+  padding: 18px 20px;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+  z-index: 5100;
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.4s var(--ease-out-expo);
+}
+.mood-intervention.intervention-open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+}
+
+.intervention-text {
+  font-family: var(--font-pixel);
+  font-size: 0.55rem;
+  color: rgba(0, 0, 0, 0.85);
+  line-height: 1.7;
+  margin-bottom: 14px;
+  min-height: 2.5em; /* Reserve space while typing */
+}
+
+.intervention-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.intervention-btn {
+  font-family: var(--font-pixel);
+  font-size: 0.5rem;
+  padding: 9px 12px;
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  border-radius: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  line-height: 1.5;
+}
+.intervention-btn-yes {
+  background: rgba(0, 0, 0, 0.06);
+  color: rgba(0, 0, 0, 0.85);
+}
+.intervention-btn-yes:hover {
+  background: rgba(0, 0, 0, 0.11);
+}
+.intervention-btn-no {
+  background: transparent;
+  color: rgba(0, 0, 0, 0.45);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+.intervention-btn-no:hover {
+  color: rgba(0, 0, 0, 0.7);
+  border-color: rgba(0, 0, 0, 0.25);
+}
+
+.intervention-story {
+  flex-direction: column;
+  gap: 8px;
+}
+.intervention-textarea {
+  width: 100%;
+  min-height: 80px;
+  font-family: var(--font-pixel);
+  font-size: 0.5rem;
+  line-height: 1.7;
+  color: rgba(0, 0, 0, 0.85);
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 0;
+  padding: 10px;
+  resize: vertical;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+.intervention-textarea:focus {
+  outline: none;
+  border-color: rgba(0, 0, 0, 0.3);
+}
+.intervention-textarea::placeholder {
+  color: rgba(0, 0, 0, 0.3);
+}
+.intervention-btn-send {
+  background: rgba(0, 0, 0, 0.07);
+  color: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  align-self: flex-end;
+  padding: 8px 14px;
+}
+.intervention-btn-send:hover {
+  background: rgba(0, 0, 0, 0.13);
+}
+
+.intervention-relief {
+  flex-direction: column;
+  gap: 10px;
+}
+.intervention-relief-text {
+  font-family: var(--font-pixel);
+  font-size: 0.5rem;
+  color: rgba(0, 0, 0, 0.7);
+  line-height: 1.6;
+}
+.intervention-relief-btns {
+  display: flex;
+  gap: 8px;
+}
+
+/* --- Breathing Guide --- */
+.breathing-guide {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  z-index: 9000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+.breathing-guide.breathing-active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.breathing-circle {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  animation: breatheInOut 6s ease-in-out infinite;
+}
+@keyframes breatheInOut {
+  0%, 100% { transform: scale(1);    opacity: 0.5; }
+  50%       { transform: scale(1.6); opacity: 1;   }
+}
+
+.breathing-text {
+  font-family: var(--font-pixel);
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.8);
+  letter-spacing: 1px;
+}
+
+.breathing-close {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.8rem;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-family: var(--font-pixel);
+  transition: all 0.2s ease;
+  border-radius: 0;
+}
+.breathing-close:hover {
+  color: white;
+  border-color: rgba(255, 255, 255, 0.7);
+}
+
+/* --- Midnight Mode --- */
+body.midnight-mode .page-background {
+  filter: brightness(0.75) hue-rotate(220deg) saturate(0.7);
+  transition: filter 3s ease;
+}
+body.midnight-mode .admin-header {
+  border-color: rgba(126, 200, 227, 0.2);
+}
+
+/* Phase 2 reduced-motion overrides */
+@media (prefers-reduced-motion: reduce) {
+  .mascot-img,
+  .mascot-whisper-bubble,
+  .presence-note,
+  .comfort-panel,
+  .comfort-btn {
+    animation: none !important;
+    transition: opacity 0.2s ease !important;
+    transform: none !important;
+  }
 }

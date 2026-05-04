@@ -41,6 +41,26 @@ document.addEventListener('DOMContentLoaded', async () => {
   const preloader = document.getElementById('preloader');
   if (preloader) setTimeout(() => preloader.classList.add('hidden'), 600);
 
+  // Rotating subtitle
+  const subtitlePool = [
+    'A quiet corner of the internet, made for you.',
+    'Un sanctuaire numérique, fait avec soin.',
+    'Pixel by pixel. With intention.',
+    'Everything here was made thinking of you.',
+    'Come in. You’re always welcome here.',
+    'This space has been waiting, quietly.',
+  ];
+  const subtitleEl = document.getElementById('login-rotating-subtitle');
+  if (subtitleEl) {
+    // Pick one, avoiding the last used one
+    let lastIdx = -1;
+    try { lastIdx = parseInt(localStorage.getItem('bonna_login_subtitle') || '-1'); } catch(_) {}
+    const available = subtitlePool.map((_, i) => i).filter(i => i !== lastIdx);
+    const pick = available[Math.floor(Math.random() * available.length)];
+    localStorage.setItem('bonna_login_subtitle', pick);
+    subtitleEl.textContent = subtitlePool[pick];
+  }
+
   // Element references
   const form = document.getElementById('login-form');
   const keyInput = document.getElementById('login-key');
@@ -74,8 +94,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   function setLoading(loading) {
     loginBtn.disabled = loading;
     loginBtn.innerHTML = loading
-      ? '<i class="fa-solid fa-spinner fa-spin"></i> <span>Verifying...</span>'
-      : '<i class="fa-solid fa-key"></i> <span>ENTER THE KINGDOM</span>';
+      ? '<i class="fa-solid fa-spinner fa-spin"></i> <span>One moment...</span>'
+      : '<i class="fa-solid fa-key"></i> <span>ENTER</span>';
   }
 
   // Shake animation on wrong key
@@ -93,7 +113,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     clearMessage();
 
     if (!token) {
-      showMessage('⚠️ Enter your secret key, traveler!');
+      showMessage('Enter your key, and come in.');
       keyInput.focus();
       return;
     }
@@ -114,10 +134,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (inputHash === ADMIN_TOKEN_HASH) {
         // Store token for use by admin dashboard
         sessionStorage.setItem('bonna_admin_token', token);
-        showMessage('✨ Access granted! Entering the Kingdom...', 'success');
+        showMessage('Welcome back.', 'success');
         setTimeout(() => window.location.replace('admin.html'), 1000);
       } else {
-        showMessage('🚫 The kingdom remains sealed. Wrong key!');
+        showMessage('Not quite. Try once more, belle.');
         keyInput.value = '';
         keyInput.focus();
         shakeInput();

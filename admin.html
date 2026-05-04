@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>COMMAND CENTER ✦ Admin Dashboard</title>
-    <meta name="description" content="Admin dashboard for Bonna's portfolio" />
+    <title>Bonna's Sanctuary ✦ Studio</title>
+    <meta name="description" content="A private studio, made for her." />
     <meta name="theme-color" content="#2d0a1e" />
 
     <link
@@ -35,10 +35,12 @@
       <header class="admin-header">
         <div class="admin-header-inner">
           <div>
-            <h1 class="site-title">COMMAND CENTER</h1>
-            <p class="admin-subtitle">MANAGE YOUR KINGDOM, BONNA</p>
+            <!-- BONNA'S SANCTUARY / LE SANCTUAIRE DE BONNA — decision pending, using first for now -->
+            <h1 class="site-title" id="admin-main-title">BONNA'S SANCTUARY</h1>
+            <p class="admin-subtitle" id="admin-daily-greeting">Welcome home.</p>
+            <p class="admin-together-since" id="admin-together-since"></p>
           </div>
-          <button class="admin-logout-btn" id="btn-logout" aria-label="Logout">
+          <button class="admin-logout-btn" id="btn-logout" aria-label="Leaving so soon?">
             <i class="fa-solid fa-right-from-bracket"></i>
             <span>Zzzz...</span>
           </button>
@@ -48,13 +50,13 @@
       <!-- Tab Navigation -->
       <nav class="admin-tabs">
         <button class="tab-btn active" data-tab="profile">
-          <i class="fa-solid fa-user"></i> Profile
+          <i class="fa-solid fa-user"></i> About You
         </button>
         <button class="tab-btn" data-tab="gallery">
-          <i class="fa-solid fa-images"></i> Gallery
+          <i class="fa-solid fa-images"></i> Your Artworks
         </button>
         <button class="tab-btn" data-tab="commission">
-          <i class="fa-solid fa-palette"></i> Commission
+          <i class="fa-solid fa-palette"></i> Commission Setup
         </button>
       </nav>
 
@@ -164,7 +166,7 @@
               <!-- Gallery items injected here -->
               <div class="empty-state">
                 <i class="fa-solid fa-images"></i>
-                <p>No artworks yet. Add your first!</p>
+                <p>No artworks yet. But I know what's coming. 🎨</p>
               </div>
             </div>
           </div>
@@ -200,7 +202,7 @@
               <!-- Commission types injected here -->
               <div class="empty-state">
                 <i class="fa-solid fa-palette"></i>
-                <p>No commission types configured.</p>
+                <p>Ready when you are. The world is waiting for your terms. 💫</p>
               </div>
             </div>
           </div>
@@ -546,6 +548,83 @@
       </div>
     </div>
 
+    <!-- =============================================
+         MASCOT SYSTEM — Layer 2
+         Bonna's own creation, living here quietly.
+         ============================================= -->
+    <div class="mascot-system" id="mascot-system">
+      <div class="mascot-whisper-bubble" id="mascot-whisper" role="status" aria-live="polite"></div>
+      <button
+        class="mascot-btn"
+        id="mascot-btn"
+        aria-label="A small companion"
+        tabindex="0"
+      >
+        <img src="./assets/rabit.gif" alt="" class="mascot-img" id="mascot-img" draggable="false" />
+      </button>
+    </div>
+
+    <!-- =============================================
+         WORDS THAT FOLLOW — Contextual Messages
+         Bottom-left. Distinct from standard toasts.
+         ============================================= -->
+    <div class="presence-note-container" id="presence-note-container" aria-live="polite"></div>
+
+    <!-- =============================================
+         COMFORT CORNER — Layer 3 (visible day one)
+         No label. No announcement. She finds it.
+         ============================================= -->
+    <div class="comfort-corner-system" id="comfort-corner-system">
+      <div class="comfort-panel" id="comfort-panel" aria-hidden="true">
+        <p class="comfort-question">How are you feeling right now?</p>
+        <div class="comfort-moods">
+          <button class="comfort-mood-btn" data-mood="great" aria-label="Really good">🌟 Really good</button>
+          <button class="comfort-mood-btn" data-mood="okay" aria-label="Okay">😊 Okay</button>
+          <button class="comfort-mood-btn" data-mood="notgreat" aria-label="Not great">🌧 Not great</button>
+          <button class="comfort-mood-btn" data-mood="struggling" aria-label="Struggling">😔 Struggling</button>
+        </div>
+        <div class="comfort-response" id="comfort-response" aria-live="polite"></div>
+        <button class="comfort-tomorrow-btn" id="comfort-tomorrow-btn">Come back tomorrow</button>
+      </div>
+      <button class="comfort-btn" id="comfort-btn" aria-label="A quiet corner" tabindex="0">
+        <span class="comfort-icon" aria-hidden="true">🤍</span>
+      </button>
+    </div>
+
+    <!-- =============================================
+         MOOD INTERVENTION — Tier 3
+         Opens when Bonna has been struggling 3+ days.
+         Not an alert. A quiet offer.
+         ============================================= -->
+    <div class="mood-intervention" id="mood-intervention" aria-hidden="true" aria-live="polite">
+      <p class="intervention-text" id="intervention-text"></p>
+      <div class="intervention-actions" id="intervention-actions" style="display:none">
+        <button class="intervention-btn intervention-btn-yes" id="intervention-yes">Ya, aku ingin cerita</button>
+        <button class="intervention-btn intervention-btn-no" id="intervention-no">Tidak sekarang</button>
+      </div>
+      <div class="intervention-story" id="intervention-story" style="display:none">
+        <textarea class="intervention-textarea" id="intervention-textarea" placeholder="Ketik apa pun yang ingin kamu bagikan..."></textarea>
+        <button class="intervention-btn intervention-btn-send" id="intervention-send">Kirim</button>
+      </div>
+      <div class="intervention-relief" id="intervention-relief" style="display:none">
+        <p class="intervention-relief-text">Apakah berbagi ini membuatmu sedikit lega?</p>
+        <div class="intervention-relief-btns">
+          <button class="intervention-btn intervention-btn-yes" id="intervention-relief-yes">Iya 💙</button>
+          <button class="intervention-btn intervention-btn-no" id="intervention-relief-no">Belum</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- =============================================
+         BREATHING GUIDE
+         Gentle fallback after Bonna says "not now".
+         ============================================= -->
+    <div class="breathing-guide" id="breathing-guide" aria-hidden="true">
+      <div class="breathing-circle" id="breathing-circle"></div>
+      <p class="breathing-text">Ikuti napasku</p>
+      <button class="breathing-close" id="breathing-close" aria-label="Tutup">✕</button>
+    </div>
+
     <script>
       // Logout function — called by admin.js and the logout button
       function adminLogout() {
@@ -557,6 +636,7 @@
         ?.addEventListener("click", adminLogout);
     </script>
     <script src="js/utils.js"></script>
+    <script src="js/mood_responses.js"></script>
     <script src="js/admin.js"></script>
   </body>
 </html>
