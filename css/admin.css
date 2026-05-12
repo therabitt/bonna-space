@@ -2947,60 +2947,113 @@ body.anniversary-mode .admin-header::after {
   100% { opacity: 0; transform: translate(var(--tx, 0px), var(--ty, -80px)) scale(0.4); }
 }
 
-/* Countdown wrapper */
+/* ============================================
+   GOLDEN TICKET COUNTDOWN
+   ============================================ */
 .admin-countdown-wrapper {
-  margin-top: var(--space-md);
-  display: flex;
-  justify-content: center;
+  position: relative;
+  display: inline-block;
+  margin-top: var(--space-xl);
+  transform-origin: top center;
+  animation: tagSwing 4s ease-in-out infinite alternate;
+  cursor: pointer;
 }
 
-.countdown-glitch-box {
-  background: rgba(10, 10, 20, 0.4);
-  border: 1px solid rgba(255, 215, 0, 0.3);
-  padding: 8px 16px;
-  border-radius: 4px;
+/* The pin string */
+.admin-countdown-wrapper::before {
+  content: '';
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 15px;
+  background: rgba(255,215,0,0.4);
+}
+
+/* The pin head */
+.admin-countdown-wrapper::after {
+  content: '';
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--clr-gold);
+  box-shadow: 0 0 4px var(--clr-gold);
+}
+
+.countdown-ticket {
+  position: relative;
+  background: linear-gradient(135deg, rgba(255,184,114,0.15), rgba(255,215,0,0.05));
+  border: 1px solid rgba(255,215,0,0.3);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: 2px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  box-shadow: 0 0 15px rgba(255, 215, 0, 0.05), inset 0 0 8px rgba(255, 215, 0, 0.1);
-  position: relative;
+  gap: 0; /* gap will expand on hover via padding */
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   overflow: hidden;
 }
 
-/* Scanning scanline effect inside the box */
-.countdown-glitch-box::before {
-  content: '';
-  position: absolute;
-  top: 0; left: -100%;
-  width: 50%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.15), transparent);
-  animation: scanline 3s linear infinite;
-  pointer-events: none;
-}
-
-@keyframes scanline {
-  0%   { left: -50%; }
-  100% { left: 150%; }
-}
-
-.countdown-icon {
+.ticket-icon {
   color: var(--clr-gold);
-  font-size: 0.8rem;
-  animation: pulseIcon 2s ease-in-out infinite alternate;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-@keyframes pulseIcon {
-  from { opacity: 0.4; text-shadow: 0 0 2px var(--clr-gold); }
-  to   { opacity: 1; text-shadow: 0 0 8px var(--clr-gold); }
-}
-
-.countdown-text {
+.ticket-content {
+  display: flex;
+  flex-direction: column;
+  width: 0;
+  opacity: 0;
+  white-space: nowrap;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   font-family: var(--font-pixel);
-  font-size: 0.55rem;
+  align-items: flex-start;
+}
+
+.ticket-days {
   color: var(--clr-gold);
-  letter-spacing: 1.5px;
-  text-shadow: 0 0 4px rgba(255, 215, 0, 0.5);
-  white-space: pre; /* Keep scramble chars from wrapping weirdly */
+  font-size: 0.55rem;
+  letter-spacing: 1px;
+  margin-bottom: 2px;
+}
+
+.ticket-text {
+  color: rgba(255,255,255,0.6);
+  font-size: 0.38rem;
+  letter-spacing: 2px;
+}
+
+/* Hover state — reveals message */
+.admin-countdown-wrapper:hover .countdown-ticket {
+  background: linear-gradient(135deg, rgba(255,184,114,0.25), rgba(255,215,0,0.15));
+  border-color: rgba(255,215,0,0.8);
+  box-shadow: 0 0 20px rgba(255,215,0,0.2);
+}
+
+.admin-countdown-wrapper:hover .ticket-icon {
+  transform: scale(1.1) rotate(-10deg);
+  color: #fff;
+  text-shadow: 0 0 8px var(--clr-gold);
+}
+
+.admin-countdown-wrapper:hover .ticket-content {
+  width: 110px; /* expands to reveal text */
+  opacity: 1;
+  padding-left: var(--space-sm);
+}
+
+@keyframes tagSwing {
+  0%   { transform: rotate(-3deg); }
+  100% { transform: rotate(3deg); }
 }
 
 /* Phase 3 & 4 reduced-motion overrides */
@@ -3008,7 +3061,7 @@ body.anniversary-mode .admin-header::after {
   .letter-envelope-icon,
   .constellation-star-glow,
   .anniversary-confetti-piece,
-  .admin-countdown-line {
+  .admin-countdown-wrapper {
     animation: none !important;
   }
   .letter-modal-paper,

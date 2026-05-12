@@ -211,45 +211,23 @@ const presenceSystem = {
     const counterEl = document.getElementById('admin-together-since');
     if (!counterEl) return;
 
-    const line = document.createElement('div');
-    line.id = 'admin-countdown-line';
-    line.className = 'admin-countdown-wrapper';
+    const wrapper = document.createElement('div');
+    wrapper.id = 'admin-countdown-line'; // Reuse ID so removal logic still works
+    wrapper.className = 'admin-countdown-wrapper';
     
-    const finalMsg = `SOMETHING IS COMING IN ${days} DAY${days === 1 ? '' : 'S'}...`;
-    
-    // Build the HTML structure
-    line.innerHTML = `
-      <div class="countdown-glitch-box">
-        <span class="countdown-icon">✧</span>
-        <span class="countdown-text" id="countdown-scramble-text"></span>
+    wrapper.innerHTML = `
+      <div class="countdown-ticket">
+        <div class="ticket-icon">
+          <i class="fa-solid fa-envelope"></i>
+        </div>
+        <div class="ticket-content">
+          <span class="ticket-days">${days} DAY${days === 1 ? '' : 'S'}</span>
+          <span class="ticket-text">REMAINING...</span>
+        </div>
       </div>
     `;
-    counterEl.insertAdjacentElement('afterend', line);
 
-    // Decryption / Scramble Animation
-    const textEl = document.getElementById('countdown-scramble-text');
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?";
-    let iteration = 0;
-    const maxIterations = 30; // How long the scramble lasts
-
-    const scrambleInterval = setInterval(() => {
-      textEl.innerText = finalMsg
-        .split("")
-        .map((letter, index) => {
-          if (index < iteration) {
-            return finalMsg[index]; // Reveal correct character from left to right
-          }
-          // Random alien/glitch char
-          return chars[Math.floor(Math.random() * chars.length)];
-        })
-        .join("");
-
-      if (iteration >= finalMsg.length) {
-        clearInterval(scrambleInterval);
-      }
-      
-      iteration += 1 / 2; // Speed of reveal (0.5 char per tick)
-    }, 40);
+    counterEl.insertAdjacentElement('afterend', wrapper);
   },
 
   // --- Anniversary Takeover ---
