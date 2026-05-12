@@ -1185,38 +1185,24 @@ const mascotSystem = {
   typewriterWithDelete(element, targetText, options = {}, onComplete = null) {
     const minAdd = options.minAddDelay || 30;
     const maxAdd = options.maxAddDelay || 80;
-    const minDel = options.minDeleteDelay || 20;
-    const maxDel = options.maxDeleteDelay || 60;
-    
+
     clearTimeout(this.typewriterTimer);
-    
-    let currentText = element.textContent;
-    let deleting = currentText.length > 0;
+
+    // Clear any existing text instantly (no delete animation)
+    element.textContent = '';
     let i = 0;
-    
+
     const tick = () => {
-      if (deleting) {
-        currentText = currentText.slice(0, -1);
-        element.textContent = currentText;
-        if (currentText.length === 0) {
-          deleting = false;
-          this.typewriterTimer = setTimeout(tick, 300); // Pause before typing new text
-          return;
-        }
-        const delay = Math.random() * (maxDel - minDel) + minDel;
-        this.typewriterTimer = setTimeout(tick, delay);
-      } else {
-        element.textContent += targetText.charAt(i);
-        i++;
-        if (i >= targetText.length) {
-          if (onComplete) onComplete();
-          return;
-        }
-        const delay = Math.random() * (maxAdd - minAdd) + minAdd;
-        this.typewriterTimer = setTimeout(tick, delay);
+      element.textContent += targetText.charAt(i);
+      i++;
+      if (i >= targetText.length) {
+        if (onComplete) onComplete();
+        return;
       }
+      const delay = Math.random() * (maxAdd - minAdd) + minAdd;
+      this.typewriterTimer = setTimeout(tick, delay);
     };
-    
+
     this.typewriterTimer = setTimeout(tick, 50);
   },
 
@@ -1248,26 +1234,34 @@ const mascotSystem = {
   handleClick() {
     this.clickCount++;
     clearTimeout(this.clickTimer);
-    this.clickTimer = setTimeout(() => { this.clickCount = 0; }, 3000);
+    // FIX 3: 8-second window covers both 5-click egg and 7-click journal
+    this.clickTimer = setTimeout(() => { this.clickCount = 0; }, 8000);
 
-    if (this.clickCount >= 5) {
-      this.clickCount = 0;
+    // 5-click → easter egg (count is NOT reset — continues toward 7)
+    if (this.clickCount === 5) {
       this._triggerClickEgg();
       return;
     }
 
-    // Single click: wave and toggle comfort panel
+    // 7-click → Studio Journal (unified — no separate IIFE needed)
+    if (this.clickCount >= 7) {
+      this.clickCount = 0;
+      clearTimeout(this.clickTimer);
+      if (typeof journalSystem !== 'undefined') journalSystem.open();
+      return;
+    }
+
+    // Clicks 1-4 and 6: wave + toggle comfort panel
     const img = document.getElementById('mascot-img');
     if (img) {
       img.classList.add('mascot-wave');
       setTimeout(() => img.classList.remove('mascot-wave'), 800);
     }
-    
-    // Toggle comfort corner panel
+
     if (typeof comfortCorner !== 'undefined') {
       comfortCorner.toggle();
       const mascotBtn = document.getElementById('mascot-btn');
-      if (mascotBtn) mascotBtn.style.animation = ''; // Remove glow if present
+      if (mascotBtn) mascotBtn.style.animation = '';
     }
   },
 
@@ -1320,7 +1314,8 @@ const mascotSystem = {
         }
       }, 10 * 60 * 1000);
     };
-    ['mousemove', 'keydown', 'click', 'scroll'].forEach(ev =>
+    // FIX 5: include touch events so mobile idle timer resets properly
+    ['mousemove', 'keydown', 'click', 'scroll', 'touchstart', 'touchmove'].forEach(ev =>
       document.addEventListener(ev, resetIdle, { passive: true })
     );
     resetIdle();
@@ -1372,6 +1367,7 @@ const mascotSystem = {
       const onUp = () => {
         document.removeEventListener('mousemove', onMove);
         document.removeEventListener('mouseup', onUp);
+        window.removeEventListener('blur', onUp); // FIX 4: cleanup on window blur
         if (dragged) {
           this.showWhisper('…je suis là.');
           system.style.transition = 'left 0.7s var(--ease-out-expo), bottom 0.7s var(--ease-out-expo), right 0.7s var(--ease-out-expo)';
@@ -1386,6 +1382,7 @@ const mascotSystem = {
 
       document.addEventListener('mousemove', onMove);
       document.addEventListener('mouseup', onUp);
+      window.addEventListener('blur', onUp); // FIX 4: abort drag if window loses focus
     });
   },
 
@@ -1401,6 +1398,8 @@ const mascotSystem = {
     if (!btn) return;
 
     btn.addEventListener('click', () => this.handleClick());
+
+    // Desktop: double-click → startled animation
     btn.addEventListener('dblclick', () => {
       const img = document.getElementById('mascot-img');
       if (img) {
@@ -1409,12 +1408,34 @@ const mascotSystem = {
       }
     });
 
-    // Hover-hold 3s → quiet presence
+    // Desktop: hover-hold 3s → quiet presence
     let hoverTimer = null;
     btn.addEventListener('mouseenter', () => {
       hoverTimer = setTimeout(() => this.showWhisper('I’m listening.'), 3000);
     });
     btn.addEventListener('mouseleave', () => clearTimeout(hoverTimer));
+
+    // FIX 1 — Mobile: touch-hold 3s → quiet presence (mirrors hover-hold)
+    // FIX 2 — Mobile: double-tap → startled animation (mirrors dblclick)
+    let touchHoldTimer = null;
+    let lastTapTime = 0;
+    btn.addEventListener('touchstart', () => {
+      touchHoldTimer = setTimeout(() => this.showWhisper('I’m listening.'), 3000);
+    }, { passive: true });
+    btn.addEventListener('touchend', () => {
+      clearTimeout(touchHoldTimer);
+      const now = Date.now();
+      if (now - lastTapTime < 350) {
+        // Double-tap within 350ms → startled
+        const img = document.getElementById('mascot-img');
+        if (img) {
+          img.classList.add('mascot-startled');
+          setTimeout(() => img.classList.remove('mascot-startled'), 900);
+        }
+      }
+      lastTapTime = now;
+    });
+    btn.addEventListener('touchcancel', () => clearTimeout(touchHoldTimer));
 
     // Click whisper bubble to dismiss
     const bubble = document.getElementById('mascot-whisper');
@@ -2154,23 +2175,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   songSystem.init();
 
   // ── Mascot click-7 → Journal ─────────────
-  // Extend mascot click handler to also track 7-click sequence for journal
-  (() => {
-    let journalClickCount = 0;
-    let journalClickTimer = null;
-    const mascotBtn = document.getElementById('mascot-btn');
-    if (mascotBtn) {
-      mascotBtn.addEventListener('click', () => {
-        journalClickCount++;
-        clearTimeout(journalClickTimer);
-        journalClickTimer = setTimeout(() => { journalClickCount = 0; }, 10000);
-        if (journalClickCount >= 7) {
-          journalClickCount = 0;
-          if (typeof journalSystem !== 'undefined') journalSystem.open();
-        }
-      });
-    }
-  })();
+  // Now handled INSIDE mascotSystem.handleClick() — unified counter at click 7
+  // (previously a separate IIFE with an independent counter that could conflict)
 
   // ── "LOVE" keyword → The Song ────────────
   // Already handled in easterEggs.setupKeywordEgg via the shared buffer

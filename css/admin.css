@@ -278,9 +278,11 @@
 
   .admin-logout-btn {
     position: relative;
-    margin-top: var(--space-md);
     top: auto;
     right: auto;
+    order: -1; /* Move to top to avoid overlap with countdown ticket */
+    margin-top: 0;
+    margin-bottom: var(--space-lg);
   }
 
   .login-card {
@@ -1490,6 +1492,7 @@
   bottom: calc(100% + 12px);
   left: 20px;
   width: 200px;
+  max-width: calc(100vw - 40px); /* FIX 6: prevent overflow on narrow screens */
   padding: 12px 14px;
   white-space: pre-line;
   z-index: 10;
