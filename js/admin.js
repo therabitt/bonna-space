@@ -2202,41 +2202,79 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   })();
 
-  // ── "Silent Touch" → The Song (Mobile Trigger) ──
+  // ── "Music Box Pull" → The Song (Mobile Trigger) ──
   (() => {
-    let silentTouchTimer = null;
-    let isVignetteActive = false;
-    const vignette = document.getElementById('silent-touch-vignette');
+    const title = document.getElementById('admin-main-title');
+    const string = document.getElementById('music-box-string');
+    const vignette = document.getElementById('music-box-vignette');
+    if (!title || !string || !vignette) return;
 
-    const resetSilentTouch = () => {
-      clearTimeout(silentTouchTimer);
-      if (isVignetteActive && vignette) {
-        vignette.classList.remove('active');
-        isVignetteActive = false;
-      }
+    let startY = 0;
+    let isPulling = false;
+    const threshold = 130; // Pixels to pull down to trigger
+
+    const resetPull = () => {
+      isPulling = false;
+      string.classList.remove('visible');
+      string.style.height = '0px';
+      vignette.classList.remove('active');
+      vignette.style.opacity = '0';
     };
 
-    window.addEventListener('touchstart', (e) => {
-      // Exactly 2 or 3 fingers required to start the secret sequence
-      if (e.touches.length === 2 || e.touches.length === 3) {
-        if (!isVignetteActive && vignette) {
-          vignette.classList.add('active');
-          isVignetteActive = true;
-          
-          silentTouchTimer = setTimeout(() => {
-            // Trigger the song
-            resetSilentTouch();
-            songSystem.open();
-          }, 3000); // 3 seconds hold
-        }
-      } else {
-        // If 1 finger or 4+ fingers, abort
-        resetSilentTouch();
-      }
+    title.addEventListener('touchstart', (e) => {
+      if (e.touches.length !== 1) return;
+      startY = e.touches[0].clientY;
+      isPulling = true;
+      string.style.transition = 'none';
+      string.classList.add('visible');
     }, { passive: true });
 
-    window.addEventListener('touchend', resetSilentTouch);
-    window.addEventListener('touchcancel', resetSilentTouch);
+    window.addEventListener('touchmove', (e) => {
+      if (!isPulling) return;
+      
+      const currentY = e.touches[0].clientY;
+      const diff = Math.max(0, currentY - startY);
+      
+      if (diff > 5) {
+        // Prevent browser pull-to-refresh once we start pulling the string
+        if (e.cancelable) e.preventDefault();
+      }
+      
+      // Update string height with a bit of "tension" (clamped at threshold + extra)
+      const tensionDiff = diff > threshold ? threshold + (diff - threshold) * 0.3 : diff;
+      string.style.height = tensionDiff + 'px';
+      
+      // Darken vignette proportional to pull
+      const progress = Math.min(1, diff / threshold);
+      vignette.style.opacity = progress * 0.9;
+      if (progress > 0.05) vignette.classList.add('active');
+      
+      // Visual feedback when threshold reached
+      if (diff >= threshold) {
+        string.querySelector('.bead').style.boxShadow = '0 0 20px #fff, 0 0 30px var(--clr-gold)';
+        string.querySelector('.bead').style.transform = 'translateX(-50%) scale(1.3)';
+      } else {
+        string.querySelector('.bead').style.boxShadow = '';
+        string.querySelector('.bead').style.transform = '';
+      }
+    }, { passive: false });
+
+    window.addEventListener('touchend', () => {
+      if (!isPulling) return;
+      
+      const currentHeight = parseInt(string.style.height) || 0;
+      if (currentHeight >= threshold) {
+        // SUCCESS: Trigger the song!
+        resetPull();
+        if (typeof songSystem !== 'undefined') songSystem.open();
+      } else {
+        // FAIL: Snap back animation
+        string.style.transition = 'height 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease';
+        resetPull();
+      }
+    });
+    
+    window.addEventListener('touchcancel', resetPull);
   })();
 
   // Initialize Layer 2 — Working Companion

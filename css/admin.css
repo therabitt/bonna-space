@@ -11,18 +11,46 @@
   overflow-x: hidden;
 }
 
-/* --- Silent Touch Vignette --- */
-.silent-touch-vignette {
+/* --- Music Box Interaction (The Song Trigger) --- */
+.music-box-vignette {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
-  background: radial-gradient(circle at center, transparent 30%, rgba(10, 5, 20, 0.95) 100%);
+  background: radial-gradient(circle at center, transparent 40%, rgba(20, 10, 0, 0.85) 100%);
   pointer-events: none;
-  z-index: 9999;
+  z-index: 9998;
   opacity: 0;
-  transition: opacity 3s ease-in-out;
+  transition: opacity 0.5s ease;
 }
-.silent-touch-vignette.active {
+.music-box-vignette.active {
   opacity: 1;
+}
+
+.music-box-string {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 2px;
+  height: 0;
+  background: linear-gradient(to bottom, var(--clr-gold), rgba(255, 184, 114, 0.3));
+  transform-origin: top;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.music-box-string.visible {
+  opacity: 1;
+}
+.music-box-string .bead {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 10px;
+  background: var(--clr-gold);
+  border-radius: 50%;
+  box-shadow: 0 0 15px var(--clr-gold), 0 0 5px #fff;
 }
 
 .admin-container {
