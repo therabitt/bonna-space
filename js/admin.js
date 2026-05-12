@@ -1451,11 +1451,13 @@ const mascotSystem = {
     const uptimeEl = document.getElementById('admin-together-since');
     if (uptimeEl) {
       let isDecrypting = false;
+      let isHolding = false;
       let decryptTimer = null;
       let scrambleInterval = null;
       let decodeInterval = null;
 
       const resetUptime = () => {
+        isHolding = false;
         if (isDecrypting) return; 
         clearTimeout(decryptTimer);
         clearInterval(scrambleInterval);
@@ -1466,8 +1468,9 @@ const mascotSystem = {
         uptimeEl.textContent = `[ SYS.UPTIME: ${String(days).padStart(3, '0')} ]`;
       };
 
-      uptimeEl.addEventListener('mousedown', () => {
-        if (isDecrypting) return;
+      const handleDown = () => {
+        if (isHolding || isDecrypting) return;
+        isHolding = true;
         
         const days = presenceSystem.getTogetherSinceDays();
         const secretText = `[ ${String(days).padStart(3, '0')} DAYS WITH YOU ]`;
@@ -1535,10 +1538,15 @@ const mascotSystem = {
             }
           }, 40); // 40ms per character reveal
         }, 3500);
-      });
+      };
 
+      uptimeEl.addEventListener('mousedown', handleDown);
+      uptimeEl.addEventListener('touchstart', handleDown, { passive: true });
+      
       uptimeEl.addEventListener('mouseup', resetUptime);
       uptimeEl.addEventListener('mouseleave', resetUptime);
+      uptimeEl.addEventListener('touchend', resetUptime);
+      uptimeEl.addEventListener('touchcancel', resetUptime);
     }
 
     this.initDrag();
