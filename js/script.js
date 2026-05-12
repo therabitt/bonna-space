@@ -534,15 +534,20 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // Global Link Interceptor
+  let brandPressTimer = null;
+
   document.addEventListener("click", (e) => {
     const link = e.target.closest("a");
     if (!link) return;
+
+    // Standard SPA Navigation
     const href = link.getAttribute("href");
     const isInternal =
       href &&
       !href.startsWith("http") &&
       !href.startsWith("#") &&
       !href.includes("mailto:");
+      
     if (isInternal) {
       e.preventDefault();
       const targetUrl = link.href;
@@ -550,6 +555,93 @@ document.addEventListener("DOMContentLoaded", () => {
       loadPage(targetUrl);
     }
   });
+
+  // --- The Hidden Long-Press (Secret Gateway) ---
+  let glitchTimer = null;
+
+  const triggerSecretBurst = (el) => {
+    const rect = el.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+
+    for (let i = 0; i < 12; i++) {
+      const heart = document.createElement("div");
+      heart.className = "pixel-heart";
+      heart.textContent = "❤️";
+      const angle = (i / 12) * Math.PI * 2;
+      const velocity = 80 + Math.random() * 60;
+      const tx = Math.cos(angle) * velocity;
+      const ty = Math.sin(angle) * velocity;
+      heart.style.setProperty("--tx", `${tx}px`);
+      heart.style.setProperty("--ty", `${ty}px`);
+      heart.style.left = `${centerX}px`;
+      heart.style.top = `${centerY}px`;
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 2000);
+    }
+  };
+
+  document.addEventListener("mousedown", (e) => {
+    const link = e.target.closest(".nav-brand");
+    if (!link) return;
+
+    link.classList.add("shivering");
+    
+    glitchTimer = setTimeout(() => {
+      link.classList.remove("shivering");
+      link.classList.add("glitching");
+    }, 800);
+
+    brandPressTimer = setTimeout(() => {
+      clearTimeout(glitchTimer);
+      link.classList.remove("shivering", "glitching");
+      triggerSecretBurst(link);
+      
+      // Flash effect before teleport
+      document.body.style.transition = "background 0.3s ease";
+      document.body.style.background = "var(--clr-coral)";
+      
+      setTimeout(() => {
+        window.location.href = "admin-login.html";
+      }, 600);
+    }, 1500);
+  });
+
+  const clearBrandHolding = () => {
+    clearTimeout(brandPressTimer);
+    clearTimeout(glitchTimer);
+    const link = document.querySelector(".nav-brand");
+    if (link) {
+      link.classList.remove("shivering", "glitching");
+      document.body.style.background = "";
+    }
+  };
+
+  document.addEventListener("mouseup", clearBrandHolding);
+  document.addEventListener("mouseleave", clearBrandHolding);
+  
+  // Mobile touch support
+  document.addEventListener("touchstart", (e) => {
+    const link = e.target.closest(".nav-brand");
+    if (link) {
+      link.classList.add("shivering");
+      glitchTimer = setTimeout(() => {
+        link.classList.remove("shivering");
+        link.classList.add("glitching");
+      }, 800);
+
+      brandPressTimer = setTimeout(() => {
+        clearTimeout(glitchTimer);
+        link.classList.remove("shivering", "glitching");
+        triggerSecretBurst(link);
+        document.body.style.background = "var(--clr-coral)";
+        setTimeout(() => {
+          window.location.href = "admin-login.html";
+        }, 600);
+      }, 1500);
+    }
+  }, { passive: true });
+  document.addEventListener("touchend", clearBrandHolding);
 
   // Handle Back/Forward
   window.addEventListener("popstate", () => {
@@ -1657,6 +1749,17 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Re-run for first time - this will initialize managers based on current page
+  // --- Secret Portal (The Session Whisper) ---
+  // If Bonna is actively logged in, show a subtle keyhole to return to the Sanctuary
+  if (sessionStorage.getItem("bonna_admin_token")) {
+    const portalBtn = document.createElement("a");
+    portalBtn.href = "admin.html";
+    portalBtn.className = "secret-portal-btn";
+    portalBtn.innerHTML = '<i class="fa-solid fa-key"></i>';
+    portalBtn.title = "Return to Sanctuary";
+    document.body.appendChild(portalBtn);
+  }
+
   reinitAll();
 });
 

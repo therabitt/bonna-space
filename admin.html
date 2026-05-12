@@ -553,7 +553,7 @@
          Bonna's own creation, living here quietly.
          ============================================= -->
     <div class="mascot-system" id="mascot-system">
-      <div class="mascot-whisper-bubble" id="mascot-whisper" role="status" aria-live="polite"></div>
+      <div class="mascot-whisper-bubble mascot-bubble-base" id="mascot-whisper" role="status" aria-live="polite"></div>
       <button
         class="mascot-btn"
         id="mascot-btn"
@@ -575,13 +575,18 @@
          No label. No announcement. She finds it.
          ============================================= -->
     <div class="comfort-corner-system" id="comfort-corner-system">
-      <div class="comfort-panel" id="comfort-panel" aria-hidden="true">
+      <div class="comfort-panel mascot-bubble-base" id="comfort-panel" aria-hidden="true">
         <p class="comfort-question">How are you feeling right now?</p>
         <div class="comfort-moods">
           <button class="comfort-mood-btn" data-mood="great" aria-label="Really good">🌟 Really good</button>
           <button class="comfort-mood-btn" data-mood="okay" aria-label="Okay">😊 Okay</button>
           <button class="comfort-mood-btn" data-mood="notgreat" aria-label="Not great">🌧 Not great</button>
           <button class="comfort-mood-btn" data-mood="struggling" aria-label="Struggling">😔 Struggling</button>
+        </div>
+        <!-- Shown after first check-in of the day -->
+        <div class="comfort-checkin-summary" id="comfort-checkin-summary" style="display:none">
+          <p class="comfort-today-label">Today: <span id="comfort-today-mood"></span> ✓</p>
+          <button class="comfort-return-btn" id="comfort-return-btn">💬 Still want to talk?</button>
         </div>
         <div class="comfort-response" id="comfort-response" aria-live="polite"></div>
         <button class="comfort-tomorrow-btn" id="comfort-tomorrow-btn">Come back tomorrow</button>
@@ -599,18 +604,18 @@
     <div class="mood-intervention" id="mood-intervention" aria-hidden="true" aria-live="polite">
       <p class="intervention-text" id="intervention-text"></p>
       <div class="intervention-actions" id="intervention-actions" style="display:none">
-        <button class="intervention-btn intervention-btn-yes" id="intervention-yes">Ya, aku ingin cerita</button>
-        <button class="intervention-btn intervention-btn-no" id="intervention-no">Tidak sekarang</button>
+        <button class="intervention-btn intervention-btn-yes" id="intervention-yes">Yes, I'd like to talk</button>
+        <button class="intervention-btn intervention-btn-no" id="intervention-no">Not right now</button>
       </div>
       <div class="intervention-story" id="intervention-story" style="display:none">
-        <textarea class="intervention-textarea" id="intervention-textarea" placeholder="Ketik apa pun yang ingin kamu bagikan..."></textarea>
-        <button class="intervention-btn intervention-btn-send" id="intervention-send">Kirim</button>
+        <textarea class="intervention-textarea" id="intervention-textarea" placeholder="Whatever you want to share..."></textarea>
+        <button class="intervention-btn intervention-btn-send" id="intervention-send">Send</button>
       </div>
       <div class="intervention-relief" id="intervention-relief" style="display:none">
-        <p class="intervention-relief-text">Apakah berbagi ini membuatmu sedikit lega?</p>
+        <p class="intervention-relief-text">Did sharing make it a little lighter?</p>
         <div class="intervention-relief-btns">
-          <button class="intervention-btn intervention-btn-yes" id="intervention-relief-yes">Iya 💙</button>
-          <button class="intervention-btn intervention-btn-no" id="intervention-relief-no">Belum</button>
+          <button class="intervention-btn intervention-btn-yes" id="intervention-relief-yes">Yes 💙</button>
+          <button class="intervention-btn intervention-btn-no" id="intervention-relief-no">Not yet</button>
         </div>
       </div>
     </div>
@@ -621,8 +626,178 @@
          ============================================= -->
     <div class="breathing-guide" id="breathing-guide" aria-hidden="true">
       <div class="breathing-circle" id="breathing-circle"></div>
-      <p class="breathing-text">Ikuti napasku</p>
-      <button class="breathing-close" id="breathing-close" aria-label="Tutup">✕</button>
+      <p class="breathing-text">Breathe with me</p>
+      <button class="breathing-close" id="breathing-close" aria-label="Close">✕</button>
+    </div>
+
+    <!-- =============================================
+         LETTERS IN TIME — Layer 3
+         Envelope drifts in after day 14. One per day.
+         ============================================= -->
+    <button
+      class="letter-envelope-trigger"
+      id="letter-envelope-trigger"
+      aria-label="A note from R..."
+      tabindex="0"
+    >
+      <span class="letter-envelope-icon" aria-hidden="true">📩</span>
+      <span class="letter-envelope-label">A note from R...</span>
+    </button>
+
+    <!-- Letter Modal (paper texture) -->
+    <div class="letter-modal" id="letter-modal" aria-modal="true" role="dialog" aria-label="A letter">
+      <div class="letter-modal-backdrop" id="letter-modal-backdrop"></div>
+      <div class="letter-modal-paper">
+        <div class="letter-modal-header">
+          <div>
+            <span class="letter-modal-from">R → BONNA</span><br>
+            <span class="letter-modal-date" id="letter-date"></span>
+          </div>
+          <button class="letter-modal-close" id="letter-modal-close" aria-label="Close letter">✕</button>
+        </div>
+        <div class="letter-modal-body" id="letter-text" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <!-- =============================================
+         CONSTELLATION OF MOMENTS — Layer 3
+         Trigger: Konami Code ↑↑↓↓←→←→BA
+         ============================================= -->
+    <div
+      class="constellation-overlay"
+      id="constellation-overlay"
+      aria-modal="true"
+      role="dialog"
+      aria-label="Constellation of Moments"
+    >
+      <div class="constellation-header">
+        <span class="constellation-title">CONSTELLATION OF MOMENTS</span>
+        <button class="constellation-close" id="constellation-close" aria-label="Close constellation">
+          CLOSE ✕
+        </button>
+      </div>
+
+      <!-- The star map -->
+      <svg
+        class="constellation-svg"
+        id="constellation-svg"
+        aria-hidden="true"
+        focusable="false"
+      ></svg>
+
+      <!-- Memory card (appears on star click) -->
+      <div class="constellation-memory-card" id="constellation-memory-card" aria-live="polite">
+        <button class="constellation-memory-close" id="constellation-memory-close" aria-label="Close memory">✕</button>
+        <span class="constellation-memory-name" id="constellation-memory-name"></span>
+        <div class="constellation-memory-text" id="constellation-memory-text"></div>
+        <span class="constellation-memory-sig">— R</span>
+      </div>
+
+      <p class="constellation-hint">hover to name · click to remember</p>
+    </div>
+
+    <!-- =============================================
+         STUDIO JOURNAL — Layer 3
+         Trigger: Mascot clicked 7 times in 10 seconds.
+         ============================================= -->
+    <div
+      class="journal-overlay"
+      id="journal-overlay"
+      aria-modal="true"
+      role="dialog"
+      aria-label="Studio Journal"
+      aria-hidden="true"
+    >
+      <div class="journal-header">
+        <span class="journal-title">THE STUDIO JOURNAL</span>
+        <button class="journal-close" id="journal-close" aria-label="Close journal">CLOSE ✕</button>
+      </div>
+      <div class="journal-body">
+
+        <!-- Left: Raditya's side -->
+        <div class="journal-panel journal-panel-left">
+          <span class="journal-panel-label">FROM RADITYA</span>
+          <span class="journal-date-left" id="journal-date-left"></span>
+          <div class="journal-observation" id="journal-observation"></div>
+          <div class="journal-obs-nav">
+            <button class="journal-obs-btn" id="journal-obs-prev" aria-label="Previous observation">←</button>
+            <span class="journal-obs-counter" id="journal-obs-counter">1 / 8</span>
+            <button class="journal-obs-btn" id="journal-obs-next" aria-label="Next observation">→</button>
+          </div>
+          <span class="journal-observation-sig">— R</span>
+          <div class="journal-day-note" id="journal-day-note"></div>
+        </div>
+
+        <div class="journal-divider" aria-hidden="true"></div>
+
+        <!-- Right: Bonna's page -->
+        <div class="journal-panel journal-panel-right" id="journal-panel-right">
+          <span class="journal-panel-label">BONNA'S PAGE</span>
+          <div class="journal-entry-header">
+            <div class="journal-date-nav">
+              <button class="journal-nav-btn" id="journal-prev-day" aria-label="Previous day">←</button>
+              <span class="journal-date-display" id="journal-date-display"></span>
+              <button class="journal-nav-btn" id="journal-next-day" aria-label="Next day">→</button>
+            </div>
+            <div class="journal-mood-picker" id="journal-mood-picker" aria-label="How are you feeling?"></div>
+          </div>
+          <textarea
+            class="journal-notes-textarea"
+            id="journal-notes"
+            placeholder="This page is yours.&#10;Write anything. Or nothing at all."
+            aria-label="Your private journal entry"
+          ></textarea>
+          <div class="journal-footer">
+            <span class="journal-save-indicator" id="journal-save-indicator">saved ·</span>
+            <span class="journal-word-count" id="journal-word-count">0 words</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- =============================================
+         THE SONG — Minimal Player
+         Trigger: Type "LOVE" anywhere on dashboard.
+         ============================================= -->
+    <div class="song-player-overlay" id="song-player-overlay" aria-label="Music player">
+      <p class="song-player-title">SOMETHING FOR YOU</p>
+      <div class="song-vinyl" id="song-vinyl"></div>
+      <p class="song-player-name" id="song-player-name">The Moon Song</p>
+      <p class="song-player-artist" id="song-player-artist">Karen O</p>
+
+      <div class="song-player-controls">
+        <button class="song-play-btn" id="song-play-btn" aria-label="Play / Pause">
+          <i class="fa-solid fa-play" id="song-play-icon"></i>
+        </button>
+      </div>
+
+      <div class="song-waveform" id="song-waveform">
+        <div class="song-waveform-bar"></div><div class="song-waveform-bar"></div>
+        <div class="song-waveform-bar"></div><div class="song-waveform-bar"></div>
+        <div class="song-waveform-bar"></div><div class="song-waveform-bar"></div>
+        <div class="song-waveform-bar"></div><div class="song-waveform-bar"></div>
+        <div class="song-waveform-bar"></div><div class="song-waveform-bar"></div>
+        <div class="song-waveform-bar"></div><div class="song-waveform-bar"></div>
+        <div class="song-waveform-bar"></div><div class="song-waveform-bar"></div>
+        <div class="song-waveform-bar"></div><div class="song-waveform-bar"></div>
+        <div class="song-waveform-bar"></div><div class="song-waveform-bar"></div>
+        <div class="song-waveform-bar"></div><div class="song-waveform-bar"></div>
+        <div class="song-waveform-bar"></div><div class="song-waveform-bar"></div>
+        <div class="song-waveform-bar"></div><div class="song-waveform-bar"></div>
+        <div class="song-waveform-bar"></div><div class="song-waveform-bar"></div>
+        <div class="song-waveform-bar"></div><div class="song-waveform-bar"></div>
+        <div class="song-waveform-bar"></div><div class="song-waveform-bar"></div>
+      </div>
+      <div class="song-player-progress">
+        <div class="song-player-progress-bar" id="song-player-progress-bar"></div>
+      </div>
+
+      <audio id="song-audio" preload="none">
+        <source src="assets/audio/song.mp3" type="audio/mpeg">
+        <source src="assets/audio/song.ogg" type="audio/ogg">
+      </audio>
     </div>
 
     <script>
@@ -638,5 +813,8 @@
     <script src="js/utils.js"></script>
     <script src="js/mood_responses.js"></script>
     <script src="js/admin.js"></script>
+    <script src="js/letters.js"></script>
+    <script src="js/constellation.js"></script>
+    <script src="js/journal.js"></script>
   </body>
 </html>

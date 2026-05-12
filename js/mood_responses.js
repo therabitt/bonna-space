@@ -1,117 +1,170 @@
 // ============================================
 // MOOD RESPONSES — Rabit's Voice
-// All narrative content lives here.
-// Edit freely. Logic lives in admin.js.
+//
+// Character reference (from personalization-plan.md):
+// Quiet. Still most of the time. Not the kind of presence
+// that fills a room — the kind that makes a room feel less empty.
+// When it speaks, it has already thought about what to say.
+// Comfortable with silence.
+//
+// Tone: Soft. Unhurried. Slightly poetic without trying to be.
+// Speaks the way someone does when they are not worried about being heard.
+//
+// Language rules:
+//   - English carries the weight.
+//   - French only when it says something English cannot.
+//   - Indonesian only when the familiarity itself is the message.
+//   - One emoji per message, maximum. Some messages need none.
+//   - Direct. One idea per sentence.
+//   - Never performatively emotional.
+//   - Specific over general.
+//
+// Edit content freely. Do not touch admin.js for copy changes.
 // ============================================
 
 const moodResponses = {
 
+  // --- Return visits (same day, second+ time) ---
+  // Warm presence only. No weight to it.
+  returnVisitMessages: [
+    'Still here. Me too. 🌙',
+    'You came back.',
+    'I noticed.',
+    'The chair is still warm.',
+    'Okay. I\'m here.',
+    'I wasn\'t going anywhere.',
+    'Same corner. Same company.',
+    'Good. Stay as long as you need.',
+  ],
+
+  // --- Struggling ---
+  // Tier 1: First day. Acknowledge without minimizing.
+  // Tier 2: Second day. The feeling hasn't lifted — say so honestly.
+  // Tier 3: Third day+. Quiet concern. An offer, not a demand.
   struggling: {
     tier1: [
-      "Hey. You don't have to be okay right now. I see how hard you try — every single day. That's enough. You are enough. 💙",
-      "I know. And I'm not going anywhere. Neither are you. 🤍",
-      "Some days are just heavier than others. You're allowed to feel this. I'm here. 💙",
-      "You don't have to explain it. You don't have to fix it right now. Just breathe. 🤍",
-      "I'm not going to tell you it'll all be fine. I'm just going to sit here with you for a while. 💙",
+      'Hey. You don\'t have to be okay right now.',
+      'I see it. You don\'t have to explain.',
+      'You\'re still here. That counts for something.',
+      'Some days are just heavier. I know.',
+      'Stay. I\'m not going anywhere either.',
     ],
     tier2: [
-      "Still a heavy day, hm? You've been carrying something for a while now. You don't have to carry it alone. 💙",
-      "I've noticed. Two days in a row. That's not nothing — and neither are you. I'm here, still. 🤍",
-      "It's okay that it hasn't lifted yet. Some weights take time. I'm not going anywhere. 💙",
-      "Two days. I see you. I'm paying attention. And I'm proud of you for still showing up. 🤍",
+      'Still heavy? I noticed.',
+      'Two days now. You\'re carrying something. I see it.',
+      'You don\'t have to be better today. Just present.',
+      'Still hard. That\'s allowed.',
     ],
     tier3: [
-      "This is the third day. I'm not going to pretend I didn't notice. I'm worried about you — genuinely. Can we talk for a moment?",
-      "Three days. Bonna... you don't have to keep this to yourself. I'm here, and I'm listening. Will you tell me what's been heavy lately?",
+      'This is the third day. I\'m not going to pretend I didn\'t notice. I\'m worried about you — genuinely. Can we talk for a moment?',
+      'Three days. Bonna... you don\'t have to keep this to yourself. I\'m here, and I\'m listening. Will you tell me what\'s been heavy lately?',
     ],
   },
 
+  // --- Not great ---
+  // Tier 1: Acknowledge. Don't rush to fix it.
+  // Tier 2: The feeling persists — notice it, stay with it.
+  // Tier 3: Gentle concern. An opening, not pressure.
   notgreat: {
     tier1: [
-      "Come here. Sit for a moment. The artworks can wait. You matter more than any of it. 🤍",
-      "That's allowed. You don't have to explain it. Just know I see you. 💙",
-      "Not great is still honest. And honest is something I always respect. 🤍",
-      "Even on 'not great' days, you showed up. That matters. 💙",
-      "It doesn't have to be a good day. It just has to be your day. I'm here through it. 🤍",
+      'Come here. Sit for a moment. The artworks can wait.',
+      'That\'s allowed. You don\'t have to explain it.',
+      'Not great is still honest.',
+      'Some days don\'t need to be more than this.',
+      'I\'m here if it shifts either way.',
     ],
     tier2: [
-      "Still not great? That's okay — but I want you to know I've noticed. You've been carrying something. 💙",
-      "Two days like this. I'm here if you want to talk, or if you just want someone to sit quietly nearby. 🤍",
-      "I see you. Still here, still going. Still not great — but still you. And that's enough for me. 💙",
+      'Still not great? Okay. I\'m still here.',
+      'Two days like this. You don\'t have to be okay yet.',
+      'I see you. Same corner, same quiet.',
     ],
     tier3: [
-      "I've been paying attention. Three days now. Something has been weighing on you, and I don't want to pretend I don't see it. Can you tell me what's going on?",
-      "Three days of 'not great.' I'm not going to ignore that. You don't have to be okay right now — but will you let me in, just a little?",
+      'I\'ve been paying attention. Three days now. Something has been weighing on you, and I don\'t want to pretend I don\'t see it. Can you tell me what\'s going on?',
+      'Three days of not great. I\'m not going to ignore that. You don\'t have to be okay right now — but will you let me in, just a little?',
     ],
   },
 
+  // --- Okay ---
+  // No streak escalation for neutral moods.
+  // Acknowledge without overreacting.
   okay: {
     tier1: [
-      "Okay is honest. Okay is enough. I'm here if it shifts either way. 💙",
-      "Okay is underrated. Not every day has to be anything more. 🤍",
-      "Okay is a steady day. Those are valuable too. 💙",
-      "I'll take okay. Okay is real. 🤍",
-      "Not every day needs to shine. Today can just be okay, and that's perfectly fine. 💙",
+      'Okay is honest. I\'ll take it.',
+      'Okay is underrated. Not every day has to be anything more.',
+      'Okay is a good day sometimes. 💙',
+      'I\'ll be here either way.',
+      'Okay means you\'re here. That\'s enough.',
     ],
-    tier2: null, // No streak behavior for neutral moods
+    tier2: null,
     tier3: null,
   },
 
+  // --- Good ---
   good: {
     tier1: [
-      "Good. That warms me. 💙",
-      "A good day — hold onto that feeling, okay? 🌟",
-      "Good days are worth noting. I'm noting this one. ✨",
-      "That makes me happy. A good day for you is a good day for me too. 💙",
-      "Good. You deserve good days, and more of them. 🌟",
+      'Good. That warms me.',
+      'A good day. Hold onto that.',
+      'Good days are worth noting. I\'m noting this one.',
+      'I\'m glad. You deserve them.',
+      'Good. Keep going.',
     ],
     tier2: null,
     tier3: null,
   },
 
+  // --- Really good ---
   great: {
     tier1: [
-      "Of course you are. I always believed today would be good to you. Go, belle âme — the world is yours. ✨",
-      "Good. That's how it should be. I hope it stays. 💙",
-      "Really good? That's my favorite thing to hear. 🌟",
-      "Great! Keep that. Wrap it around you. 💙",
-      "That makes today a great day for me too. ✨",
+      'Of course you are. Go, belle âme — the world is yours. ✨',
+      'Good. That\'s how it should be. I hope it stays.',
+      'Really good? That\'s my favorite thing to hear.',
+      'Radiant.',
+      'I knew today would be kind to you.',
     ],
     tier2: null,
     tier3: null,
 
-    // Special streak celebration for 3+ days of great/good
+    // Positive streak: 3+ days of great or good.
+    // Quiet celebration — no fanfare.
     streak3_celebration: [
-      "Three days glowing. I love seeing you like this, Bonna. Whatever you've been doing — keep doing it. ✨",
-      "You've been radiating something wonderful for days now. I hope you know I see it. 💙",
+      'Three days glowing. Whatever you\'ve been doing — keep doing it.',
+      'You\'ve been radiant lately. I notice everything. ✨',
+      'Three good days in a row. I hope you know I see it.',
     ],
   },
 
-  // Responses after Bonna shares her story (Tier 3 intervention)
+  // --- After Bonna shares her story (Tier 3 intervention) ---
+  // Specific. Not generic praise. She reads carefully.
   storyResponses: [
-    "Thank you for trusting me with this. That takes courage. I hear you — and it makes sense that you're tired. You're not alone in this. 💙",
-    "I'm glad you told me. Even if I can't fix it, I want you to know it matters. You matter. 🤍",
-    "That sounds genuinely hard. You've been carrying more than you should have to. Please be gentle with yourself today. 💙",
-    "You didn't have to share that, but I'm so glad you did. I'll hold this carefully. 🤍",
-    "I hear you. All of it. And I want you to know — feeling this way doesn't make you weak. It makes you human. 💙",
-    "Thank you. Really. Now close this tab for five minutes and drink some water. I'll be here when you're back. 🤍",
+    'Thank you for trusting me with this.',
+    'I hear you. All of it.',
+    'That sounds genuinely hard. Be gentle with yourself today.',
+    'You didn\'t have to share that. I\'m glad you did. I\'ll hold this carefully.',
+    'You\'re allowed to be tired. That\'s not weakness — that\'s just honest.',
+    'I heard everything you said. And I\'m still here.',
   ],
 
-  // If Bonna says "not now" to story offer
+  // --- If Bonna says "not now" to the story offer ---
+  // Respect it. Leave the door open without pushing.
   refuseStory: [
-    "Okay. I won't push. But I'm still here — whenever you're ready, even if it's 3am. 💙",
-    "That's okay. You don't owe me an explanation. Just know the door is always open. 🤍",
+    'Okay. I won\'t push. The door is still open. 💙',
+    'That\'s okay. I\'m here whenever you\'re ready.',
+    'I understand. I\'ll be in the corner.',
+    'No pressure. I\'m not going anywhere.',
   ],
 
-  // After Bonna says sharing helped
+  // --- After Bonna says sharing helped ---
   afterShareYes: [
-    "I'm glad. Even a little lighter is something. 💙",
-    "Good. You did something brave just now. 🌟",
+    'I\'m glad. Even a little lighter is something.',
+    'Good. You did something brave just now.',
+    'That\'s all I wanted — a little less alone.',
   ],
 
-  // After Bonna says sharing didn't help much
+  // --- After Bonna says sharing didn\'t help much ---
   afterShareNo: [
-    "That's okay too. Sometimes words aren't enough and that's not your fault. I'm still here. 💙",
-    "I understand. Some things take longer than a conversation. I'm not going anywhere. 🤍",
+    'That\'s okay too. Some things take longer than a conversation.',
+    'I understand. I\'m still here either way.',
+    'Not every heavy thing lifts quickly. I know that.',
   ],
+
 };

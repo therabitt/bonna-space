@@ -57,31 +57,32 @@
 
 /* --- Logout Button --- */
 .admin-logout-btn {
-  position: absolute;
-  top: -10px;
-  right: 0;
+  position: fixed;
+  top: 20px;
+  right: 24px;
+  z-index: 10000;
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: 8px 12px;
-  background: transparent;
-  border: 2px solid var(--clr-coral);
-  border-radius: var(--radius-xs);
+  padding: 6px 12px;
+  background: rgba(232, 114, 90, 0.05);
+  border: 1px solid rgba(232, 114, 90, 0.3);
+  border-radius: 4px;
   color: var(--clr-coral);
   font-family: var(--font-pixel);
   font-size: 0.5rem;
   letter-spacing: 1px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 2px 2px 0 var(--retro-shadow);
-  white-space: nowrap;
+  transition: all 0.3s var(--ease-out-expo);
+  backdrop-filter: blur(4px);
 }
 
 .admin-logout-btn:hover {
   background: var(--clr-coral);
   color: var(--clr-cream);
-  box-shadow: 3px 3px 0 var(--retro-shadow);
-  transform: translateY(-1px);
+  border-color: var(--clr-coral);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(232, 114, 90, 0.3);
 }
 
 .admin-logout-btn i {
@@ -1170,20 +1171,70 @@
   transition: all 0.5s ease;
 }
 
-/* Love easter egg — works on both subtitle and main title */
+/* Love easter egg — high-impact transformation */
 .admin-subtitle.love-activated,
 #admin-main-title.love-activated {
   color: var(--clr-coral);
-  text-shadow: 0 0 10px var(--clr-coral);
-  transform: scale(1);
-  font-size: clamp(1.2rem, 4.5vw, 1.8rem); /* Smaller to fit without overlapping */
+  text-shadow: 0 0 15px rgba(232, 114, 90, 0.8), 0 0 30px rgba(232, 114, 90, 0.4);
+  transform: scale(1.05);
+  font-size: clamp(1.3rem, 4.8vw, 1.9rem);
+  letter-spacing: 2px;
   cursor: default;
+  animation: titleBloom 2s ease-out infinite alternate;
+}
+
+#admin-main-title.shivering {
+  animation: titleShiver 0.1s linear infinite;
+}
+
+#admin-main-title.glitching {
+  animation: titleGlitch 0.2s linear infinite;
+  color: var(--clr-gold);
+}
+
+@keyframes titleBloom {
+  from { text-shadow: 0 0 10px rgba(232, 114, 90, 0.6); }
+  to { text-shadow: 0 0 25px rgba(232, 114, 90, 0.9), 0 0 45px rgba(232, 114, 90, 0.3); }
+}
+
+@keyframes titleShiver {
+  0% { transform: translate(0,0); }
+  25% { transform: translate(1px, -1px); }
+  50% { transform: translate(-1px, 1px); }
+  75% { transform: translate(1px, 1px); }
+  100% { transform: translate(0,0); }
+}
+
+@keyframes titleGlitch {
+  0% { clip-path: inset(10% 0 30% 0); transform: translate(-2px, 0); }
+  20% { clip-path: inset(50% 0 10% 0); transform: translate(2px, 0); }
+  40% { clip-path: inset(0 0 70% 0); transform: translate(-3px, 1px); }
+  60% { clip-path: inset(30% 0 20% 0); transform: translate(3px, -1px); }
+  80% { clip-path: inset(60% 0 5% 0); transform: translate(-1px, 0); }
+  100% { clip-path: inset(10% 0 30% 0); transform: translate(0,0); }
+}
+
+/* Particle: Pixel Heart */
+.pixel-heart {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  font-size: 14px;
+  animation: heartFloat 2s ease-out forwards;
+}
+
+@keyframes heartFloat {
+  0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; }
+  100% { transform: translate(var(--tx), var(--ty)) scale(0) rotate(45deg); opacity: 0; }
 }
 
 #admin-main-title {
   cursor: default;
-  transition: color 0.5s ease, text-shadow 0.5s ease, transform 0.5s ease;
+  transition: all 0.3s var(--ease-out-expo);
+  display: inline-block;
+  position: relative;
 }
+
 
 /* ============================================
    PRESENCE SYSTEM — PHASE 1 STYLES
@@ -1202,16 +1253,24 @@
 
 /* --- Together Since Counter (SYS.UPTIME) --- */
 .admin-together-since {
-  position: absolute;
-  bottom: 0;
-  right: 0;
+  position: fixed;
+  top: 22px;
+  left: 24px;
+  z-index: 10000;
   font-family: var(--font-pixel);
   font-size: 0.45rem;
-  color: var(--text-light);
-  letter-spacing: 1px;
-  opacity: 0.3;
+  color: var(--clr-gold);
+  letter-spacing: 1.5px;
+  opacity: 0.35;
   margin: 0;
-  pointer-events: none;
+  pointer-events: all; /* Allowed for hover effect */
+  cursor: help;
+  transition: opacity 0.3s ease;
+  text-transform: uppercase;
+}
+
+.admin-together-since:hover {
+  opacity: 0.85;
 }
 
 /* --- The First Time Overlay --- */
@@ -1293,14 +1352,14 @@
 /* --- Mascot System (fixed, bottom-left) --- */
 .mascot-system {
   position: fixed;
-  bottom: 28px;
-  left: 28px;
+  bottom: 16px;
+  left: 16px;
   z-index: 5000;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  pointer-events: none; /* container is transparent; button is interactive */
+  gap: 8px;
+  pointer-events: none;
 }
 
 .mascot-btn {
@@ -1309,8 +1368,8 @@
   border: none;
   cursor: pointer;
   padding: 0;
-  width: 86px;
-  height: 86px;
+  width: 96px;
+  height: 96px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1327,43 +1386,36 @@
 }
 
 .mascot-img {
-  width: 86px;
+  width: 96px;
   height: auto;
   display: block;
+  /* Preserve pixel art sharpness */
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
   filter: drop-shadow(0 2px 8px rgba(45, 10, 30, 0.35));
   transition: transform 0.3s var(--ease-out-expo), filter 0.3s ease;
+  pointer-events: none;
 }
 
-/* Mood states — CSS only, no extra images */
+/* Mood states — filter/opacity only; GIF handles motion */
 .mascot-img.mascot-attentive {
-  animation: mascotAttentiveBreathe 3s ease-in-out infinite;
-  filter: drop-shadow(0 4px 12px rgba(255, 215, 0, 0.4));
-}
-@keyframes mascotAttentiveBreathe {
-  0%, 100% { transform: scale(1.04) rotate(-4deg) translateY(0); }
-  50%      { transform: scale(1.04) rotate(-4deg) translateY(-3px); }
+  filter: drop-shadow(0 4px 12px rgba(255, 215, 0, 0.35));
 }
 
 .mascot-img.mascot-happy {
-  animation: mascotBounce 0.6s var(--ease-out-expo) forwards, mascotBreathe 4s 0.6s ease-in-out infinite;
-  filter: drop-shadow(0 4px 14px rgba(232, 114, 90, 0.5));
+  animation: mascotBounce 0.6s var(--ease-out-expo) forwards;
+  filter: drop-shadow(0 4px 14px rgba(232, 114, 90, 0.45));
 }
 .mascot-img.mascot-still {
   opacity: 0.7;
   filter: saturate(0.5) drop-shadow(0 2px 6px rgba(0,0,0,0.2));
 }
 .mascot-img.mascot-drowsy {
-  animation: mascotDrowsyBreathe 5s ease-in-out infinite;
   opacity: 0.75;
   filter: drop-shadow(0 2px 6px rgba(0,0,0,0.2));
 }
-@keyframes mascotDrowsyBreathe {
-  0%, 100% { transform: rotate(6deg) scale(0.95) translateY(0); }
-  50%      { transform: rotate(6deg) scale(0.95) translateY(-2px); }
-}
 .mascot-img.mascot-midnight {
   filter: drop-shadow(0 0 14px rgba(126, 200, 227, 0.5)) brightness(0.85) hue-rotate(200deg);
-  animation: mascotPulse 4s ease-in-out infinite;
 }
 .mascot-img.mascot-wave {
   animation: mascotWave 0.8s var(--ease-out-expo) forwards;
@@ -1393,65 +1445,59 @@
   80%  { transform: scale(0.97) rotate(-2deg); }
   100% { transform: scale(1) rotate(0deg); }
 }
-@keyframes mascotPulse {
-  0%, 100% { opacity: 0.75; }
-  50%       { opacity: 1; }
-}
 
-/* --- Whisper Bubble --- */
-.mascot-whisper-bubble {
-  pointer-events: all;
-  position: absolute;
-  bottom: calc(100% + 10px);
-  left: 0;
-  width: 220px;
-  background: rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(4px);
-  color: rgba(0, 0, 0, 0.85);
+/* --- Mascot & Bubble Base --- */
+.mascot-bubble-base {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 0;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
   font-family: var(--font-pixel);
   font-size: 0.55rem;
   line-height: 1.6;
-  padding: 14px 16px;
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 0;
-  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.15);
-  white-space: pre-line;
+  color: rgba(0, 0, 0, 0.85);
   opacity: 0;
-  transform: translateY(6px) scale(0.97);
+  transform: translateY(8px);
   transition: opacity 0.4s ease, transform 0.4s var(--ease-out-expo);
   pointer-events: none;
-  cursor: pointer;
+}
+
+.mascot-bubble-base::before,
+.mascot-bubble-base::after {
+  content: '';
+  position: absolute;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-top: none;
+}
+.mascot-bubble-base::before {
+  bottom: -4px;
+  left: 24px;
+  width: 8px;
+  height: 4px;
+}
+.mascot-bubble-base::after {
+  bottom: -7px;
+  left: 26px;
+  width: 4px;
+  height: 4px;
+  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+}
+
+.mascot-whisper-bubble {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 20px;
+  width: 200px;
+  padding: 12px 14px;
+  white-space: pre-line;
+  z-index: 10;
 }
 .mascot-whisper-bubble.visible {
   opacity: 1;
-  transform: translateY(0) scale(1);
+  transform: translateY(0);
   pointer-events: all;
-}
-/* Bubble tail - Pixel Staircase */
-.mascot-whisper-bubble::before {
-  content: '';
-  position: absolute;
-  bottom: -3px; /* Hang below the 1px border */
-  left: 18px;
-  width: 6px;
-  height: 2px;
-  background: rgba(255, 255, 255, 0.65);
-  border-left: 1px solid rgba(0, 0, 0, 0.15);
-  border-right: 1px solid rgba(0, 0, 0, 0.15);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-}
-.mascot-whisper-bubble::after {
-  content: '';
-  position: absolute;
-  bottom: -5px; /* Second step */
-  left: 20px;
-  width: 2px;
-  height: 2px;
-  background: rgba(255, 255, 255, 0.65);
-  border-left: 1px solid rgba(0, 0, 0, 0.15);
-  border-right: 1px solid rgba(0, 0, 0, 0.15);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.15); /* Tiny shadow for the tip */
 }
 
 /* --- Words That Follow (Contextual Notes) --- */
@@ -1532,52 +1578,18 @@
   position: absolute;
   bottom: calc(100% + 15px);
   left: 0;
-  background: rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 0;
+  width: 260px;
   padding: 18px 20px;
-  width: 260px; 
-  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.15);
-  /* Hidden by default */
-  opacity: 0;
-  transform: translateY(10px) scale(0.97);
-  pointer-events: none;
-  transition: opacity 0.35s ease, transform 0.35s var(--ease-out-expo);
-}
-
-.comfort-panel::before {
-  content: '';
-  position: absolute;
-  bottom: -3px;
-  left: 18px;
-  width: 6px;
-  height: 2px;
-  background: rgba(255, 255, 255, 0.65);
-  border-left: 1px solid rgba(0, 0, 0, 0.15);
-  border-right: 1px solid rgba(0, 0, 0, 0.15);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-}
-
-.comfort-panel::after {
-  content: '';
-  position: absolute;
-  bottom: -5px;
-  left: 20px;
-  width: 2px;
-  height: 2px;
-  background: rgba(255, 255, 255, 0.65);
-  border-left: 1px solid rgba(0, 0, 0, 0.15);
-  border-right: 1px solid rgba(0, 0, 0, 0.15);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.15);
+  z-index: 10;
 }
 
 .comfort-panel.comfort-panel-open {
   opacity: 1;
-  transform: translateY(0) scale(1);
+  transform: translateY(0);
   pointer-events: all;
 }
+
+/* Handled by .mascot-bubble-base */
 
 .comfort-question {
   font-family: var(--font-pixel);
@@ -1643,6 +1655,36 @@
 }
 .comfort-tomorrow-btn:hover {
   border-color: rgba(0, 0, 0, 0.4);
+  color: rgba(0, 0, 0, 0.8);
+}
+
+/* --- Comfort Corner: Check-in Summary (shown after first selection of the day) --- */
+.comfort-checkin-summary {
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.comfort-today-label {
+  font-family: var(--font-pixel);
+  font-size: 0.5rem;
+  color: rgba(0, 0, 0, 0.55);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.comfort-return-btn {
+  background: none;
+  border: none;
+  font-family: var(--font-pixel);
+  font-size: 0.5rem;
+  color: rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color 0.2s ease;
+  text-align: left;
+}
+.comfort-return-btn:hover {
   color: rgba(0, 0, 0, 0.8);
 }
 
@@ -1844,5 +1886,1135 @@ body.midnight-mode .admin-header {
     animation: none !important;
     transition: opacity 0.2s ease !important;
     transform: none !important;
+  }
+}
+
+/* ============================================
+   PHASE 3 — LAYER 3: ACTIVE DISCOVERY
+   ============================================ */
+
+/* ---- Letters in Time — Envelope Trigger ---- */
+.letter-envelope-trigger {
+  position: fixed;
+  bottom: 110px; /* above mascot */
+  right: 24px;
+  z-index: 8500;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px);
+  transition: opacity 0.6s ease, transform 0.6s var(--ease-out-expo);
+}
+
+.letter-envelope-trigger.envelope-visible {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateY(0);
+}
+
+.letter-envelope-icon {
+  font-size: 1.8rem;
+  animation: envelopeBob 2.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(255, 184, 114, 0.6));
+}
+
+@keyframes envelopeBob {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+
+.letter-envelope-label {
+  font-family: var(--font-pixel);
+  font-size: 0.45rem;
+  color: var(--clr-gold);
+  letter-spacing: 1px;
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+  white-space: nowrap;
+}
+
+/* ---- Letters in Time — Modal ---- */
+.letter-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+.letter-modal.letter-modal-open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.letter-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+}
+
+.letter-modal-paper {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 540px;
+  background: #fdf8f0;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  border-radius: 2px;
+  padding: var(--space-2xl) var(--space-2xl) var(--space-xl);
+  transform: translateY(20px) rotate(-0.5deg);
+  transition: transform 0.5s var(--ease-out-expo);
+  /* subtle paper texture via gradient */
+  background-image:
+    linear-gradient(rgba(0,0,0,0.015) 1px, transparent 1px);
+  background-size: 100% 28px;
+}
+
+.letter-modal.letter-modal-open .letter-modal-paper {
+  transform: translateY(0) rotate(0deg);
+}
+
+.letter-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.letter-modal-from {
+  font-family: var(--font-pixel);
+  font-size: 0.5rem;
+  color: var(--clr-warm-crimson);
+  letter-spacing: 2px;
+  opacity: 0.7;
+}
+
+.letter-modal-date {
+  font-family: var(--font-retro);
+  font-size: 0.85rem;
+  color: rgba(0, 0, 0, 0.4);
+  font-style: italic;
+}
+
+.letter-modal-close {
+  background: none;
+  border: none;
+  color: rgba(0, 0, 0, 0.35);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0 0 0 var(--space-sm);
+  transition: color 0.2s ease;
+  line-height: 1;
+}
+
+.letter-modal-close:hover { color: rgba(0, 0, 0, 0.7); }
+
+.letter-modal-body {
+  color: #2d2118;
+}
+
+.letter-modal-body p {
+  font-family: var(--font-retro);
+  font-size: 1.1rem;
+  line-height: 1.85;
+  margin: 0 0 var(--space-md);
+  color: #2d2118;
+}
+
+.letter-modal-body p:last-child { margin-bottom: 0; }
+
+/* ============================================
+   CONSTELLATION OF MOMENTS — Overlay
+   ============================================ */
+.constellation-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9600;
+  background: #03000d;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.8s ease;
+  overflow: hidden;
+}
+
+.constellation-overlay.constellation-open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* Nebula layer — atmospheric depth */
+.constellation-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 30%, rgba(80, 20, 100, 0.35) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 35% at 75% 65%, rgba(20, 40, 100, 0.3) 0%, transparent 70%),
+    radial-gradient(ellipse 30% 25% at 55% 20%, rgba(160, 80, 20, 0.15) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 30% at 30% 75%, rgba(30, 60, 120, 0.2) 0%, transparent 70%);
+  pointer-events: none;
+  animation: nebulaShift 20s ease-in-out infinite alternate;
+}
+
+/* Micro-star field */
+.constellation-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 8%  12%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 22% 48%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 38% 22%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 52% 68%, rgba(255,255,255,0.25) 0%, transparent 100%),
+    radial-gradient(1px 1px at 67% 15%, rgba(255,255,255,0.35) 0%, transparent 100%),
+    radial-gradient(1px 1px at 78% 55%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 88% 32%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 15% 78%, rgba(255,255,255,0.2) 0%, transparent 100%),
+    radial-gradient(1px 1px at 44% 85%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 93% 72%, rgba(255,255,255,0.25) 0%, transparent 100%),
+    radial-gradient(1px 1px at 5%  55%, rgba(255,255,255,0.2) 0%, transparent 100%),
+    radial-gradient(1px 1px at 62% 38%, rgba(255,255,255,0.35) 0%, transparent 100%);
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+@keyframes nebulaShift {
+  from { opacity: 0.7; transform: scale(1); }
+  to   { opacity: 1;   transform: scale(1.04); }
+}
+
+.constellation-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: var(--space-lg) var(--space-xl);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 2;
+}
+
+.constellation-title {
+  font-family: var(--font-pixel);
+  font-size: 0.55rem;
+  color: rgba(255, 255, 255, 0.25);
+  letter-spacing: 3px;
+}
+
+.constellation-close {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.4);
+  font-family: var(--font-pixel);
+  font-size: 0.5rem;
+  padding: 6px 12px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.2s ease;
+}
+
+.constellation-close:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.constellation-hint {
+  position: absolute;
+  bottom: var(--space-xl);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-pixel);
+  font-size: 0.45rem;
+  color: rgba(255, 255, 255, 0.2);
+  letter-spacing: 2px;
+  text-align: center;
+  z-index: 2;
+  white-space: nowrap;
+}
+
+/* SVG star map */
+.constellation-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+/* Sky: CotL — warm layered circle stars */
+
+/* Outer halo: large, very transparent, breathes slowly */
+.constellation-star-halo {
+  fill: rgba(232, 201, 122, 0.07);
+  animation: haloBreath var(--twinkle-dur, 9s) ease-in-out infinite;
+  animation-delay: var(--twinkle-delay, 0s);
+  pointer-events: none;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* Mid ring: warm amber */
+.constellation-star-mid {
+  fill: rgba(232, 201, 122, 0.32);
+  pointer-events: none;
+  animation: midPulse var(--twinkle-dur, 9s) ease-in-out infinite;
+  animation-delay: var(--twinkle-delay, 0s);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* Inner core: bright ivory white */
+.constellation-star {
+  fill: rgba(255, 248, 220, 0.9);
+  cursor: pointer;
+  animation: coreTwinkle var(--twinkle-dur, 9s) ease-in-out infinite;
+  animation-delay: var(--twinkle-delay, 0s);
+  transform-box: fill-box;
+  transform-origin: center;
+  filter: drop-shadow(0 0 3px rgba(255, 240, 180, 0.5));
+  transition: filter 0.4s ease;
+}
+
+.constellation-star-group:hover .constellation-star,
+.constellation-star-group:focus .constellation-star {
+  fill: rgba(255, 255, 235, 1);
+  filter: drop-shadow(0 0 10px rgba(255, 240, 160, 0.9));
+}
+
+.constellation-star-group:hover .constellation-star-mid,
+.constellation-star-group:focus .constellation-star-mid {
+  fill: rgba(232, 201, 122, 0.6);
+}
+
+.constellation-star-group:hover .constellation-star-halo,
+.constellation-star-group:focus .constellation-star-halo {
+  fill: rgba(232, 201, 122, 0.18);
+}
+
+/* Connection lines between stars */
+.constellation-connection {
+  stroke: rgba(232, 201, 122, 0.35);
+  stroke-width: 1.2;
+  stroke-dasharray: 4 9;
+  fill: none;
+  pointer-events: none;
+  animation: lineGlow 8s ease-in-out infinite alternate;
+}
+
+@keyframes lineGlow {
+  from { stroke-opacity: 0.25; }
+  to   { stroke-opacity: 0.55; }
+}
+
+@keyframes haloBreath {
+  0%, 100% { transform: scale(1);   opacity: 0.5; }
+  50%       { transform: scale(1.4); opacity: 0.9; }
+}
+
+@keyframes midPulse {
+  0%, 100% { transform: scale(1);    opacity: 0.6; }
+  50%       { transform: scale(1.18); opacity: 1; }
+}
+
+@keyframes coreTwinkle {
+  0%, 100% { transform: scale(0.9);  opacity: 0.75; }
+  35%       { transform: scale(1.12); opacity: 1; }
+  65%       { transform: scale(0.88); opacity: 0.65; }
+}
+
+.constellation-star-label {
+  font-family: var(--font-pixel);
+  font-size: 7px;
+  fill: rgba(232, 201, 122, 0);
+  letter-spacing: 2px;
+  pointer-events: none;
+  transition: fill 0.5s ease;
+  dominant-baseline: text-after-edge;
+}
+
+.constellation-star-group:hover .constellation-star-label,
+.constellation-star-group:focus .constellation-star-label {
+  fill: rgba(232, 201, 122, 0.8);
+}
+
+/* Memory Card */
+.constellation-memory-card {
+  position: absolute;
+  bottom: var(--space-2xl);
+  left: 50%;
+  transform: translateX(-50%) translateY(24px);
+  width: min(540px, 90vw);
+  background: linear-gradient(160deg, rgba(8,3,20,0.97) 0%, rgba(16,6,35,0.97) 100%);
+  border-top: 1px solid rgba(255, 215, 0, 0.18);
+  border-left: 1px solid rgba(255, 215, 0, 0.08);
+  border-right: 1px solid rgba(255, 215, 0, 0.08);
+  border-bottom: none;
+  backdrop-filter: blur(20px);
+  padding: var(--space-xl) var(--space-xl) var(--space-lg);
+  z-index: 3;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease, transform 0.5s var(--ease-out-expo);
+  box-shadow: 0 -8px 40px rgba(255, 215, 0, 0.05), inset 0 1px 0 rgba(255,215,0,0.1);
+}
+
+.constellation-memory-card.memory-card-open {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateX(-50%) translateY(0);
+}
+
+.constellation-memory-name {
+  font-family: var(--font-pixel);
+  font-size: 0.5rem;
+  color: rgba(255, 215, 0, 0.7);
+  letter-spacing: 3px;
+  margin-bottom: var(--space-lg);
+  display: block;
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid rgba(255,215,0,0.08);
+}
+
+.constellation-memory-text p {
+  font-family: var(--font-retro);
+  font-size: 1.05rem;
+  line-height: 2;
+  color: rgba(220, 200, 255, 0.7);
+  margin: 0 0 var(--space-sm);
+}
+
+.constellation-memory-text p:last-child { margin-bottom: 0; }
+
+.constellation-memory-sig {
+  font-family: var(--font-pixel);
+  font-size: 0.4rem;
+  color: rgba(255, 215, 0, 0.3);
+  letter-spacing: 3px;
+  margin-top: var(--space-lg);
+  display: block;
+  text-align: right;
+}
+
+.constellation-memory-close {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  font-family: var(--font-pixel);
+  font-size: 0.45rem;
+  letter-spacing: 1px;
+  padding: 4px 8px;
+}
+
+.constellation-memory-close:hover { color: rgba(255, 255, 255, 0.6); }
+
+/* ============================================
+   STUDIO JOURNAL — Two-Panel Overlay
+   ============================================ */
+.journal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9400;
+  background: rgba(14, 5, 10, 0.98);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.journal-overlay.journal-open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.journal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-lg) var(--space-xl);
+  border-bottom: 1px solid rgba(255, 215, 0, 0.08);
+  flex-shrink: 0;
+  background: rgba(255, 215, 0, 0.02);
+}
+
+.journal-title {
+  font-family: var(--font-pixel);
+  font-size: 0.55rem;
+  color: rgba(255, 215, 0, 0.4);
+  letter-spacing: 4px;
+}
+
+.journal-close {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.3);
+  font-family: var(--font-pixel);
+  font-size: 0.45rem;
+  padding: 6px 12px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.2s ease;
+}
+
+.journal-close:hover {
+  border-color: rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.journal-body {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr;
+  flex: 1;
+  overflow: hidden;
+}
+
+.journal-divider {
+  background: linear-gradient(to bottom,
+    transparent 0%,
+    rgba(255, 215, 0, 0.12) 20%,
+    rgba(255, 215, 0, 0.12) 80%,
+    transparent 100%);
+  align-self: stretch;
+}
+
+.journal-panel {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-2xl) clamp(var(--space-xl), 5vw, 80px);
+  overflow-y: auto;
+  height: 100%;
+  /* Ruled paper lines */
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent calc(1.9rem * 1.15 - 1px),
+    rgba(255, 255, 255, 0.03) calc(1.9rem * 1.15 - 1px),
+    rgba(255, 255, 255, 0.03) calc(1.9rem * 1.15)
+  );
+  background-size: 100% calc(1.9rem * 1.15);
+  background-position: 0 var(--space-2xl);
+}
+
+.journal-panel-label {
+  font-family: var(--font-pixel);
+  font-size: 0.4rem;
+  color: rgba(255, 255, 255, 0.15);
+  letter-spacing: 4px;
+  margin-bottom: var(--space-xl);
+  text-transform: uppercase;
+  background: inherit;
+}
+
+/* Left panel — Raditya's observations */
+.journal-panel-left {
+  border-left: 2px solid rgba(255, 184, 114, 0.06);
+  padding-left: clamp(var(--space-xl), 5vw, 80px);
+}
+
+/* Decorative opening quote */
+.journal-panel-left .journal-observation::before {
+  content: '\201C';
+  display: block;
+  font-family: Georgia, serif;
+  font-size: 4rem;
+  color: rgba(255, 184, 114, 0.12);
+  line-height: 0.6;
+  margin-bottom: var(--space-md);
+  margin-left: -8px;
+}
+
+.journal-panel-left .journal-observation p {
+  font-family: var(--font-retro);
+  font-size: 1.15rem;
+  line-height: 1.9;
+  color: rgba(255, 220, 180, 0.65);
+  margin: 0 0 0.1rem;
+}
+
+.journal-observation-sig {
+  font-family: var(--font-pixel);
+  font-size: 0.4rem;
+  color: rgba(255, 184, 114, 0.2);
+  letter-spacing: 3px;
+  margin-top: var(--space-xl);
+  display: block;
+}
+
+/* Left panel extras */
+.journal-date-left {
+  font-family: var(--font-pixel);
+  font-size: 0.38rem;
+  color: rgba(255, 184, 114, 0.25);
+  letter-spacing: 3px;
+  margin-bottom: var(--space-lg);
+  display: block;
+}
+
+.journal-obs-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+  margin-bottom: var(--space-sm);
+}
+
+.journal-obs-btn {
+  background: none;
+  border: 1px solid rgba(255, 184, 114, 0.15);
+  color: rgba(255, 184, 114, 0.4);
+  font-family: var(--font-pixel);
+  font-size: 0.45rem;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 1px;
+}
+
+.journal-obs-btn:hover {
+  border-color: rgba(255, 184, 114, 0.4);
+  color: rgba(255, 184, 114, 0.8);
+}
+
+.journal-obs-counter {
+  font-family: var(--font-pixel);
+  font-size: 0.38rem;
+  color: rgba(255, 255, 255, 0.15);
+  letter-spacing: 2px;
+}
+
+.journal-day-note {
+  font-family: var(--font-retro);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: rgba(255, 184, 114, 0.3);
+  margin-top: var(--space-xl);
+  padding-top: var(--space-lg);
+  border-top: 1px solid rgba(255, 184, 114, 0.06);
+  font-style: italic;
+}
+
+/* Right panel */
+.journal-panel-right {
+  padding-right: clamp(var(--space-xl), 5vw, 80px);
+}
+
+.journal-entry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-lg);
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+
+.journal-date-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.journal-nav-btn {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.25);
+  font-family: var(--font-pixel);
+  font-size: 0.45rem;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.journal-nav-btn:hover:not(:disabled) {
+  border-color: rgba(255, 184, 114, 0.3);
+  color: rgba(255, 184, 114, 0.7);
+}
+
+.journal-nav-btn:disabled {
+  opacity: 0.2;
+  cursor: default;
+}
+
+.journal-date-display {
+  font-family: var(--font-pixel);
+  font-size: 0.42rem;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 2px;
+  min-width: 120px;
+  text-align: center;
+}
+
+/* Mood picker */
+.journal-mood-picker {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.journal-mood-btn {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.25);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.journal-mood-btn:hover:not(:disabled) {
+  border-color: rgba(255, 184, 114, 0.4);
+  color: rgba(255, 184, 114, 0.8);
+  background: rgba(255, 184, 114, 0.06);
+}
+
+.journal-mood-btn.active {
+  border-color: rgba(255, 184, 114, 0.6);
+  color: rgba(255, 184, 114, 1);
+  background: rgba(255, 184, 114, 0.1);
+}
+
+.journal-mood-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* Notes textarea */
+.journal-notes-textarea {
+  flex: 1;
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: none;
+  font-family: var(--font-retro);
+  font-size: 1.15rem;
+  line-height: 1.9;
+  color: rgba(255, 255, 255, 0.5);
+  caret-color: rgba(255, 184, 114, 0.8);
+  min-height: 200px;
+  transition: opacity 0.3s ease;
+}
+
+.journal-notes-textarea::placeholder {
+  color: rgba(255, 255, 255, 0.1);
+  font-style: italic;
+}
+
+/* Footer: save indicator + word count */
+.journal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--space-sm);
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  flex-shrink: 0;
+}
+
+.journal-save-indicator {
+  font-family: var(--font-pixel);
+  font-size: 0.38rem;
+  color: rgba(255, 184, 114, 0.5);
+  letter-spacing: 2px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.journal-save-indicator.visible {
+  opacity: 1;
+}
+
+.journal-word-count {
+  font-family: var(--font-pixel);
+  font-size: 0.38rem;
+  color: rgba(255, 255, 255, 0.12);
+  letter-spacing: 1px;
+}
+
+/* Past entry: read-only state */
+.journal-past-entry .journal-panel-label::after {
+  content: ' — read only';
+  color: rgba(255, 255, 255, 0.15);
+  font-size: 0.35rem;
+}
+
+
+
+/* Mobile: stack panels vertically */
+@media (max-width: 768px) {
+  .journal-body {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1px auto;
+    overflow-y: auto;
+  }
+
+  .journal-divider {
+    height: 1px;
+    width: 100%;
+  }
+
+  .journal-panel {
+    padding: var(--space-xl) var(--space-lg);
+    height: auto;
+    overflow-y: visible;
+  }
+}
+
+/* ============================================
+   THE SONG — Premium Player Overlay
+   ============================================ */
+.song-player-overlay {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(100%);
+  z-index: 9300;
+  width: min(460px, 94vw);
+  background: linear-gradient(170deg,
+    rgba(8, 3, 18, 0.98) 0%,
+    rgba(18, 6, 32, 0.98) 60%,
+    rgba(10, 4, 22, 0.98) 100%);
+  border-top: 1px solid rgba(255, 215, 0, 0.12);
+  border-left: 1px solid rgba(255, 215, 0, 0.06);
+  border-right: 1px solid rgba(255, 215, 0, 0.06);
+  border-bottom: none;
+  backdrop-filter: blur(24px);
+  padding: var(--space-xl) var(--space-xl) var(--space-lg);
+  text-align: center;
+  transition: transform 0.7s var(--ease-out-expo);
+  box-shadow: 0 -12px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,215,0,0.08);
+}
+
+.song-player-overlay.song-player-open {
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Top label */
+.song-player-title {
+  font-family: var(--font-pixel);
+  font-size: 0.4rem;
+  color: rgba(255, 215, 0, 0.25);
+  letter-spacing: 5px;
+  margin-bottom: var(--space-lg);
+  text-transform: uppercase;
+}
+
+/* Vinyl disc */
+.song-vinyl {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  margin: 0 auto var(--space-lg);
+  position: relative;
+  background:
+    radial-gradient(circle at center, #1a1a1a 28%, transparent 28%),
+    conic-gradient(
+      rgba(60,30,80,0.9) 0deg, rgba(30,10,50,0.9) 60deg,
+      rgba(60,30,80,0.9) 120deg, rgba(30,10,50,0.9) 180deg,
+      rgba(60,30,80,0.9) 240deg, rgba(30,10,50,0.9) 300deg,
+      rgba(60,30,80,0.9) 360deg
+    );
+  box-shadow:
+    0 0 0 2px rgba(255,215,0,0.08),
+    0 0 24px rgba(120,40,160,0.3),
+    inset 0 0 12px rgba(0,0,0,0.6);
+  animation: vinylSpin 6s linear infinite paused;
+}
+
+.song-vinyl::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,215,0,0.5) 0%, rgba(255,215,0,0.1) 100%);
+  box-shadow: 0 0 8px rgba(255,215,0,0.3);
+}
+
+.song-vinyl.spinning {
+  animation-play-state: running;
+}
+
+@keyframes vinylSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Waveform — full width, bars anchored at bottom, no gaps */
+.song-waveform {
+  display: flex;
+  align-items: flex-end;       /* bars grow upward from bottom */
+  justify-content: stretch;
+  gap: 1px;
+  width: 100%;
+  height: 44px;
+  margin-bottom: var(--space-md);
+}
+
+/* Waveform bars — JS-driven animation via requestAnimationFrame */
+/* CSS handles only layout, color, and initial collapsed state */
+.song-waveform-bar {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border-radius: 1px 1px 0 0;
+  transform: scaleY(0.08);          /* collapsed by default */
+  transform-origin: bottom center;
+  will-change: transform, opacity;
+  transition: none;                 /* no transition — rAF handles it */
+}
+
+/* Lavender palette — cool purple/violet tones, subtle variation per position */
+.song-waveform-bar:nth-child(6n+1) { background: linear-gradient(to top, rgba(180,140,220,0.90), rgba(180,140,220,0.06)); }
+.song-waveform-bar:nth-child(6n+2) { background: linear-gradient(to top, rgba(165,125,210,0.85), rgba(180,140,220,0.05)); }
+.song-waveform-bar:nth-child(6n+3) { background: linear-gradient(to top, rgba(195,155,235,0.88), rgba(180,140,220,0.06)); }
+.song-waveform-bar:nth-child(6n+4) { background: linear-gradient(to top, rgba(155,120,205,0.85), rgba(180,140,220,0.05)); }
+.song-waveform-bar:nth-child(6n+5) { background: linear-gradient(to top, rgba(210,170,240,0.82), rgba(180,140,220,0.05)); }
+.song-waveform-bar:nth-child(6n)   { background: linear-gradient(to top, rgba(170,130,215,0.87), rgba(180,140,220,0.05)); }
+
+
+.song-player-name {
+  font-family: var(--font-retro);
+  font-size: 1.2rem;
+  color: rgba(255, 228, 180, 0.9);
+  margin-bottom: 2px;
+  letter-spacing: 0.5px;
+}
+
+.song-player-artist {
+  font-family: var(--font-pixel);
+  font-size: 0.42rem;
+  color: rgba(255, 184, 114, 0.4);
+  margin-bottom: var(--space-lg);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* Progress bar */
+.song-player-progress {
+  width: 100%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 2px;
+  margin-bottom: var(--space-lg);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.song-player-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, rgba(255,184,114,0.6), rgba(255,215,0,0.8));
+  width: 0%;
+  transition: width 1s linear;
+  box-shadow: 0 0 6px rgba(255,215,0,0.4);
+}
+
+.song-player-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-xl);
+  margin-bottom: var(--space-lg);
+  margin-top: var(--space-lg);
+}
+
+.song-play-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(255, 215, 0, 0.06);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  color: rgba(255, 215, 0, 0.8);
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+  box-shadow: 0 0 0 0 rgba(255,215,0,0);
+}
+
+.song-play-btn:hover {
+  background: rgba(255, 215, 0, 0.12);
+  border-color: rgba(255, 215, 0, 0.4);
+  box-shadow: 0 0 20px rgba(255,215,0,0.15);
+  transform: scale(1.06);
+}
+
+.song-play-btn.playing {
+  border-color: rgba(255, 184, 114, 0.5);
+  box-shadow: 0 0 24px rgba(255,184,114,0.2);
+}
+
+/* ============================================
+   PHASE 4 — ANNIVERSARY TAKEOVER
+   ============================================ */
+body.anniversary-mode .admin-header {
+  position: relative;
+  overflow: hidden;
+}
+
+body.anniversary-mode .admin-header::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg,
+    rgba(255, 100, 100, 0.05),
+    rgba(255, 184, 114, 0.08),
+    rgba(255, 100, 100, 0.05));
+  animation: anniversaryGlow 4s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes anniversaryGlow {
+  from { opacity: 0.5; }
+  to   { opacity: 1; }
+}
+
+/* Geometric confetti particles — themed, not emoji */
+.confetti-piece {
+  position: fixed;
+  top: -12px;
+  width: 8px;
+  height: 8px;
+  pointer-events: none;
+  z-index: 9999;
+  animation: confettiFall linear forwards;
+}
+
+/* Shape variants via class */
+.confetti-piece.shape-square  { border-radius: 1px; }
+.confetti-piece.shape-diamond { border-radius: 1px; transform-origin: center; }
+.confetti-piece.shape-dot     { border-radius: 50%; width: 6px; height: 6px; }
+.confetti-piece.shape-rect    { width: 12px; height: 5px; border-radius: 1px; }
+
+/* Color variants via CSS variable */
+.confetti-piece { background: var(--confetti-clr, var(--clr-gold)); }
+
+@keyframes confettiFall {
+  0%   { transform: translateY(0) rotate(0deg)   translateX(0);    opacity: 1; }
+  40%  { opacity: 1; }
+  100% { transform: translateY(110vh) rotate(540deg) translateX(var(--confetti-drift, 0px)); opacity: 0; }
+}
+
+/* Heart particle — CSS-drawn, no emoji */
+.pixel-heart,
+.heart-particle {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  width: 10px;
+  height: 10px;
+  background: var(--clr-coral);
+  clip-path: polygon(50% 0%, 100% 35%, 100% 70%, 50% 100%, 0% 70%, 0% 35%);
+  animation: heartFloat var(--heart-dur, 1.2s) ease-out forwards;
+  font-size: 0 !important; /* suppress any emoji text */
+}
+
+@keyframes heartFloat {
+  0%   { opacity: 1; transform: translate(0, 0) scale(1); }
+  100% { opacity: 0; transform: translate(var(--tx, 0px), var(--ty, -80px)) scale(0.4); }
+}
+
+/* Countdown wrapper */
+.admin-countdown-wrapper {
+  margin-top: var(--space-md);
+  display: flex;
+  justify-content: center;
+}
+
+.countdown-glitch-box {
+  background: rgba(10, 10, 20, 0.4);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  padding: 8px 16px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.05), inset 0 0 8px rgba(255, 215, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Scanning scanline effect inside the box */
+.countdown-glitch-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 50%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.15), transparent);
+  animation: scanline 3s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes scanline {
+  0%   { left: -50%; }
+  100% { left: 150%; }
+}
+
+.countdown-icon {
+  color: var(--clr-gold);
+  font-size: 0.8rem;
+  animation: pulseIcon 2s ease-in-out infinite alternate;
+}
+
+@keyframes pulseIcon {
+  from { opacity: 0.4; text-shadow: 0 0 2px var(--clr-gold); }
+  to   { opacity: 1; text-shadow: 0 0 8px var(--clr-gold); }
+}
+
+.countdown-text {
+  font-family: var(--font-pixel);
+  font-size: 0.55rem;
+  color: var(--clr-gold);
+  letter-spacing: 1.5px;
+  text-shadow: 0 0 4px rgba(255, 215, 0, 0.5);
+  white-space: pre; /* Keep scramble chars from wrapping weirdly */
+}
+
+/* Phase 3 & 4 reduced-motion overrides */
+@media (prefers-reduced-motion: reduce) {
+  .letter-envelope-icon,
+  .constellation-star-glow,
+  .anniversary-confetti-piece,
+  .admin-countdown-line {
+    animation: none !important;
+  }
+  .letter-modal-paper,
+  .constellation-overlay,
+  .journal-overlay,
+  .song-player-overlay {
+    transition: opacity 0.2s ease !important;
   }
 }

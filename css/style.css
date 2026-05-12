@@ -1369,11 +1369,12 @@ img {
 }
 
 .footer-mascot {
+  display: block;
   width: 240px;
   height: 240px;
+  margin: 0 auto var(--space-lg);
   object-fit: contain;
   image-rendering: pixelated;
-  margin-bottom: var(--space-lg);
   filter: drop-shadow(0 4px 12px rgba(45, 10, 30, 0.2));
   transition: transform var(--transition-smooth);
   background: transparent;
@@ -2946,4 +2947,75 @@ button:disabled {
   .commission-preview-card {
     flex: 0 0 85vw;
   }
+}
+
+/* ============================================
+   SECRET PORTAL (ADMIN GATE)
+   ============================================ */
+.secret-portal-btn {
+  position: fixed;
+  bottom: 100px;
+  left: 20px;
+  width: 44px;
+  height: 44px;
+  background: var(--clr-coral);
+  color: var(--clr-cream);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  z-index: 9999;
+  box-shadow: 0 0 15px rgba(232, 114, 90, 0.4);
+  opacity: 0.6;
+  transition: all 0.3s var(--transition-smooth);
+  text-decoration: none;
+}
+
+.secret-portal-btn:hover {
+  opacity: 1;
+  transform: translateY(-4px) scale(1.1);
+  box-shadow: 0 0 25px rgba(232, 114, 90, 0.8);
+  color: var(--clr-cream);
+}
+
+/* Secret Gateway Animations */
+.nav-brand.shivering {
+  animation: titleShiver 0.1s linear infinite;
+}
+
+.nav-brand.glitching {
+  animation: titleGlitch 0.2s linear infinite;
+  color: var(--clr-coral);
+}
+
+@keyframes titleShiver {
+  0% { transform: translate(0,0); }
+  25% { transform: translate(1px, -1px); }
+  50% { transform: translate(-1px, 1px); }
+  75% { transform: translate(1px, 1px); }
+  100% { transform: translate(0,0); }
+}
+
+@keyframes titleGlitch {
+  0% { clip-path: inset(10% 0 30% 0); transform: translate(-2px, 0); }
+  20% { clip-path: inset(50% 0 10% 0); transform: translate(2px, 0); }
+  40% { clip-path: inset(0 0 70% 0); transform: translate(-3px, 1px); }
+  60% { clip-path: inset(30% 0 20% 0); transform: translate(3px, -1px); }
+  80% { clip-path: inset(60% 0 5% 0); transform: translate(-1px, 0); }
+  100% { clip-path: inset(10% 0 30% 0); transform: translate(0,0); }
+}
+
+/* Particle: Pixel Heart */
+.pixel-heart {
+  position: fixed;
+  pointer-events: none;
+  z-index: 10000;
+  font-size: 14px;
+  animation: heartFloat 2s ease-out forwards;
+}
+
+@keyframes heartFloat {
+  0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; }
+  100% { transform: translate(var(--tx), var(--ty)) scale(0) rotate(45deg); opacity: 0; }
 }
