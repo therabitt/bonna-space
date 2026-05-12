@@ -2194,6 +2194,43 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   })();
 
+  // ── "Silent Touch" → The Song (Mobile Trigger) ──
+  (() => {
+    let silentTouchTimer = null;
+    let isVignetteActive = false;
+    const vignette = document.getElementById('silent-touch-vignette');
+
+    const resetSilentTouch = () => {
+      clearTimeout(silentTouchTimer);
+      if (isVignetteActive && vignette) {
+        vignette.classList.remove('active');
+        isVignetteActive = false;
+      }
+    };
+
+    window.addEventListener('touchstart', (e) => {
+      // Exactly 2 or 3 fingers required to start the secret sequence
+      if (e.touches.length === 2 || e.touches.length === 3) {
+        if (!isVignetteActive && vignette) {
+          vignette.classList.add('active');
+          isVignetteActive = true;
+          
+          silentTouchTimer = setTimeout(() => {
+            // Trigger the song
+            resetSilentTouch();
+            songSystem.open();
+          }, 3000); // 3 seconds hold
+        }
+      } else {
+        // If 1 finger or 4+ fingers, abort
+        resetSilentTouch();
+      }
+    }, { passive: true });
+
+    window.addEventListener('touchend', resetSilentTouch);
+    window.addEventListener('touchcancel', resetSilentTouch);
+  })();
+
   // Initialize Layer 2 — Working Companion
   mascotSystem.init();
   contextualMessages.checkFirstLoginToday();

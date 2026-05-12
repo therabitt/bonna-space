@@ -11,6 +11,20 @@
   overflow-x: hidden;
 }
 
+/* --- Silent Touch Vignette --- */
+.silent-touch-vignette {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: radial-gradient(circle at center, transparent 30%, rgba(10, 5, 20, 0.95) 100%);
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 3s ease-in-out;
+}
+.silent-touch-vignette.active {
+  opacity: 1;
+}
+
 .admin-container {
   max-width: 1200px;
   margin: 0 auto;
