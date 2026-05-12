@@ -2156,7 +2156,137 @@ const easterEggs = {
 // ============================================
 // INITIALIZATION
 // ============================================
+// ============================================
+// AESTHETICS MANAGER: Stars, Trails & Ornaments
+// ============================================
+const aestheticsManager = {
+  init() {
+    this.setupStars();
+    this.setupShootingStars();
+    this.setupStardustTrail();
+    this.setupParallaxScroll();
+    this.setupUptimePulsing();
+  },
+  
+  setupStars() {
+    const layers = [
+      document.querySelector(".parallax-layer-1"),
+      document.querySelector(".parallax-layer-2"),
+      document.querySelector(".parallax-layer-3")
+    ];
+    if (!layers[0]) return;
+
+    const generateStars = (count) => {
+      let s = [];
+      for (let i = 0; i < count; i++) {
+        const x = Math.floor(Math.random() * 2000);
+        const y = Math.floor(Math.random() * 2000);
+        const color = Math.random() > 0.8 ? "var(--clr-gold-soft)" : "var(--clr-light-peach)";
+        s.push(`${x}px ${y}px ${color}`);
+      }
+      return s.join(", ");
+    };
+
+    layers[0].style.boxShadow = generateStars(100);
+    layers[1].style.boxShadow = generateStars(200);
+    layers[2].style.boxShadow = generateStars(300);
+  },
+
+  setupShootingStars() {
+    const container = document.getElementById("shooting-stars-container");
+    if (!container) return;
+
+    setInterval(() => {
+      // More frequent and more varied shooting stars
+      if (Math.random() > 0.5) {
+        const star = document.createElement("div");
+        star.className = "shooting-star";
+        
+        // Start from varied positions at the top/right area
+        const startX = Math.random() * 80 + 40; // 40% to 120% (right side)
+        const startY = Math.random() * 40 - 20; // -20% to 20% (top area)
+        
+        star.style.left = startX + "vw";
+        star.style.top = startY + "vh";
+        
+        // Varied length and speed
+        const length = 150 + Math.random() * 300;
+        star.style.width = length + "px";
+        const duration = 1.2 + Math.random() * 1.5;
+        star.style.animationDuration = duration + "s";
+        
+        // Add a slight randomization to the diagonal angle via rotation if needed, 
+        // but the CSS translate already handles the path.
+        
+        container.appendChild(star);
+        setTimeout(() => star.remove(), duration * 1000 + 100);
+      }
+    }, 4000);
+  },
+
+  setupStardustTrail() {
+    // Only for devices with fine pointers (mouse/stylus)
+    if (!window.matchMedia("(pointer: fine)").matches) return;
+    
+    let lastX = 0, lastY = 0;
+    const chars = ['✦', '·', '☆', '★', '*', '✨'];
+    const colors = ['#ffd700', '#f09070', '#e8725a', '#fff'];
+
+    document.addEventListener("mousemove", (e) => {
+      const dist = Math.hypot(e.clientX - lastX, e.clientY - lastY);
+      if (dist > 15) {
+        lastX = e.clientX;
+        lastY = e.clientY;
+        
+        const p = document.createElement("span");
+        p.className = "stardust-particle";
+        p.textContent = chars[Math.floor(Math.random() * chars.length)];
+        p.style.left = e.clientX + "px";
+        p.style.top = e.clientY + "px";
+        p.style.color = colors[Math.floor(Math.random() * colors.length)];
+        p.style.fontSize = (8 + Math.random() * 10) + "px";
+        
+        // Random drift direction (upwards and slightly sideways)
+        const tx = (Math.random() - 0.5) * 60;
+        const ty = -30 - Math.random() * 50; 
+        p.style.setProperty("--tx", `${tx}px`);
+        p.style.setProperty("--ty", `${ty}px`);
+        
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 1200);
+      }
+    });
+  },
+
+  setupParallaxScroll() {
+    const l1 = document.querySelector(".parallax-layer-1");
+    const l2 = document.querySelector(".parallax-layer-2");
+    const l3 = document.querySelector(".parallax-layer-3");
+    
+    window.addEventListener("scroll", () => {
+      const y = window.scrollY;
+      if (l1) l1.style.transform = `translateY(${y * 0.5}px)`;
+      if (l2) l2.style.transform = `translateY(${y * 0.3}px)`;
+      if (l3) l3.style.transform = `translateY(${y * 0.15}px)`;
+    }, { passive: true });
+  },
+
+  setupUptimePulsing() {
+    const uptime = document.getElementById('admin-together-since');
+    if (!uptime) return;
+    
+    // Periodic emotional glow shift
+    setInterval(() => {
+      uptime.classList.add('uptime-glow');
+      setTimeout(() => uptime.classList.remove('uptime-glow'), 3000);
+    }, 12000);
+  }
+};
+
 document.addEventListener("DOMContentLoaded", async () => {
+  // Initialize Aesthetics
+  aestheticsManager.init();
+
   // Fetch initial data
   await api.fetchData();
 
