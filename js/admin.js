@@ -640,7 +640,6 @@ const galleryManager = {
           <i class="fa-solid fa-wand-magic-sparkles"></i>
           <h3>Empty Canvas</h3>
           <p>"This canvas is still waiting for your touch. This empty space is an invitation for you to show the world what you can create..."</p>
-          <p class="empty-state-hint">Click the '+ Add Artwork' button above to start filling this gallery.</p>
         </div>
       `;
       return;
@@ -976,7 +975,6 @@ const commissionManager = {
           <i class="fa-solid fa-heart-pulse"></i>
           <h3>Architect's Note</h3>
           <p>"The world is waiting for your magic. Let's begin by listing the wonders you have to offer them..."</p>
-          <p class="empty-state-hint">Add a new row to the 'Prices' sheet in your Google Sheets to see it appear here.</p>
         </div>
       `;
       return;

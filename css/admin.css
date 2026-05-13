@@ -1134,7 +1134,7 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: var(--space-4xl) var(--space-2xl);
+  padding: var(--space-5xl) var(--space-2xl) var(--space-3xl); /* More top padding for the icon */
   background: rgba(255, 245, 230, 0.4); /* Glassmorphism effect */
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
