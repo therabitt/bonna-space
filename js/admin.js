@@ -17,7 +17,7 @@ const CONFIG = {
 // Single source of truth for all personal dates & settings
 // ============================================
 const PRESENCE_CONFIG = {
-  togetherSince: '2026-04-17',
+  togetherSince: '2026-05-13',
   letterActivationDays: 14,
   midnightWindow: { start: 0, end: 1 },
 
