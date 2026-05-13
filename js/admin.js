@@ -2491,7 +2491,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const handleEnd = () => {
       if (!isPulling) return;
       const currentHeight = parseInt(string.style.height) || 0;
-      if (currentHeight >= threshold && !holdTimer) {
+      if (currentHeight >= threshold) {
         resetPull();
         discoveryState.track('song');
         if (typeof songSystem !== 'undefined') songSystem.open();
