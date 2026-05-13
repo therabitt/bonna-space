@@ -637,8 +637,10 @@ const galleryManager = {
     if (this.galleryItems.length === 0) {
       container.innerHTML = `
         <div class="empty-state">
-          <i class="fa-solid fa-images"></i>
-          <p>No artworks yet. Add your first!</p>
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <h3>Empty Canvas</h3>
+          <p>"Kanvas ini masih menunggu sentuhanmu. Ruang kosong ini adalah kesempatan bagimu untuk menunjukkan dunia apa yang bisa kamu ciptakan..."</p>
+          <p class="empty-state-hint">Klik tombol '+ Add Artwork' di atas untuk mulai mengisi galeri ini.</p>
         </div>
       `;
       return;
@@ -971,8 +973,10 @@ const commissionManager = {
     if (this.priceItems.length === 0) {
       container.innerHTML = `
         <div class="empty-state">
-          <i class="fa-solid fa-palette"></i>
-          <p>No commission types configured. Add rows to your Prices sheet.</p>
+          <i class="fa-solid fa-heart-pulse"></i>
+          <h3>Architect's Note</h3>
+          <p>"Dunia ingin melihat karyamu. Mari kita mulai dengan menyusun daftar keajaiban yang bisa kamu tawarkan kepada mereka..."</p>
+          <p class="empty-state-hint">Tambahkan baris baru pada tab 'Prices' di Google Sheets untuk memunculkan jenis komisi di sini.</p>
         </div>
       `;
       return;

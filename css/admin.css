@@ -1125,38 +1125,69 @@
   display: none; /* Hide the text label we added earlier */
 }
 
-/* --- Empty State --- */
+/* --- Empty State (Ethereal Sanctuary Style) --- */
 .empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  padding: var(--space-3xl) var(--space-xl);
-  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(232, 114, 90, 0.05));
-  border: 2px dashed var(--retro-border);
-  border-radius: var(--radius-xs);
+  padding: var(--space-4xl) var(--space-2xl);
+  background: radial-gradient(circle at center, rgba(255, 215, 0, 0.05) 0%, transparent 70%);
+  border: 1px dashed rgba(255, 215, 0, 0.2);
+  border-radius: var(--radius-sm);
+  margin: var(--space-xl) auto;
+  max-width: 500px;
+  position: relative;
+  overflow: hidden;
+}
+
+.empty-state::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(45deg, transparent, rgba(255, 215, 0, 0.03), transparent);
+  animation: shimmer 5s linear infinite;
 }
 
 .empty-state i {
-  font-size: 4rem;
-  color: var(--clr-salmon);
-  margin-bottom: var(--space-md);
-  opacity: 0.6;
-  display: inline-block;
-  animation: emptyStateFloat 3s ease-in-out infinite;
+  font-size: 3.5rem;
+  color: var(--clr-gold);
+  margin-bottom: var(--space-lg);
+  filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.4));
+  animation: emptyStateFloat 4s ease-in-out infinite;
 }
 
 @keyframes emptyStateFloat {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(-15px) rotate(5deg); }
+}
+
+.empty-state h3 {
+  font-family: var(--font-pixel);
+  font-size: 0.55rem;
+  color: var(--clr-gold);
+  margin-bottom: var(--space-md);
+  letter-spacing: 2px;
+  text-transform: uppercase;
 }
 
 .empty-state p {
   font-family: var(--font-retro);
-  font-size: 1.2rem;
-  color: var(--text-secondary);
-  margin-bottom: var(--space-md);
+  font-size: 1.3rem;
+  line-height: 1.6;
+  color: var(--clr-light-peach);
+  max-width: 400px;
+  margin: 0 auto;
+  opacity: 0.9;
+}
+
+.empty-state-hint {
+  margin-top: var(--space-xl);
+  font-size: 0.9rem !important;
+  color: var(--clr-coral) !important;
+  font-style: italic;
+  opacity: 0.7;
 }
 
 /* --- Add Button --- */
