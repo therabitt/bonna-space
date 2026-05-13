@@ -639,8 +639,8 @@ const galleryManager = {
         <div class="empty-state">
           <i class="fa-solid fa-wand-magic-sparkles"></i>
           <h3>Empty Canvas</h3>
-          <p>"Kanvas ini masih menunggu sentuhanmu. Ruang kosong ini adalah kesempatan bagimu untuk menunjukkan dunia apa yang bisa kamu ciptakan..."</p>
-          <p class="empty-state-hint">Klik tombol '+ Add Artwork' di atas untuk mulai mengisi galeri ini.</p>
+          <p>"This canvas is still waiting for your touch. This empty space is an invitation for you to show the world what you can create..."</p>
+          <p class="empty-state-hint">Click the '+ Add Artwork' button above to start filling this gallery.</p>
         </div>
       `;
       return;
@@ -975,8 +975,8 @@ const commissionManager = {
         <div class="empty-state">
           <i class="fa-solid fa-heart-pulse"></i>
           <h3>Architect's Note</h3>
-          <p>"Dunia ingin melihat karyamu. Mari kita mulai dengan menyusun daftar keajaiban yang bisa kamu tawarkan kepada mereka..."</p>
-          <p class="empty-state-hint">Tambahkan baris baru pada tab 'Prices' di Google Sheets untuk memunculkan jenis komisi di sini.</p>
+          <p>"The world is waiting for your magic. Let's begin by listing the wonders you have to offer them..."</p>
+          <p class="empty-state-hint">Add a new row to the 'Prices' sheet in your Google Sheets to see it appear here.</p>
         </div>
       `;
       return;
