@@ -17,7 +17,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
     />
     <link rel="stylesheet" href="css/style.css" />
-    <link rel="stylesheet" href="css/admin.css" />
+    <link rel="stylesheet" href="css/admin.css?v=1.0.1" />
   </head>
   <body class="admin-body">
     <!-- Auth Guard: redirect to login if no session -->
@@ -175,8 +175,10 @@
             <div class="editor-list" id="gallery-editor-list">
               <!-- Gallery items injected here -->
               <div class="empty-state">
-                <i class="fa-solid fa-images"></i>
-                <p>No artworks yet. But I know what's coming. 🎨</p>
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <h3>Empty Canvas</h3>
+                <p>"This canvas is still waiting for your touch. This empty space is an invitation for you to show the world what you can create..."</p>
+                <p class="empty-state-hint">Click the '+ Add Artwork' button above to start filling this gallery.</p>
               </div>
             </div>
           </div>
@@ -211,8 +213,10 @@
             <div class="editor-list" id="commission-editor-list">
               <!-- Commission types injected here -->
               <div class="empty-state">
-                <i class="fa-solid fa-palette"></i>
-                <p>Ready when you are. The world is waiting for your terms. 💫</p>
+                <i class="fa-solid fa-heart-pulse"></i>
+                <h3>Architect's Note</h3>
+                <p>"The world is waiting for your magic. Let's begin by listing the wonders you have to offer them..."</p>
+                <p class="empty-state-hint">Add a new row to the 'Prices' sheet in your Google Sheets to see it appear here.</p>
               </div>
             </div>
           </div>
@@ -822,7 +826,7 @@
     </script>
     <script src="js/utils.js"></script>
     <script src="js/mood_responses.js"></script>
-    <script src="js/admin.js"></script>
+    <script src="js/admin.js?v=1.0.1"></script>
     <script src="js/letters.js"></script>
     <script src="js/constellation.js"></script>
     <script src="js/journal.js"></script>

@@ -1127,21 +1127,22 @@
 
 /* --- Empty State (Ethereal Sanctuary Style) --- */
 .empty-state {
-  grid-column: 1 / -1; /* Span full width in grid containers */
-  display: flex;
+  grid-column: 1 / -1 !important; /* Force span all grid columns */
+  width: 100% !important; 
+  max-width: none !important; /* Remove constraints */
+  display: flex !important;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
   padding: var(--space-4xl) var(--space-2xl);
   background: radial-gradient(circle at center, rgba(255, 215, 0, 0.05) 0%, transparent 70%);
-  border: 1px dashed rgba(255, 215, 0, 0.2);
+  border: 1px dashed rgba(255, 215, 0, 0.3);
   border-radius: var(--radius-sm);
-  margin: var(--space-xl) auto;
-  width: 100%;
-  max-width: 600px;
+  margin: var(--space-xl) 0;
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .empty-state::before {
