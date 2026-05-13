@@ -1135,16 +1135,9 @@
   justify-content: center;
   text-align: center;
   padding: var(--space-5xl) var(--space-2xl) var(--space-3xl); /* More top padding for the icon */
-  background: rgba(255, 245, 230, 0.4); /* Glassmorphism effect */
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 215, 0, 0.4); /* Solid elegant gold border */
-  border-radius: var(--radius-sm);
   margin: var(--space-xl) 0;
   position: relative;
-  overflow: hidden;
   box-sizing: border-box;
-  box-shadow: 0 10px 30px rgba(45, 10, 30, 0.05);
 }
 
 .empty-state::before {
@@ -1157,9 +1150,8 @@
 
 .empty-state i {
   font-size: 4rem;
-  color: var(--clr-gold);
+  color: var(--clr-warm-crimson);
   margin-bottom: var(--space-lg);
-  filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.5));
   animation: emptyStateFloat 4s ease-in-out infinite;
 }
 
@@ -1176,7 +1168,7 @@
 .empty-state h3 {
   font-family: var(--font-pixel);
   font-size: 0.7rem;
-  color: var(--clr-gold);
+  color: var(--clr-warm-crimson);
   margin-bottom: var(--space-md);
   letter-spacing: 3px;
   text-transform: uppercase;
@@ -1185,7 +1177,7 @@
 
 .empty-state p {
   font-family: var(--font-retro);
-  font-size: 1.6rem;
+  font-size: 1.2rem;
   line-height: 1.4;
   color: var(--clr-deep-maroon); /* Higher contrast */
   max-width: 500px;
