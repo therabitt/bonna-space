@@ -53,6 +53,16 @@
   box-shadow: 0 0 15px var(--clr-gold), 0 0 5px #fff;
 }
 
+#music-box-vignette.deep-glow {
+  background: radial-gradient(circle, transparent 20%, rgba(255, 215, 0, 0.4) 100%);
+  animation: heartbeatPulse 1s ease-in-out infinite;
+}
+
+@keyframes heartbeatPulse {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 0.9; transform: scale(1.05); }
+}
+
 /* --- Ethereal Background: Stars & Parallax --- */
 .parallax-bg {
   position: fixed;
@@ -93,7 +103,162 @@
 
 
 
-/* --- Typography Enhancements --- */
+/* --- The Architect's Poem --- */
+.architect-poem-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 5, 20, 0.98);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1.5s ease;
+  padding: var(--space-md);
+}
+
+.architect-poem-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.poem-scroll {
+  position: relative;
+  max-width: 600px;
+  width: 100%;
+  max-height: 85vh;
+  background: #110c18;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  box-shadow: 0 0 60px rgba(139, 34, 82, 0.2), inset 0 0 40px rgba(0, 0, 0, 0.5);
+  padding: var(--space-3xl) var(--space-xl);
+  overflow-y: auto;
+  transform: scale(0.95) translateY(30px);
+  transition: transform 1.2s var(--ease-out-expo);
+}
+
+.architect-poem-overlay.active .poem-scroll {
+  transform: scale(1) translateY(0);
+}
+
+.poem-close {
+  position: absolute;
+  top: 20px; right: 25px;
+  background: transparent;
+  border: none;
+  color: var(--clr-gold);
+  font-size: 2.5rem;
+  cursor: pointer;
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
+}
+.poem-close:hover { opacity: 1; }
+
+.poem-content {
+  font-family: var(--font-retro);
+  color: var(--clr-light-peach);
+  line-height: 1.8;
+}
+
+.poem-header {
+  margin-bottom: var(--space-2xl);
+  text-align: center;
+}
+.poem-header h2 {
+  font-family: var(--font-pixel);
+  font-size: 0.8rem;
+  color: var(--clr-gold);
+  margin-bottom: var(--space-md);
+  letter-spacing: 3px;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+.poem-header p {
+  font-style: italic;
+  font-size: 1.15rem;
+  color: var(--clr-coral);
+  line-height: 1.4;
+}
+
+.poem-riddles {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.riddle {
+  display: flex;
+  gap: var(--space-lg);
+  opacity: 0;
+  transform: translateY(20px);
+}
+.architect-poem-overlay.active .riddle {
+  animation: riddleFadeIn 1s ease forwards;
+}
+.riddle:nth-child(1) { animation-delay: 0.5s !important; }
+.riddle:nth-child(2) { animation-delay: 0.8s !important; }
+.riddle:nth-child(3) { animation-delay: 1.1s !important; }
+.riddle:nth-child(4) { animation-delay: 1.4s !important; }
+.riddle:nth-child(5) { animation-delay: 1.7s !important; }
+
+@keyframes riddleFadeIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.riddle-icon { 
+  color: var(--clr-gold); 
+  flex-shrink: 0; 
+  font-size: 1.1rem;
+  margin-top: 4px;
+}
+.riddle p { 
+  font-size: 1.25rem; 
+  color: rgba(252, 213, 192, 0.9);
+}
+
+.final-riddle {
+  margin-top: var(--space-xl);
+  padding-top: var(--space-2xl);
+  border-top: 1px solid rgba(255, 215, 0, 0.1);
+  text-align: center;
+}
+.final-riddle .riddle-icon { display: block; margin-bottom: var(--space-sm); }
+
+.playground-link {
+  display: inline-block;
+  margin-top: var(--space-xl);
+  padding: 12px 24px;
+  background: transparent;
+  border: 1px solid var(--clr-gold);
+  color: var(--clr-gold);
+  text-decoration: none;
+  font-family: var(--font-pixel);
+  font-size: 0.45rem;
+  letter-spacing: 2px;
+  transition: all 0.4s ease;
+  text-transform: uppercase;
+}
+.playground-link:hover {
+  background: var(--clr-gold);
+  color: var(--clr-dark-plum);
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+  transform: translateY(-3px);
+}
+
+.poem-footer {
+  margin-top: var(--space-3xl);
+  text-align: right;
+  font-style: italic;
+  color: var(--clr-gold);
+  opacity: 0.5;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 600px) {
+  .poem-scroll {
+    padding: var(--space-2xl) var(--space-lg);
+  }
+  .riddle p { font-size: 1.1rem; }
+}
 .site-title {
   position: relative;
   background: linear-gradient(

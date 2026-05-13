@@ -59,10 +59,35 @@ const PRESENCE_CONFIG = {
   ],
 };
 
+// ── Discovery Tracking ──
+const discoveryState = {
+  features: { song: false, love: false, uptime: false, mascot: false },
+  track(f) {
+    if (this.features[f] === false) {
+      this.features[f] = true;
+      localStorage.setItem('bonna_discovery_' + f, 'true');
+    }
+  },
+  isAllFound() { return Object.values(this.features).every(v => v); },
+  load() {
+    for (let k in this.features) if (localStorage.getItem('bonna_discovery_' + k)) this.features[k] = true;
+  }
+};
+discoveryState.load();
+
 // ============================================
 // PRESENCE SYSTEM — Layer 1
 // ============================================
 const presenceSystem = {
+  init() {
+    this.showFirstTime();
+    this.renderGreeting();
+    this.renderCounter();
+    this.initLogoutTooltip();
+    this.renderCountdown();
+    this.checkAnniversary();
+    this.setupUptimeHold();
+  },
 
   // --- Together Since Counter ---
   getTogetherSinceDays() {
@@ -81,6 +106,37 @@ const presenceSystem = {
     const days = this.getTogetherSinceDays();
     el.innerHTML = `[ SYS.UPTIME: ${String(days).padStart(3, '0')} ]`;
   },
+
+  setupUptimeHold() {
+    const el = document.getElementById('admin-together-since');
+    if (!el) return;
+    
+    let holdTimer = null;
+    const days = this.getTogetherSinceDays();
+    const secretText = `[ ${days} DAYS WITH YOU ]`;
+    
+    const startHold = () => {
+      holdTimer = setTimeout(() => {
+        el.textContent = secretText;
+        el.style.color = 'var(--clr-gold)';
+        el.style.textShadow = '0 0 15px var(--clr-gold)';
+        discoveryState.track('uptime');
+      }, 2000);
+    };
+    
+    const endHold = () => {
+      clearTimeout(holdTimer);
+      el.textContent = `[ SYS.UPTIME: ${String(days).padStart(3, '0')} ]`;
+      el.style.color = '';
+      el.style.textShadow = '';
+    };
+    
+    el.addEventListener('mousedown', startHold);
+    el.addEventListener('touchstart', startHold);
+    window.addEventListener('mouseup', endHold);
+    window.addEventListener('touchend', endHold);
+  },
+
 
   // --- Daily Greeting Rotation ---
   // Same greeting for the whole day; does not repeat within 7 days
@@ -298,6 +354,7 @@ const presenceSystem = {
     this.initLogoutTooltip();
     this.renderCountdown();
     this.checkAnniversary();
+    this.setupUptimeHold();
   },
 };
 
@@ -1268,6 +1325,7 @@ const mascotSystem = {
   _triggerClickEgg() {
     this.showWhisper('You were curious enough to look. That means something.\n\nJe t’aime, mon étoile. — R');
     this.setMood('happy');
+    discoveryState.track('mascot');
     const eggs = JSON.parse(localStorage.getItem('bonna_eggs_found') || '[]');
     if (!eggs.includes('mascot_click5')) {
       eggs.push('mascot_click5');
@@ -2081,6 +2139,7 @@ const easterEggs = {
         title.classList.remove("glitching");
         title.textContent = loveText;
         title.classList.add("love-activated");
+        if (typeof discoveryState !== 'undefined') discoveryState.track('love');
         this.triggerHeartBurst(title);
       }, 2500);
     });
@@ -2332,7 +2391,43 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   })();
 
-  // ── "Music Box Pull" → The Song (Mobile Trigger) ──
+  discoveryState.load();
+
+  // ── The Architect's Poem Manager ──
+  const poemManager = {
+    overlay: document.getElementById('architect-poem-overlay'),
+    closeBtn: document.getElementById('btn-poem-close'),
+    
+    init() {
+      if (this.closeBtn) this.closeBtn.onclick = () => this.close();
+    },
+    
+    open() {
+      if (!this.overlay) return;
+      
+      const titleText = document.getElementById('poem-praise-title');
+      const msgText = document.getElementById('poem-praise-msg');
+      
+      if (!discoveryState.isAllFound()) {
+        titleText.textContent = "A Curious Soul...";
+        msgText.textContent = "Kamu menemukan ini lebih cepat dari yang kubayangkan. Rasa penasaranmu adalah keindahan yang selalu membuatku kagum...";
+      } else {
+        titleText.textContent = "The Architect's Poem";
+        msgText.textContent = "Akhirnya, kamu sampai di sini. Biarkan aku menuntunmu ke sisa detak jantung yang belum kamu temukan...";
+      }
+      
+      this.overlay.classList.add('active');
+      this.overlay.setAttribute('aria-hidden', 'false');
+    },
+    
+    close() {
+      this.overlay.classList.remove('active');
+      this.overlay.setAttribute('aria-hidden', 'true');
+    }
+  };
+  poemManager.init();
+
+  // ── "Music Box Pull" → The Song & The Poem ──
   (() => {
     const title = document.getElementById('admin-main-title');
     const string = document.getElementById('music-box-string');
@@ -2341,7 +2436,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     let startY = 0;
     let isPulling = false;
-    const threshold = 130; // Pixels to pull down to trigger
+    let holdTimer = null;
+    const threshold = 130; 
 
     const resetPull = () => {
       isPulling = false;
@@ -2349,62 +2445,70 @@ document.addEventListener("DOMContentLoaded", async () => {
       string.style.height = '0px';
       vignette.classList.remove('active');
       vignette.style.opacity = '0';
+      if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
+      vignette.classList.remove('deep-glow');
     };
 
-    title.addEventListener('touchstart', (e) => {
-      if (e.touches.length !== 1) return;
-      startY = e.touches[0].clientY;
+    const handleStart = (y) => {
+      startY = y;
       isPulling = true;
       string.style.transition = 'none';
       string.classList.add('visible');
-    }, { passive: true });
+    };
 
-    window.addEventListener('touchmove', (e) => {
+    const handleMove = (y, e) => {
       if (!isPulling) return;
+      const diff = Math.max(0, y - startY);
+      if (diff > 5 && e.cancelable) e.preventDefault();
       
-      const currentY = e.touches[0].clientY;
-      const diff = Math.max(0, currentY - startY);
-      
-      if (diff > 5) {
-        // Prevent browser pull-to-refresh once we start pulling the string
-        if (e.cancelable) e.preventDefault();
-      }
-      
-      // Update string height with a bit of "tension" (clamped at threshold + extra)
       const tensionDiff = diff > threshold ? threshold + (diff - threshold) * 0.3 : diff;
       string.style.height = tensionDiff + 'px';
       
-      // Darken vignette proportional to pull
       const progress = Math.min(1, diff / threshold);
       vignette.style.opacity = progress * 0.9;
       if (progress > 0.05) vignette.classList.add('active');
       
-      // Visual feedback when threshold reached
       if (diff >= threshold) {
         string.querySelector('.bead').style.boxShadow = '0 0 20px #fff, 0 0 30px var(--clr-gold)';
         string.querySelector('.bead').style.transform = 'translateX(-50%) scale(1.3)';
+        
+        // Start "Architect's Poem" hold timer
+        if (!holdTimer) {
+          vignette.classList.add('deep-glow');
+          holdTimer = setTimeout(() => {
+            resetPull();
+            poemManager.open();
+          }, 4000); 
+        }
       } else {
         string.querySelector('.bead').style.boxShadow = '';
         string.querySelector('.bead').style.transform = '';
+        if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
+        vignette.classList.remove('deep-glow');
       }
-    }, { passive: false });
+    };
 
-    window.addEventListener('touchend', () => {
+    const handleEnd = () => {
       if (!isPulling) return;
-      
       const currentHeight = parseInt(string.style.height) || 0;
-      if (currentHeight >= threshold) {
-        // SUCCESS: Trigger the song!
+      if (currentHeight >= threshold && !holdTimer) {
         resetPull();
+        discoveryState.track('song');
         if (typeof songSystem !== 'undefined') songSystem.open();
       } else {
-        // FAIL: Snap back animation
-        string.style.transition = 'height 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease';
         resetPull();
       }
-    });
-    
-    window.addEventListener('touchcancel', resetPull);
+    };
+
+    // Mobile
+    title.addEventListener('touchstart', (e) => handleStart(e.touches[0].clientY), { passive: true });
+    window.addEventListener('touchmove', (e) => handleMove(e.touches[0].clientY, e), { passive: false });
+    window.addEventListener('touchend', handleEnd);
+
+    // PC Support
+    title.addEventListener('mousedown', (e) => handleStart(e.clientY));
+    window.addEventListener('mousemove', (e) => handleMove(e.clientY, e));
+    window.addEventListener('mouseup', handleEnd);
   })();
 
   // Initialize Layer 2 — Working Companion
