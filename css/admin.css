@@ -1127,37 +1127,39 @@
 
 /* --- Empty State (Ethereal Sanctuary Style) --- */
 .empty-state {
-  grid-column: 1 / -1 !important; /* Force span all grid columns */
-  width: 100% !important; 
-  max-width: none !important; /* Remove constraints */
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
   display: flex !important;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
   padding: var(--space-4xl) var(--space-2xl);
-  background: radial-gradient(circle at center, rgba(255, 215, 0, 0.05) 0%, transparent 70%);
-  border: 1px dashed rgba(255, 215, 0, 0.3);
+  background: rgba(255, 245, 230, 0.4); /* Glassmorphism effect */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 215, 0, 0.4); /* Solid elegant gold border */
   border-radius: var(--radius-sm);
   margin: var(--space-xl) 0;
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
+  box-shadow: 0 10px 30px rgba(45, 10, 30, 0.05);
 }
 
 .empty-state::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(45deg, transparent, rgba(255, 215, 0, 0.03), transparent);
+  background: linear-gradient(45deg, transparent, rgba(255, 215, 0, 0.08), transparent);
   animation: shimmer 5s linear infinite;
 }
 
 .empty-state i {
-  font-size: 3.5rem;
+  font-size: 4rem;
   color: var(--clr-gold);
   margin-bottom: var(--space-lg);
-  filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.4));
+  filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.5));
   animation: emptyStateFloat 4s ease-in-out infinite;
 }
 
@@ -1168,34 +1170,39 @@
 
 @keyframes emptyStateFloat {
   0%, 100% { transform: translateY(0) rotate(0); }
-  50% { transform: translateY(-15px) rotate(5deg); }
+  50% { transform: translateY(-12px) rotate(3deg); }
 }
 
 .empty-state h3 {
   font-family: var(--font-pixel);
-  font-size: 0.55rem;
+  font-size: 0.7rem;
   color: var(--clr-gold);
   margin-bottom: var(--space-md);
-  letter-spacing: 2px;
+  letter-spacing: 3px;
   text-transform: uppercase;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .empty-state p {
   font-family: var(--font-retro);
-  font-size: 1.3rem;
-  line-height: 1.6;
-  color: var(--clr-light-peach);
-  max-width: 400px;
+  font-size: 1.6rem;
+  line-height: 1.4;
+  color: var(--clr-deep-maroon); /* Higher contrast */
+  max-width: 500px;
   margin: 0 auto;
-  opacity: 0.9;
+  opacity: 1;
+  font-style: italic;
+  position: relative;
 }
 
 .empty-state-hint {
-  margin-top: var(--space-xl);
-  font-size: 0.9rem !important;
-  color: var(--clr-coral) !important;
-  font-style: italic;
-  opacity: 0.7;
+  margin-top: var(--space-2xl) !important;
+  font-size: 1.1rem !important;
+  color: var(--clr-warm-crimson) !important;
+  opacity: 0.8 !important;
+  font-style: normal !important;
+  letter-spacing: 0.5px;
+  font-weight: 500;
 }
 
 /* --- Add Button --- */
