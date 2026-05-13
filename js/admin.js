@@ -2437,10 +2437,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     let startY = 0;
     let isPulling = false;
     let holdTimer = null;
-    const threshold = 130; 
+    let currentDiff = 0;
+    const threshold = 120; // Lowered slightly from 130 for better feel
 
     const resetPull = () => {
       isPulling = false;
+      currentDiff = 0;
       string.classList.remove('visible');
       string.style.height = '0px';
       vignette.classList.remove('active');
@@ -2452,6 +2454,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const handleStart = (y) => {
       startY = y;
       isPulling = true;
+      currentDiff = 0;
       string.style.transition = 'none';
       string.classList.add('visible');
     };
@@ -2459,6 +2462,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const handleMove = (y, e) => {
       if (!isPulling) return;
       const diff = Math.max(0, y - startY);
+      currentDiff = diff;
+      
       if (diff > 5 && e.cancelable) e.preventDefault();
       
       const tensionDiff = diff > threshold ? threshold + (diff - threshold) * 0.3 : diff;
@@ -2472,7 +2477,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         string.querySelector('.bead').style.boxShadow = '0 0 20px #fff, 0 0 30px var(--clr-gold)';
         string.querySelector('.bead').style.transform = 'translateX(-50%) scale(1.3)';
         
-        // Start "Architect's Poem" hold timer
         if (!holdTimer) {
           vignette.classList.add('deep-glow');
           holdTimer = setTimeout(() => {
@@ -2490,8 +2494,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const handleEnd = () => {
       if (!isPulling) return;
-      const currentHeight = parseInt(string.style.height) || 0;
-      if (currentHeight >= threshold) {
+      if (currentDiff >= threshold) {
         resetPull();
         discoveryState.track('song');
         if (typeof songSystem !== 'undefined') songSystem.open();
