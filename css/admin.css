@@ -2,6 +2,528 @@
    ADMIN DASHBOARD 2.0 - Professional Styles
    ============================================ */
 
+/* ============================================
+   BONNA'S SECRET SANCTUARY — Login Gate v3
+   Theme: Retro RPG Pixel
+   ============================================ */
+
+.login-sanctuary-body {
+  overflow: hidden;
+  height: 100vh;
+}
+
+/* --- Warm RPG Background (matches site gradient) --- */
+.aurora-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  /* Matches var(--bg-page-gradient) from style.css */
+  background: linear-gradient(160deg,
+    #2d0a1e 0%,
+    #4a1234 12%,
+    #8b2252 28%,
+    #c85a3a 44%,
+    #e8725a 56%,
+    #f09070 68%,
+    #f5b890 80%,
+    #fcd5c0 92%,
+    #fff0e6 100%
+  );
+}
+
+/* RPG scanline grid texture overlay */
+.aurora-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(45, 10, 30, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(45, 10, 30, 0.06) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+}
+
+/* Animated warm glow blob (aurora effect, now warm-toned) */
+.aurora-layer { display: none; } /* replaced by pure gradient */
+
+/* --- Two-Column Sanctuary Layout --- */
+.sanctuary-layout {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+}
+
+/* ============================================
+   LEFT COLUMN: RPG Title Screen
+   ============================================ */
+.sanctuary-left {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3xl) var(--space-2xl);
+  position: relative;
+  /* Darker left panel for contrast */
+  background: rgba(45, 10, 30, 0.45);
+  backdrop-filter: blur(2px);
+}
+
+/* Chunky dashed RPG divider line */
+.sanctuary-left::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--clr-dark-plum) 0px,
+    var(--clr-dark-plum) 6px,
+    transparent 6px,
+    transparent 12px
+  );
+}
+
+.sanctuary-left-inner {
+  max-width: 400px;
+  width: 100%;
+}
+
+/* "PRIVATE ENTRANCE" eyebrow label */
+.sanctuary-eyebrow {
+  font-family: var(--font-pixel);
+  font-size: 0.38rem;
+  color: var(--clr-gold);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: var(--space-2xl);
+  opacity: 0.7;
+  animation: sanctuaryFadeUp 0.6s ease 0.2s both;
+  /* RPG label bracket style */
+}
+
+.sanctuary-eyebrow::before { content: '[ '; }
+.sanctuary-eyebrow::after  { content: ' ]'; }
+
+/* Big RPG-style title — vivid coral-to-gold shimmer (periodic for seamless loop) */
+.sanctuary-title {
+  font-family: var(--font-pixel);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  line-height: 1.1;
+  margin-bottom: var(--space-2xl);
+  /* Periodic warm gradient for seamless shimmer: A -> B -> A -> B -> A */
+  background: linear-gradient(
+    135deg,
+    var(--clr-coral)     0%,
+    var(--clr-gold)      25%,
+    var(--clr-cream)     50%,
+    var(--clr-gold)      75%,
+    var(--clr-coral)     100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  /* Black outline/shadow for Retro RPG look */
+  filter: drop-shadow(4px 4px 0 #000000);
+  animation:
+    sanctuaryFadeUp 0.6s ease 0.35s both,
+    titleShimmer 6s linear infinite;
+}
+
+/* Typewriter quote area */
+.sanctuary-quote-area {
+  min-height: 80px;
+  margin-bottom: var(--space-xl);
+  animation: sanctuaryFadeUp 0.6s ease 0.5s both;
+  border-left: 3px solid var(--clr-coral);
+  padding-left: var(--space-md);
+  /* inline so cursor sits flush after last character */
+  display: block;
+}
+
+/* quote and cursor are inline siblings */
+.sanctuary-quote {
+  display: inline;
+  font-family: var(--font-retro);
+  font-size: 1.35rem;
+  color: var(--clr-cream);
+  line-height: 1.6;
+  letter-spacing: 0.5px;
+}
+
+.sanctuary-cursor {
+  display: inline;
+  font-family: var(--font-retro);
+  font-size: 1.35rem;
+  color: var(--clr-gold);
+  animation: cursorBlink 0.8s step-end infinite;
+  margin-left: 1px;
+  user-select: none;
+}
+
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* Flavor italic text */
+.sanctuary-flavor {
+  font-family: var(--font-retro);
+  font-size: 1rem;
+  color: rgba(255, 240, 230, 0.5);
+  font-style: italic;
+  margin-bottom: var(--space-2xl);
+  animation: sanctuaryFadeUp 0.6s ease 0.65s both;
+}
+
+.sanctuary-flavor em {
+  color: var(--clr-gold-soft);
+  font-style: normal;
+}
+
+/* Decorative pixel diamonds */
+.sanctuary-deco-diamonds {
+  display: flex;
+  gap: var(--space-sm);
+  animation: sanctuaryFadeUp 0.6s ease 0.8s both;
+}
+
+.deco-diamond {
+  font-size: 0.65rem;
+  color: var(--clr-gold);
+  animation: diamondPulse 3s ease-in-out infinite;
+  opacity: 0.5;
+}
+.deco-diamond:nth-child(2) { animation-delay: 1s; color: var(--clr-coral); }
+.deco-diamond:nth-child(3) { animation-delay: 2s; }
+
+@keyframes diamondPulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50%       { opacity: 0.9; transform: scale(1.3); }
+}
+
+/* ============================================
+   RIGHT COLUMN: RPG Dialog Box
+   ============================================ */
+.sanctuary-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3xl) var(--space-2xl);
+  background: rgba(252, 213, 192, 0.06);
+}
+
+/* The form box — warm peach RPG dialog box with black outlines */
+.sanctuary-form-box {
+  max-width: 360px;
+  width: 100%;
+  background: var(--clr-light-peach);
+  border: 4px solid #000000;
+  box-shadow: 8px 8px 0 #000000;
+  padding: var(--space-2xl) var(--space-xl);
+  animation: sanctuaryFadeUp 0.6s ease 0.4s both;
+  position: relative;
+}
+
+/* Top pixel corner accent — black banner with gold text */
+.sanctuary-form-box::before {
+  content: '✦ YOUR KEY ✦';
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  background: #000000;
+  color: var(--clr-gold);
+  font-family: var(--font-pixel);
+  font-size: 0.38rem;
+  letter-spacing: 2px;
+  padding: 6px 12px;
+  white-space: nowrap;
+  border: 2px solid #000000; /* reinforce sharp corners */
+}
+
+/* "YOUR KEY" label (now hidden, replaced by ::before) */
+.sanctuary-form-label {
+  display: none;
+}
+
+.sanctuary-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-lg);
+}
+
+/* RPG-style input: warm cream box with black chunky borders */
+.sanctuary-input-group {
+  position: relative;
+  border: 3px solid #000000;
+  background: var(--clr-cream);
+  box-shadow: 4px 4px 0 #000000;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.sanctuary-input-group:focus-within {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 #000000, 0 0 0 2px var(--clr-gold);
+}
+
+/* Remove the sliding underline — not RPG */
+.sanctuary-input-group::after { display: none; }
+
+.sanctuary-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: var(--space-sm) var(--space-3xl) var(--space-sm) var(--space-md);
+  font-family: var(--font-retro);
+  font-size: 1.2rem;
+  color: var(--clr-deep-maroon);
+  letter-spacing: 1px;
+  caret-color: var(--clr-coral);
+}
+
+.sanctuary-input::placeholder {
+  color: rgba(139, 34, 82, 0.4);
+  font-style: italic;
+}
+
+.sanctuary-toggle {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  border-left: 2px solid #000000;
+  color: var(--clr-warm-crimson);
+  cursor: pointer;
+  padding: var(--space-sm);
+  font-size: 0.9rem;
+  transition: color 0.2s ease, background 0.2s ease;
+  height: 100%;
+}
+
+.sanctuary-toggle:hover {
+  background: #000000;
+  color: var(--clr-gold);
+}
+
+/* Message area */
+.sanctuary-message {
+  font-family: var(--font-retro);
+  font-size: 1.05rem;
+  letter-spacing: 0.5px;
+  padding: var(--space-xs) var(--space-sm);
+  border: 2px solid currentColor;
+  animation: sanctuaryFadeUp 0.3s ease both;
+}
+
+.sanctuary-message--error {
+  color: var(--clr-coral);
+  background: rgba(232, 114, 90, 0.08);
+}
+
+.sanctuary-message--success {
+  color: var(--clr-deep-maroon);
+  background: rgba(255, 215, 0, 0.15);
+  border-color: var(--clr-gold);
+}
+
+/* RPG submit button — black base with gold text, chunky retro style */
+.sanctuary-submit {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  width: 100%;
+  padding: var(--space-md) var(--space-lg);
+  background: #000000;
+  border: 3px solid #000000;
+  color: var(--clr-gold);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.sanctuary-submit::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--clr-warm-crimson), var(--clr-coral));
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.sanctuary-submit:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 rgba(45, 10, 30, 0.5);
+}
+
+.sanctuary-submit:hover::before {
+  opacity: 1;
+}
+
+.sanctuary-submit:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
+
+.sanctuary-submit-text {
+  font-family: var(--font-pixel);
+  font-size: 0.5rem;
+  letter-spacing: 3px;
+  position: relative;
+  z-index: 1;
+}
+
+.sanctuary-submit-icon {
+  font-size: 0.85rem;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.2s ease;
+}
+
+.sanctuary-submit:hover .sanctuary-submit-icon {
+  transform: translateX(3px);
+}
+
+/* Back link */
+.sanctuary-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-family: var(--font-pixel);
+  font-size: 0.38rem;
+  color: rgba(45, 10, 30, 0.4);
+  text-decoration: none;
+  letter-spacing: 1px;
+  transition: color 0.2s ease;
+  margin-top: var(--space-md);
+}
+
+.sanctuary-back-link:hover {
+  color: var(--clr-warm-crimson);
+}
+
+/* Shared entry animation */
+@keyframes sanctuaryFadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Wrong key shake */
+.sanctuary-shake {
+  animation: sanctuaryShake 0.4s ease both;
+}
+
+@keyframes sanctuaryShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+/* --- Responsive: RPG Mobile Optimization --- */
+@media (max-width: 768px) {
+  .sanctuary-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    overflow-y: auto;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .login-sanctuary-body {
+    overflow-y: auto;
+    height: auto;
+  }
+
+  /* Title side on top */
+  .sanctuary-left {
+    padding: var(--space-2xl) var(--space-xl) var(--space-lg);
+    background: rgba(45, 10, 30, 0.55);
+    border-right: none;
+    border-bottom: 3px dashed #000000;
+    text-align: center;
+    flex-direction: column;
+  }
+
+  .sanctuary-left::after { display: none; }
+
+  .sanctuary-left-inner {
+    max-width: 100%;
+  }
+
+  .sanctuary-title {
+    font-size: clamp(1.8rem, 10vw, 2.5rem);
+    margin-bottom: var(--space-lg);
+  }
+
+  .sanctuary-quote-area {
+    min-height: 50px;
+    margin-bottom: var(--space-lg);
+    border-left: none;
+    border-top: 2px solid var(--clr-coral);
+    padding-top: var(--space-sm);
+    padding-left: 0;
+  }
+
+  .sanctuary-quote, .sanctuary-cursor {
+    font-size: 1.15rem;
+  }
+
+  .sanctuary-flavor {
+    font-size: 0.9rem;
+    margin-bottom: var(--space-xl);
+  }
+
+  /* Form side on bottom */
+  .sanctuary-right {
+    padding: var(--space-xl) var(--space-md);
+    background: transparent;
+    align-items: flex-start; /* start form near the top of its section */
+    padding-top: var(--space-2xl);
+  }
+
+  .sanctuary-form-box {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: var(--space-xl) var(--space-md);
+    box-shadow: 6px 6px 0 #000000;
+  }
+
+  .sanctuary-deco-diamonds {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .sanctuary-left {
+    padding: var(--space-xl) var(--space-md);
+  }
+
+  .sanctuary-title {
+    font-size: 1.8rem;
+  }
+
+  .sanctuary-right {
+    padding-top: var(--space-xl);
+  }
+
+  .sanctuary-form-box::before {
+    font-size: 0.32rem;
+    padding: 4px 8px;
+  }
+}
+
+
 /* --- Admin Base Styles --- */
 .admin-body {
   font-family: var(--font-body);
