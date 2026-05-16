@@ -1504,6 +1504,10 @@ img {
 }
 
 /* --- Gallery Preview Items (Ethereal Expanding Memories) --- */
+.gallery-cta-card {
+  padding: var(--space-2xl);
+}
+
 .gallery-expand-container {
   display: flex;
   width: 100%;
@@ -1618,12 +1622,18 @@ img {
   .gallery-expand-container {
     height: 300px;
   }
+  .gallery-cta-card {
+    padding: var(--space-lg);
+  }
 }
 
 @media (max-width: 480px) {
   .gallery-expand-container {
     flex-direction: column;
     height: 500px;
+  }
+  .gallery-cta-card {
+    padding: var(--space-md);
   }
   .gallery-expand-panel {
     flex: 1;
