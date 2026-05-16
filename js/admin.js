@@ -35,7 +35,7 @@ const PRESENCE_CONFIG = {
   },
 
   // Anniversary Takeover greeting — set before the date arrives
-  anniversaryGreeting: 'Today. Of all the days — today. 💙',
+  anniversaryGreeting: `Still here. Still you. Still the only chapter that matters. [X] year may have passed, but my promise remains etched in the space. I haven't left. My Love, Bonna.`,
 
   greetingPool: [
     'Bonjour, belle âme.',
@@ -161,7 +161,8 @@ const presenceSystem = {
       return t.getMonth() === now.getMonth() && t.getDate() === now.getDate();
     });
     if (isAnniversary) {
-      el.textContent = PRESENCE_CONFIG.anniversaryGreeting.replace('[X]', days);
+      const years = Math.floor(days / 365);
+      el.textContent = PRESENCE_CONFIG.anniversaryGreeting.replace('[X]', years);
       return;
     }
 
@@ -347,15 +348,6 @@ const presenceSystem = {
     }
   },
 
-  init() {
-    this.showFirstTime();
-    this.renderGreeting();
-    this.renderCounter();
-    this.initLogoutTooltip();
-    this.renderCountdown();
-    this.checkAnniversary();
-    this.setupUptimeHold();
-  },
 };
 
 // ============================================

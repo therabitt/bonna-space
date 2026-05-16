@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     renderGalleryPreview(items, container) {
       container.innerHTML = "";
-      const previewItems = items.slice(0, 3);
+      const previewItems = items.slice(0, 5);
 
       if (previewItems.length === 0) {
         container.innerHTML = "<p style='grid-column: 1/-1; text-align: center; font-family: var(--font-pixel); font-size: 0.5rem; color: var(--clr-coral);'>No memories found yet.</p>";
@@ -130,9 +130,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const div = document.createElement("a");
         div.href = "gallery.html";
-        div.className = `gallery-preview-item reveal reveal-delay-${index}`;
+        div.className = `gallery-expand-panel reveal reveal-delay-${index} ${index === 0 ? 'active' : ''}`;
+        
         div.setAttribute("aria-label", `View ${title} in gallery`);
-        div.innerHTML = `<div class="gallery-preview-bg" style="background-image: url('${imgUrl}')" title="${title}"></div>`;
+        div.innerHTML = `
+          <div class="panel-bg" style="background-image: url('${imgUrl}')" title="${title}"></div>
+          <div class="panel-content">
+            <div class="panel-icon"><i class="fa-solid fa-star"></i></div>
+            <div class="panel-info">
+              <h4 class="panel-title">${title}</h4>
+            </div>
+          </div>
+        `;
+
+        // Interactive hover to switch active class
+        div.addEventListener("mouseenter", () => {
+          const siblings = container.querySelectorAll(".gallery-expand-panel");
+          siblings.forEach(el => el.classList.remove("active"));
+          div.classList.add("active");
+        });
+
         container.appendChild(div);
       });
     }
