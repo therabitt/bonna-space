@@ -1528,6 +1528,10 @@ img {
   box-shadow: 4px 4px 0px var(--retro-shadow);
   text-decoration: none;
   background: var(--clr-dark-plum);
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
 }
 
 .gallery-expand-panel.active {

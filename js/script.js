@@ -150,6 +150,21 @@ document.addEventListener("DOMContentLoaded", () => {
           div.classList.add("active");
         });
 
+        // Click behavior for mobile: expand if not active, navigate if active
+        div.addEventListener("click", (e) => {
+          if (!div.classList.contains("active")) {
+            e.preventDefault(); // Prevent navigation
+            const siblings = container.querySelectorAll(".gallery-expand-panel");
+            siblings.forEach(el => el.classList.remove("active"));
+            div.classList.add("active");
+          }
+        });
+
+        // Disable right-click (context menu) for the preview
+        div.addEventListener("contextmenu", (e) => {
+          e.preventDefault();
+        });
+
         container.appendChild(div);
       });
     }
