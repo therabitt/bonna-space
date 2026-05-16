@@ -1746,17 +1746,31 @@ img {
   transform-box: fill-box;
   transform-origin: center;
   animation: pulseStar 2s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 4px var(--clr-coral));
 }
 
 .core-star {
   fill: var(--clr-gold);
-  filter: drop-shadow(0 0 10px var(--clr-gold));
+  filter: drop-shadow(0 0 12px var(--clr-gold));
   animation: corePulse 1.5s ease-in-out infinite alternate;
 }
 
+.sprinkle {
+  fill: var(--clr-cream);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: twinkle 2s ease-in-out infinite alternate;
+}
+
+@keyframes twinkle {
+  0% { transform: scale(0) rotate(0deg); opacity: 0; }
+  50% { opacity: 0.8; }
+  100% { transform: scale(1.2) rotate(180deg); opacity: 0; }
+}
+
 @keyframes pulseStar {
-  0% { transform: scale(0.6); opacity: 0.4; filter: drop-shadow(0 0 2px var(--clr-coral)); }
-  100% { transform: scale(1.2); opacity: 1; filter: drop-shadow(0 0 8px var(--clr-gold)); }
+  0% { transform: scale(0.7) rotate(-15deg); opacity: 0.5; }
+  100% { transform: scale(1.2) rotate(15deg); opacity: 1; }
 }
 
 @keyframes corePulse {
