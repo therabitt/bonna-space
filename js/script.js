@@ -695,9 +695,65 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- 4. Initialization (First Run) ---
 
   // Preloader & First entry
+  // Preloader & First entry
   const preloader = document.querySelector(".preloader");
+  const preloaderText = document.querySelector(".preloader-text");
+  const preloaderSpinner = document.querySelector(".constellation-spinner");
+
+  // Terminal Scramble Text
+  const scrambleText = (element, targetText) => {
+    return new Promise(resolve => {
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*!<>~";
+      let iterations = 0;
+      const interval = setInterval(() => {
+        element.innerHTML = targetText.split("").map((letter, index) => {
+          if (index < iterations) return letter;
+          return chars[Math.floor(Math.random() * chars.length)];
+        }).join("") + '<span class="dots"></span>';
+        if (iterations >= targetText.length) {
+          clearInterval(interval);
+          resolve();
+        }
+        iterations += 1/2; // speed
+      }, 30);
+    });
+  };
+
+  const runPreloaderSequence = async () => {
+    if (!preloaderText || !preloader) return;
+    await scrambleText(preloaderText, "SYSTEM_WAKE");
+    if (preloader.classList.contains("hidden")) return;
+    await new Promise(r => setTimeout(r, 400));
+    
+    await scrambleText(preloaderText, "SYNCING_NEURAL");
+    if (preloader.classList.contains("hidden")) return;
+    await new Promise(r => setTimeout(r, 400));
+
+    await scrambleText(preloaderText, "LOADING_MEMORIES");
+  };
+
+  if (preloader && !preloader.classList.contains("hidden")) {
+    runPreloaderSequence();
+    
+    // Magnetic Cursor Parallax
+    if (preloaderSpinner) {
+      preloader.addEventListener("mousemove", (e) => {
+        if (!window.matchMedia("(pointer: fine)").matches) return;
+        const x = (window.innerWidth / 2 - e.clientX) / 25;
+        const y = (window.innerHeight / 2 - e.clientY) / 25;
+        preloaderSpinner.style.setProperty("--px", `${x}px`);
+        preloaderSpinner.style.setProperty("--py", `${y}px`);
+      });
+    }
+  }
+
   const hidePreloader = () => {
-    if (preloader) preloader.classList.add("hidden");
+    if (preloader) {
+      preloader.classList.add("hidden");
+      if (typeof audioManager !== "undefined" && audioManager.sfxClick) {
+        audioManager.sfxClick.play().catch(() => {});
+      }
+    }
   };
 
   // Initialize App (Data First)

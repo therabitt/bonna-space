@@ -1664,14 +1664,31 @@ img {
   flex-direction: column;
   gap: var(--space-md);
   transition:
-    opacity 0.6s ease,
-    visibility 0.6s ease;
+    opacity 0.8s cubic-bezier(0.8, 0, 0.2, 1),
+    visibility 0.8s ease;
 }
 
 .preloader.hidden {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
+}
+
+.preloader.hidden .constellation-spinner {
+  animation: hyperspaceBurst 1.2s cubic-bezier(0.4, 0, 0, 1) forwards !important;
+}
+
+@keyframes hyperspaceBurst {
+  0% {
+    transform: translate(var(--px, 0), var(--py, 0)) scale(1);
+    filter: blur(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--px, 0), var(--py, 0)) scale(15);
+    filter: blur(20px);
+    opacity: 0;
+  }
 }
 
 .constellation-spinner {
@@ -1682,8 +1699,8 @@ img {
 }
 
 @keyframes floatConstellation {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-5px) rotate(2deg); }
+  0%, 100% { transform: translate(var(--px, 0), var(--py, 0)) translateY(0) rotate(0deg); }
+  50% { transform: translate(var(--px, 0), var(--py, 0)) translateY(-5px) rotate(2deg); }
 }
 
 .cosmic-ring {
