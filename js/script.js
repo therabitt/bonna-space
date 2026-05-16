@@ -129,7 +129,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const imgUrl = BonnaUtils.getVal(item, "ImageURL");
 
         const div = document.createElement("a");
-        div.href = "gallery.html";
+        // Only add href if it's the active (first) item initially
+        if (index === 0) div.href = "gallery.html";
         div.className = `gallery-expand-panel reveal reveal-delay-${index} ${index === 0 ? 'active' : ''}`;
         
         div.setAttribute("aria-label", `View ${title} in gallery`);
@@ -146,18 +147,27 @@ document.addEventListener("DOMContentLoaded", () => {
         // Interactive hover to switch active class
         div.addEventListener("mouseenter", () => {
           const siblings = container.querySelectorAll(".gallery-expand-panel");
-          siblings.forEach(el => el.classList.remove("active"));
+          siblings.forEach(el => {
+            el.classList.remove("active");
+            el.removeAttribute("href"); // Remove href from inactive
+          });
           div.classList.add("active");
+          div.href = "gallery.html"; // Add href to active
         });
 
         // Click behavior for mobile: expand if not active, navigate if active
         div.addEventListener("click", (e) => {
           if (!div.classList.contains("active")) {
-            e.preventDefault(); // Prevent standard navigation
-            e.stopPropagation(); // Prevent SPA global link interceptor
+            e.preventDefault(); 
+            e.stopPropagation(); 
             const siblings = container.querySelectorAll(".gallery-expand-panel");
-            siblings.forEach(el => el.classList.remove("active"));
+            siblings.forEach(el => {
+              el.classList.remove("active");
+              el.removeAttribute("href");
+            });
             div.classList.add("active");
+            // Important: we don't set href immediately on click to prevent double-firing on some touch devices
+            setTimeout(() => { div.href = "gallery.html"; }, 100);
           }
         });
 
