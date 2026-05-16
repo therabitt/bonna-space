@@ -1674,59 +1674,93 @@ img {
   pointer-events: none;
 }
 
-.preloader-spinner {
-  width: 160px;
-  height: 20px;
-  border: 4px solid var(--clr-dark-plum);
-  background: var(--clr-deep-maroon);
+.constellation-spinner {
+  width: 180px;
+  height: 180px;
   position: relative;
-  overflow: hidden;
-  box-shadow: 0 0 0 2px var(--clr-coral), 0 4px 12px rgba(45, 10, 30, 0.5);
-  border-radius: var(--radius-xs);
+  animation: floatConstellation 6s ease-in-out infinite;
 }
 
-/* The Animated Retro Stripes */
-.preloader-spinner::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: -30px;
-  /* Extra width to ensure smooth repeating */
-  bottom: 0;
-  background-color: var(--clr-warm-crimson);
-  background-image: repeating-linear-gradient(-45deg,
-      transparent,
-      transparent 10px,
-      var(--clr-coral) 10px,
-      var(--clr-coral) 20px);
-  background-size: 28px 28px;
-  /* 10*sqrt(2) * 2 approx */
-  animation: retroStripes 0.6s linear infinite;
+@keyframes floatConstellation {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-5px) rotate(2deg); }
 }
 
-.preloader-spinner::after {
-  display: none;
+.cosmic-ring {
+  fill: none;
+  stroke-width: 1;
+  stroke-dasharray: 4 8;
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: spinRing 20s linear infinite;
+}
+.ring-1 { stroke: rgba(232, 114, 90, 0.3); animation-duration: 25s; }
+.ring-2 { stroke: rgba(255, 215, 0, 0.2); animation-duration: 15s; animation-direction: reverse; }
+.ring-3 { stroke: rgba(252, 213, 192, 0.15); animation-duration: 10s; stroke-dasharray: 2 4; }
+
+@keyframes spinRing {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-@keyframes retroStripes {
-  0% {
-    transform: translateX(0);
-  }
+.constellation-path {
+  fill: none;
+  stroke: var(--clr-coral);
+  stroke-width: 1.5;
+  stroke-dasharray: 300;
+  stroke-dashoffset: 300;
+  filter: drop-shadow(0 0 5px rgba(232, 114, 90, 0.6));
+}
 
-  100% {
-    transform: translateX(-28px);
-  }
+.path-1 { animation: drawPath 4s ease-in-out infinite alternate 0s; }
+.path-2 { animation: drawPath 4s ease-in-out infinite alternate 0.5s; }
+.path-3 { animation: drawPath 4s ease-in-out infinite alternate 1s; }
+.path-4 { animation: drawPath 4s ease-in-out infinite alternate 1.5s; }
+.path-core { stroke: var(--clr-gold); animation: drawPath 4s ease-in-out infinite alternate 2s; }
+
+@keyframes drawPath {
+  0%, 10% { stroke-dashoffset: 300; opacity: 0; }
+  50% { opacity: 0.8; }
+  90%, 100% { stroke-dashoffset: 0; opacity: 1; }
+}
+
+.constellation-star {
+  fill: var(--clr-light-peach);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pulseStar 2s ease-in-out infinite alternate;
+}
+
+.core-star {
+  fill: var(--clr-gold);
+  filter: drop-shadow(0 0 10px var(--clr-gold));
+  animation: corePulse 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes pulseStar {
+  0% { transform: scale(0.6); opacity: 0.4; filter: drop-shadow(0 0 2px var(--clr-coral)); }
+  100% { transform: scale(1.2); opacity: 1; filter: drop-shadow(0 0 8px var(--clr-gold)); }
+}
+
+@keyframes corePulse {
+  0% { transform: scale(0.8); opacity: 0.8; filter: drop-shadow(0 0 5px var(--clr-gold)); }
+  100% { transform: scale(1.5); opacity: 1; filter: drop-shadow(0 0 15px var(--clr-gold)); }
 }
 
 .preloader-text {
   font-family: var(--font-pixel);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: var(--clr-light-peach);
-  letter-spacing: 4px;
+  letter-spacing: 3px;
   margin-top: var(--space-xs);
   display: flex;
   align-items: center;
+  animation: textGlowPulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes textGlowPulse {
+  0% { opacity: 0.6; text-shadow: 0 0 2px var(--clr-coral); }
+  100% { opacity: 1; text-shadow: 0 0 10px var(--clr-coral); }
 }
 
 .preloader-text .dots::after {
