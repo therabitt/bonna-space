@@ -144,8 +144,9 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
         `;
 
-        // Interactive hover to switch active class
+        // Interactive hover to switch active class (desktop only)
         div.addEventListener("mouseenter", () => {
+          if (!window.matchMedia("(pointer: fine)").matches) return; // Prevent touch from triggering hover first
           const siblings = container.querySelectorAll(".gallery-expand-panel");
           siblings.forEach(el => {
             el.classList.remove("active");
